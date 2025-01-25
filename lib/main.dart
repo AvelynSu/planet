@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
-import 'package:planet/test_screen.dart';
 
 import 'custom_theme.dart';
 
@@ -23,7 +21,7 @@ class _AppState extends State<App> {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: CustomThemeMode.themeMode,
       builder: (context, mode, child) {
-        return const MaterialApp(
+        return MaterialApp(
           home: FirstScreen(),
         );
       },
@@ -43,20 +41,28 @@ class _FirstScreenState extends State<FirstScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: CustomColors.getAppBarBackground(),
-        title: Container(),
+        backgroundColor: CustomColors.current.appBarBackground,
+        title: Text(
+          "Suyeon's Planet",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: CustomColors.current.appbarText,
+          ),
+        ),
       ),
-      backgroundColor: CustomColors.getBackground,
       body: Container(
+        color: CustomColors.current.background,
         alignment: Alignment.center,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            PlanetView(
+            PlanetWidget(
               data: "parksuyeon",
               size: 200,
             ),
+            const SizedBox(height: 40),
             InkWell(
               onTap: () {
                 CustomThemeMode.change();
@@ -67,21 +73,11 @@ class _FirstScreenState extends State<FirstScreen> {
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: CustomColors.getText(l: Colors.yellow), // 여기서 색상 적용
+                  color: CustomColors.current.text,
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => const TestScreen(),
-                  ),
-                );
-              },
-              child: const Text('다음 화면'),
-            ),
+            const SizedBox(height: 100),
           ],
         ),
       ),

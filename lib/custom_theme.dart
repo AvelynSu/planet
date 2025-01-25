@@ -26,22 +26,34 @@ class CustomThemeMode {
 
 // 커스텀 색상 관리
 class CustomColors {
-  // 텍스트 컬러
-  static Color getText({Color? l, Color? b}) {
-    return CustomThemeMode.isLight ? (l ?? Colors.black) : (b ?? Colors.white);
-  }
+  static const lightTheme = _ColorTheme(
+    text: Colors.yellow,
+    appbarText: Colors.white,
+    background: Colors.white,
+    appBarBackground: Colors.deepOrange,
+  );
 
-  // 배경 컬러
-  static Color get getBackground {
-    return CustomThemeMode.isLight
-        ? Colors.white
-        : const Color.fromRGBO(31, 31, 31, 1);
-  }
+  static const darkTheme = _ColorTheme(
+    text: Colors.white,
+    appbarText: Colors.white,
+    background: Color.fromRGBO(31, 31, 31, 1),
+    appBarBackground: Color.fromRGBO(51, 51, 51, 1),
+  );
 
-  // 앱바 배경 컬러
-  static Color getAppBarBackground() {
-    return CustomThemeMode.isLight
-        ? Colors.deepOrange
-        : const Color.fromRGBO(51, 51, 51, 1);
-  }
+  static _ColorTheme get current =>
+      CustomThemeMode.isLight ? lightTheme : darkTheme;
+}
+
+class _ColorTheme {
+  final Color text;
+  final Color appbarText;
+  final Color background;
+  final Color appBarBackground;
+
+  const _ColorTheme({
+    required this.text,
+    required this.background,
+    required this.appbarText,
+    required this.appBarBackground,
+  });
 }

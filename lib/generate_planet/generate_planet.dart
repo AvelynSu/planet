@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 
-class PlanetView extends StatelessWidget {
+class PlanetWidget extends StatelessWidget {
   final String data;
   final double size;
   late final Uint8List hash;
@@ -42,7 +42,7 @@ class PlanetView extends StatelessWidget {
   ];
   static const List<int> patterns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  PlanetView({
+  PlanetWidget({
     Key? key,
     required this.data,
     this.size = 700,
@@ -113,10 +113,10 @@ class PlanetPainter extends CustomPainter {
     }
 
     // Main Pattern
-    final pattern = PlanetView
-        .patterns[_getValueFromByte(hash[0], PlanetView.patterns.length)];
-    final colorCode =
-        PlanetView.colors[_getValueFromByte(hash[1], PlanetView.colors.length)];
+    final pattern = PlanetWidget
+        .patterns[_getValueFromByte(hash[0], PlanetWidget.patterns.length)];
+    final colorCode = PlanetWidget
+        .colors[_getValueFromByte(hash[1], PlanetWidget.colors.length)];
     _drawMain(canvas, size, pattern, colorCode);
 
     // Circle 1
@@ -125,8 +125,8 @@ class PlanetPainter extends CustomPainter {
       final outlineRadius = 90.0 + _getValueFromByte(hash[9], 40) * 0.5;
       final degree = _getValueFromByte(hash[10], 360);
       final scale = 90.0 + _getValueFromByte(hash[11], 40) * 0.5;
-      final colorCode = PlanetView
-          .colors[_getValueFromByte(hash[12], PlanetView.colors.length)];
+      final colorCode = PlanetWidget
+          .colors[_getValueFromByte(hash[12], PlanetWidget.colors.length)];
       _drawCircle(canvas, size, outlineRadius, degree * 1.0, scale, colorCode);
     }
 
@@ -136,8 +136,8 @@ class PlanetPainter extends CustomPainter {
       final outlineRadius = 90.0 + _getValueFromByte(hash[17], 40) * 0.5;
       final degree = _getValueFromByte(hash[18], 360);
       final scale = 90.0 + _getValueFromByte(hash[19], 40) * 0.5;
-      final colorCode = PlanetView
-          .colors[_getValueFromByte(hash[20], PlanetView.colors.length)];
+      final colorCode = PlanetWidget
+          .colors[_getValueFromByte(hash[20], PlanetWidget.colors.length)];
       _drawCircle(canvas, size, outlineRadius, degree * 1.0, scale, colorCode);
     }
   }
