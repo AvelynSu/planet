@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/test_screen.dart';
 
 import 'custom_theme.dart';
@@ -52,6 +53,10 @@ class _FirstScreenState extends State<FirstScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            PlanetView(
+              data: "parksuyeon",
+              size: 200,
+            ),
             InkWell(
               onTap: () {
                 CustomThemeMode.change();
