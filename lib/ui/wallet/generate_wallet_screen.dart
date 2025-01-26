@@ -23,8 +23,8 @@ class GenerateWalletScreen extends StatefulWidget {
 class _GenerateWalletScreenState extends State<GenerateWalletScreen> {
   String mnemonic = "";
   Uint8List seed = Uint8List(0);
-  EthPrivateKey? private;
-  String public = "";
+  EthPrivateKey? privateKey;
+  String publicKey = "";
   String address = "";
 
   WalletService walletService = WalletService();
@@ -75,70 +75,89 @@ class _GenerateWalletScreenState extends State<GenerateWalletScreen> {
               const SizedBox(height: 20),
               _label(title: "니모닉", value: mnemonic),
               _label(title: "씨드", value: "$seed"),
-              _label(title: "개인키", value: "${private?.privateKey}"),
-              _label(title: "공개키", value: public),
+              _label(title: "개인키", value: "${privateKey?.privateKey}"),
+              _label(title: "공개키", value: publicKey),
               _label(title: "주소", value: address),
               const SizedBox(height: 12),
+
               DefaultButton(
-                title: "니모닉 생성",
-                onTap: () {
+                title: "지갑 생성",
+                onTap: () async {
                   var value = walletService.generateMnemonic();
                   mnemonic = value;
-
-                  seed = Uint8List(0);
-                  private = null;
-                  public = "";
-                  address = "";
-
+                  seed = walletService.mnemonicToSeed(value);
+                  privateKey = walletService.seedToPrivateKey(seed);
+                  publicKey = walletService.privateKeyToPublicKey(privateKey!);
+                  address = walletService.publicKeyToAddress(publicKey);
                   setState(() {});
                 },
               ),
-              const SizedBox(height: 12),
-              DefaultButton(
-                title: "씨드 생성",
-                onTap: () {
-                  var value = walletService.mnemonicToSeed(mnemonic);
-                  seed = value;
 
-                  private = null;
-                  public = "";
-                  address = "";
-
-                  setState(() {});
-                },
-              ),
-              const SizedBox(height: 12),
-              DefaultButton(
-                title: "개인키 생성",
-                onTap: () {
-                  var value = walletService.seedToPrivateKey(seed);
-                  private = value;
-
-                  public = "";
-                  address = "";
-                  setState(() {});
-                },
-              ),
-              const SizedBox(height: 12),
-              DefaultButton(
-                title: "공개키 생성",
-                onTap: () {
-                  var value = walletService.privateKeyToPublicKey(private!);
-                  public = value;
-
-                  address = "";
-                  setState(() {});
-                },
-              ),
-              const SizedBox(height: 12),
-              DefaultButton(
-                title: "지갑주소 생성",
-                onTap: () {
-                  var value = walletService.publicKeyToAddress(public);
-                  address = value;
-                  setState(() {});
-                },
-              ),
+              /// 지갑주소 순차적으로 생성하는거..
+              // Column(
+              //   children: [
+              //     DefaultButton(
+              //       title: "니모닉 생성",
+              //       onTap: () {
+              //         var value = walletService.generateMnemonic();
+              //         mnemonic = value;
+              //
+              //         seed = Uint8List(0);
+              //         private = null;
+              //         public = "";
+              //         address = "";
+              //
+              //         setState(() {});
+              //       },
+              //     ),
+              //     const SizedBox(height: 12),
+              //     DefaultButton(
+              //       title: "씨드 생성",
+              //       onTap: () {
+              //         var value = walletService.mnemonicToSeed(mnemonic);
+              //         seed = value;
+              //
+              //         private = null;
+              //         public = "";
+              //         address = "";
+              //
+              //         setState(() {});
+              //       },
+              //     ),
+              //     const SizedBox(height: 12),
+              //     DefaultButton(
+              //       title: "개인키 생성",
+              //       onTap: () {
+              //         var value = walletService.seedToPrivateKey(seed);
+              //         private = value;
+              //
+              //         public = "";
+              //         address = "";
+              //         setState(() {});
+              //       },
+              //     ),
+              //     const SizedBox(height: 12),
+              //     DefaultButton(
+              //       title: "공개키 생성",
+              //       onTap: () {
+              //         var value = walletService.privateKeyToPublicKey(private!);
+              //         public = value;
+              //
+              //         address = "";
+              //         setState(() {});
+              //       },
+              //     ),
+              //     const SizedBox(height: 12),
+              //     DefaultButton(
+              //       title: "지갑주소 생성",
+              //       onTap: () {
+              //         var value = walletService.publicKeyToAddress(public);
+              //         address = value;
+              //         setState(() {});
+              //       },
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
