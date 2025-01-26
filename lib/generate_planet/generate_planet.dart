@@ -304,10 +304,10 @@ class PlanetPainter extends CustomPainter {
       case 7: // Check pattern with border
         paint.style = PaintingStyle.stroke;
         final patternWidth = size.width / 32.0;
-        final patternHeight = size.height / 8.0;
+        final patternHeight = size.height / 32.0;
         final patternDiagonal = sqrt(pow(patternWidth, 2));
 
-        for (var j = 0; j < 5; j++) {
+        for (var j = 0; j < 20; j++) {
           for (var i = 0; i < 16; i++) {
             final topPath = Path()
               ..moveTo(patternWidth * (i * 2),
