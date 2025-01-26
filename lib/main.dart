@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
+import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/wallet/generate_wallet_screen.dart';
 
 import 'custom_theme.dart';
 
@@ -55,6 +57,7 @@ class _FirstScreenState extends State<FirstScreen> {
         ),
       ),
       body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         color: CustomColors.current.background,
         alignment: Alignment.center,
         child: Column(
@@ -66,21 +69,19 @@ class _FirstScreenState extends State<FirstScreen> {
               size: 200,
             ),
             const SizedBox(height: 40),
-            InkWell(
+            DefaultButton(
+              title: '행성 변경',
               onTap: () {
                 data = DateTime.now().toString();
                 setState(() {});
-                // CustomThemeMode.change();
               },
-              child: Text(
-                'Planet Wallet',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: CustomColors.current.text.withValues(alpha: 0.5),
-                ),
-              ),
+            ),
+            const SizedBox(height: 12),
+            DefaultButton(
+              title: '월렛 테스트',
+              onTap: () {
+                GenerateWalletScreen.push(context);
+              },
             ),
             const SizedBox(height: 100),
           ],
