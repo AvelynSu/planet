@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // 테마 모드 관리
 class CustomThemeMode {
   static final CustomThemeMode instance = CustomThemeMode._internal();
-  static ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.light);
+  static ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 
   factory CustomThemeMode() => instance;
 

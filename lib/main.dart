@@ -22,6 +22,7 @@ class _AppState extends State<App> {
       valueListenable: CustomThemeMode.themeMode,
       builder: (context, mode, child) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           home: FirstScreen(),
         );
       },
@@ -37,17 +38,19 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> {
+  String data = "Shift Function";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: CustomColors.current.appBarBackground,
         title: Text(
-          "Suyeon's Planet",
+          "Shift Fn",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CustomColors.current.appbarText,
+            color: CustomColors.current.appbarText.withValues(alpha: 0.9),
           ),
         ),
       ),
@@ -59,21 +62,23 @@ class _FirstScreenState extends State<FirstScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PlanetWidget(
-              data: "parksuyeon",
+              data: data,
               size: 200,
             ),
             const SizedBox(height: 40),
             InkWell(
               onTap: () {
-                CustomThemeMode.change();
+                data = DateTime.now().toString();
+                setState(() {});
+                // CustomThemeMode.change();
               },
               child: Text(
                 'Planet Wallet',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: CustomColors.current.text,
+                  color: CustomColors.current.text.withValues(alpha: 0.5),
                 ),
               ),
             ),
