@@ -4,6 +4,8 @@ import 'package:base58check/base58check.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
+import 'package:ed25519_hd_key/ed25519_hd_key.dart';
+import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -65,7 +67,7 @@ class HDWalletService {
     // 3. 개인키 -> 공개키 (child.publicKey가 공개키)
     // 4. 공개키 -> 지갑 주소
     // 4-1. 공개키 해시 생성 (RIPEMD160(SHA256(공개키)))
-    final publicKeyHash = hash160(child.publicKey);
+    final publicKeyHash = _hash160(child.publicKey);
 
     // 4-2. Base58Check 인코딩으로 최종 주소 생성
     const version = 0x00; // mainnet P2PKH address version
@@ -77,7 +79,7 @@ class HDWalletService {
   }
 
   // RIPEMD160(SHA256(input)) 해시 생성
-  List<int> hash160(Uint8List input) {
+  List<int> _hash160(Uint8List input) {
     final sha256Hash = sha256.convert(input).bytes;
     final hash160 = sha256.convert(sha256Hash).bytes;
     return hash160.sublist(0, 20); // 앞의 20바이트만 사용
@@ -85,17 +87,18 @@ class HDWalletService {
 
   // 솔라나 주소 생성
   Future<String> _generateSolanaAddress(Uint8List seed, String path) async {
-    // // ED25519 키 유도
-    // final keyData = await ED25519_HD_KEY.derivePath(path, seed);
-    //
-    // // 키 데이터로부터 Ed25519 키쌍 생성
-    // final Ed25519HDKeyPair keyPair = Ed25519HDKeyPair.fromPrivateKeyBytes(
-    //   privateKey: keyData.key,
-    // );
-    //
-    // // 공개키를 Base58로 인코딩하여 솔라나 주소 생성
-    // return keyPair.address;
-    return "";
+    // 1. 니모닉 -> 시드 (이미 파라미터로 받음)
+
+    // 2. 시드 -> 개인키 (HD 월렛: seed -> master node -> child node -> private key)
+    final keyData = await ED25519_HD_KEY.derivePath(path, seed);
+
+    // 3. 개인키 -> 공개키 & 4. 공개키 -> 지갑 주소
+    // Ed25519HDKeyPair가 개인키로부터 공개키를 생성하고, 이를 솔라나 주소 형식으로 변환
+    final keyPair = await Ed25519HDKeyPair.fromPrivateKeyBytes(
+      privateKey: keyData.key,
+    );
+
+    return keyPair.address;
   }
 
 // 1 니모닉 -> 시드

@@ -26,7 +26,11 @@ enum NetworkType {
   }
 
   String getDerivationPath(int addressIndex) {
-    return "m/44'/$coinType'/0'/0/$addressIndex";
+    if (this == NetworkType.solana) {
+      return "m/44'/$coinType'/0'/0'/$addressIndex'";
+    } else {
+      return "m/44'/$coinType'/0'/0/$addressIndex";
+    }
   }
 
 //  계층 구조: m/purpose'/coin_type'/account'/change/address_index
