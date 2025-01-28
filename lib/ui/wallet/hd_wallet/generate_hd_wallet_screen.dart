@@ -114,7 +114,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
               // 행성들
               Row(
@@ -123,10 +123,6 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text(
-                          "ETH\n",
-                          style: fontB(16, color: CustomColors.current.text),
-                        ),
                         ...TestHdWallet.ethAddress.reversed
                             .map((e) => HdWalletTile(address: e)),
                       ],
@@ -136,10 +132,6 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text(
-                          "BTC\n",
-                          style: fontB(16, color: CustomColors.current.text),
-                        ),
                         ...TestHdWallet.btcAddress.reversed
                             .map((e) => HdWalletTile(address: e)),
                       ],
@@ -149,10 +141,6 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text(
-                          "SOL\n",
-                          style: fontB(16, color: CustomColors.current.text),
-                        ),
                         ...TestHdWallet.solAddress.reversed.map(
                           (e) => HdWalletTile(address: e),
                         ),
