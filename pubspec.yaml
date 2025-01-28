@@ -45,6 +45,7 @@ dependencies:
   solana: ^0.30.0  # 솔라나 관련
   pointycastle: ^3.7.3  # RIPEMD160을 위한 패키지
   base58check: ^2.0.0  # 비트코인 주소 인코딩
+  http: ^1.3.0
 
 dev_dependencies:
   flutter_test:

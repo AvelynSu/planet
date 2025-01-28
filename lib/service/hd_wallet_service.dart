@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:base58check/base58check.dart';
@@ -5,6 +6,7 @@ import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
+import 'package:http/http.dart' as http;
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
@@ -37,6 +39,8 @@ class HDWalletService {
         return _generateSolanaAddress(seed, path);
     }
   }
+
+  /// 주소 생성 ----------------------------------------------------------------------
 
   // 이더리움 주소 생성
   Future<String> _generateEthereumAddress(Uint8List seed, String path) async {
@@ -105,4 +109,113 @@ class HDWalletService {
 // 2 시드 -> 개인키 (hd: seed -> master node -> child node -> private key)
 // 3 개인키 -> 공개키
 // 4 공개키 -> 지갑 주소
+
+  /// 주소 복구 ----------------------------------------------------------------------
+// HD 월렛의 주소 복구 기능
+// - 하나의 니모닉에서 여러 개의 주소가 생성될 수 있음
+// - 생성된 주소들 중 실제 사용된 주소를 찾아내는 과정
+  Future<List<String>> recoverAddresses(
+    NetworkType network,
+    String mnemonic,
+  ) async {
+    List<String> foundAddresses = [];
+    int emptyAddressCount = 0; // 연속으로 발견된 빈 주소의 수
+    int index = 0; // 주소 생성 인덱스
+
+    // 연속으로 20개의 빈 주소가 나올 때까지 주소 탐색
+    // - HD 월렛 표준에서 권장하는 방식
+    // - 사용자가 20개의 주소를 건너뛰고 사용할 가능성은 매우 낮다고 가정
+    while (emptyAddressCount < 20) {
+      // 현재 인덱스로 주소 생성
+      final address = await generateHDAddress(network, mnemonic, index);
+
+      // 생성된 주소의 블록체인 활동 내역 확인
+      // - 잔액이 있거나
+      // - 트랜잭션 내역이 있는 경우
+      final hasActivity = await checkAddressActivity(network, address);
+
+      if (hasActivity) {
+        foundAddresses.add(address); // 활동 내역이 있는 주소 저장
+        emptyAddressCount = 0; // 빈 주소 카운터 리셋
+      } else {
+        emptyAddressCount++; // 빈 주소 카운트 증가
+      }
+
+      index++; // 다음 인덱스로 이동
+    }
+
+    // 발견된 모든 활성 주소 반환
+    return foundAddresses;
+  }
+
+  // 블록체인 상태 확인
+  Future<bool> checkAddressActivity(NetworkType network, String address) async {
+    switch (network) {
+      case NetworkType.ethereum:
+        return _checkEthereumActivity(address);
+      case NetworkType.bitcoin:
+        return _checkBitcoinActivity(address);
+      case NetworkType.solana:
+        return _checkSolanaActivity(address);
+    }
+  }
+
+  // 이더리움 활동 확인
+  Future<bool> _checkEthereumActivity(String address) async {
+    // Web3Client 설정 필요
+    final client = Web3Client('YOUR_ETHEREUM_RPC_URL', http.Client());
+
+    try {
+      // 잔액 확인
+      final balance = await client.getBalance(EthereumAddress.fromHex(address));
+      // 트랜잭션 수 확인
+      final transactionCount =
+          await client.getTransactionCount(EthereumAddress.fromHex(address));
+
+      return balance.getInWei > BigInt.zero || transactionCount > 0;
+    } catch (e) {
+      print('Error checking Ethereum activity: $e');
+      return false;
+    } finally {
+      client.dispose();
+    }
+  }
+
+  // 비트코인 활동 확인
+  Future<bool> _checkBitcoinActivity(String address) async {
+    try {
+      // Blockstream API 사용
+      final response = await http
+          .get(Uri.parse('https://blockstream.info/api/address/$address'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // chain_stats.tx_count로 트랜잭션 수 확인
+        return data['chain_stats']['tx_count'] > 0;
+      }
+      return false;
+    } catch (e) {
+      print('Error checking Bitcoin activity: $e');
+      return false;
+    }
+  }
+
+  // 솔라나 활동 확인
+  Future<bool> _checkSolanaActivity(String address) async {
+    try {
+      final client = SolanaClient(
+        rpcUrl: Uri.parse('YOUR_SOLANA_RPC_URL'),
+        websocketUrl: Uri.parse('YOUR_SOLANA_WS_URL'),
+      );
+
+      final balance = await client.rpcClient.getBalance(address);
+      final transactions =
+          await client.rpcClient.getSignaturesForAddress(address);
+
+      return balance.value > 0 || transactions.isNotEmpty;
+    } catch (e) {
+      print('Error checking Solana activity: $e');
+      return false;
+    }
+  }
 }
