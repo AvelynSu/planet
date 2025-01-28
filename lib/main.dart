@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/wallet/generate_hd_wallet_screen.dart';
 import 'package:planet/ui/wallet/generate_wallet_screen.dart';
 
 import 'custom_theme.dart';
@@ -74,6 +75,13 @@ class _FirstScreenState extends State<FirstScreen> {
               onTap: () {
                 data = DateTime.now().toString();
                 setState(() {});
+              },
+            ),
+            const SizedBox(height: 12),
+            DefaultButton(
+              title: 'HD 월렛 테스트',
+              onTap: () {
+                GenerateHdWalletScreen.push(context);
               },
             ),
             const SizedBox(height: 12),

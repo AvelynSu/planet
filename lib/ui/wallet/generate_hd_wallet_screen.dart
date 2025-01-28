@@ -1,36 +1,45 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:planet/generate_planet/generate_planet.dart';
-import 'package:planet/service/wallet_service.dart';
+import 'package:planet/enum/network_type.dart';
+import 'package:planet/service/hd_wallet_service.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/util/app_ui.dart';
-import 'package:web3dart/credentials.dart';
 
 import '../../custom_theme.dart';
+import '../../generate_planet/generate_planet.dart';
 
-class GenerateWalletScreen extends StatefulWidget {
-  const GenerateWalletScreen({super.key});
+class GenerateHdWalletScreen extends StatefulWidget {
+  const GenerateHdWalletScreen({super.key});
 
   static push(BuildContext context) {
-    AppUi.push(context, GenerateWalletScreen());
+    AppUi.push(context, const GenerateHdWalletScreen());
   }
 
   @override
-  State<GenerateWalletScreen> createState() => _GenerateWalletScreenState();
+  State<GenerateHdWalletScreen> createState() => _GenerateHdWalletScreenState();
 }
 
-class _GenerateWalletScreenState extends State<GenerateWalletScreen> {
+class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
   String mnemonic = "";
-  Uint8List seed = Uint8List(0);
-  EthPrivateKey? privateKey;
-  String publicKey = "";
-  String address = "";
+  int ethIdx = 0;
+  List<String> ethAddress = [];
 
-  WalletService walletService = WalletService();
+  int btcIdx = 0;
+  List<String> btcAddress = [];
+
+  int solIdx = 0;
+  List<String> solAddress = [];
+
+  HDWalletService walletService = HDWalletService();
+
+  @override
+  void initState() {
+    mnemonic = walletService.generateMnemonic();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(btcAddress);
     return Scaffold(
       backgroundColor: CustomColors.current.background,
       appBar: AppBar(
@@ -54,113 +63,127 @@ class _GenerateWalletScreenState extends State<GenerateWalletScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              address.isEmpty
-                  ? Container(
-                      alignment: Alignment.center,
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                      child: Text(
-                        "?",
-                        style: fontR(100),
-                      ),
-                    )
-                  : PlanetWidget(
-                      data: address,
-                      size: 200,
-                    ),
-              const SizedBox(height: 20),
               _label(title: "니모닉", value: mnemonic),
-              _label(title: "씨드", value: "$seed"),
-              _label(title: "개인키", value: "${privateKey?.privateKey}"),
-              _label(title: "공개키", value: publicKey),
-              _label(title: "주소", value: address),
               const SizedBox(height: 12),
 
-              DefaultButton(
-                title: "지갑 생성",
-                onTap: () async {
-                  var value = walletService.generateMnemonic();
-                  mnemonic = value;
-                  seed = walletService.mnemonicToSeed(value);
-                  privateKey = walletService.seedToPrivateKey(seed);
-                  publicKey = walletService.privateKeyToPublicKey(privateKey!);
-                  address = walletService.publicKeyToAddress(publicKey);
-                  setState(() {});
-                },
+              /// 버튼들
+              Row(
+                children: [
+                  Expanded(
+                    child: DefaultButton(
+                      title: "이더리움",
+                      onTap: () async {
+                        var address = await walletService.generateHDAddress(
+                            NetworkType.ethereum, mnemonic, ethIdx);
+                        ethIdx += 1;
+                        ethAddress.add(address);
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DefaultButton(
+                      title: "비트코인",
+                      onTap: () async {
+                        var address = await walletService.generateHDAddress(
+                            NetworkType.bitcoin, mnemonic, btcIdx);
+                        btcIdx += 1;
+                        btcAddress.add(address);
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DefaultButton(
+                      title: "솔라나",
+                      onTap: () async {
+                        var address = await walletService.generateHDAddress(
+                            NetworkType.solana, mnemonic, solIdx);
+                        solIdx += 1;
+                        solAddress.add(address);
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 24),
 
-              /// 지갑주소 순차적으로 생성하는거..
-              // Column(
-              //   children: [
-              //     DefaultButton(
-              //       title: "니모닉 생성",
-              //       onTap: () {
-              //         var value = walletService.generateMnemonic();
-              //         mnemonic = value;
-              //
-              //         seed = Uint8List(0);
-              //         private = null;
-              //         public = "";
-              //         address = "";
-              //
-              //         setState(() {});
-              //       },
-              //     ),
-              //     const SizedBox(height: 12),
-              //     DefaultButton(
-              //       title: "씨드 생성",
-              //       onTap: () {
-              //         var value = walletService.mnemonicToSeed(mnemonic);
-              //         seed = value;
-              //
-              //         private = null;
-              //         public = "";
-              //         address = "";
-              //
-              //         setState(() {});
-              //       },
-              //     ),
-              //     const SizedBox(height: 12),
-              //     DefaultButton(
-              //       title: "개인키 생성",
-              //       onTap: () {
-              //         var value = walletService.seedToPrivateKey(seed);
-              //         private = value;
-              //
-              //         public = "";
-              //         address = "";
-              //         setState(() {});
-              //       },
-              //     ),
-              //     const SizedBox(height: 12),
-              //     DefaultButton(
-              //       title: "공개키 생성",
-              //       onTap: () {
-              //         var value = walletService.privateKeyToPublicKey(private!);
-              //         public = value;
-              //
-              //         address = "";
-              //         setState(() {});
-              //       },
-              //     ),
-              //     const SizedBox(height: 12),
-              //     DefaultButton(
-              //       title: "지갑주소 생성",
-              //       onTap: () {
-              //         var value = walletService.publicKeyToAddress(public);
-              //         address = value;
-              //         setState(() {});
-              //       },
-              //     ),
-              //   ],
-              // ),
+              // 행성들
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "ETH\n",
+                          style: fontB(16, color: CustomColors.current.text),
+                        ),
+                        ...ethAddress.reversed.map((e) => _planetTile(e)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "BTC\n",
+                          style: fontB(16, color: CustomColors.current.text),
+                        ),
+                        ...btcAddress.reversed.map((e) => _planetTile(e)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "SOL\n",
+                          style: fontB(16, color: CustomColors.current.text),
+                        ),
+                        ...solAddress.reversed.map((e) => _planetTile(e)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  _planetTile(String address) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          PlanetWidget(
+            data: address,
+            size: 50,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            address,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: fontR(12,
+                color: CustomColors.current.text.withValues(alpha: 0.4)),
+          ),
+        ],
       ),
     );
   }

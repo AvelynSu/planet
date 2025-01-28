@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:base58check/base58check.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:crypto/crypto.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -55,11 +57,44 @@ class HDWalletService {
 
   // 비트코인 주소 생성
   Future<String> _generateBitcoinAddress(Uint8List seed, String path) async {
-    return "";
+    // 2-1. seed로부터 HD 노드 생성 (seed -> master)
+    final node = bip32.BIP32.fromSeed(seed);
+    // 2-2. 경로에 따른 자식 키 생성 (master -> child)
+    final child = node.derivePath(path);
+
+    // 3. 개인키 -> 공개키 (child.publicKey가 공개키)
+    // 4. 공개키 -> 지갑 주소
+    // 4-1. 공개키 해시 생성 (RIPEMD160(SHA256(공개키)))
+    final publicKeyHash = hash160(child.publicKey);
+
+    // 4-2. Base58Check 인코딩으로 최종 주소 생성
+    const version = 0x00; // mainnet P2PKH address version
+    final payload = Base58CheckPayload(version, publicKeyHash);
+    final codec = Base58CheckCodec.bitcoin();
+    final address = codec.encode(payload);
+
+    return address;
+  }
+
+  // RIPEMD160(SHA256(input)) 해시 생성
+  List<int> hash160(Uint8List input) {
+    final sha256Hash = sha256.convert(input).bytes;
+    final hash160 = sha256.convert(sha256Hash).bytes;
+    return hash160.sublist(0, 20); // 앞의 20바이트만 사용
   }
 
   // 솔라나 주소 생성
   Future<String> _generateSolanaAddress(Uint8List seed, String path) async {
+    // // ED25519 키 유도
+    // final keyData = await ED25519_HD_KEY.derivePath(path, seed);
+    //
+    // // 키 데이터로부터 Ed25519 키쌍 생성
+    // final Ed25519HDKeyPair keyPair = Ed25519HDKeyPair.fromPrivateKeyBytes(
+    //   privateKey: keyData.key,
+    // );
+    //
+    // // 공개키를 Base58로 인코딩하여 솔라나 주소 생성
+    // return keyPair.address;
     return "";
   }
 
