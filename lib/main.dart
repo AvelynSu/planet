@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/ui/common/default_button.dart';
-import 'package:planet/ui/wallet/generate_hd_wallet_screen.dart';
 import 'package:planet/ui/wallet/generate_wallet_screen.dart';
+import 'package:planet/ui/wallet/hd_wallet/generate_hd_wallet_screen.dart';
 
 import 'custom_theme.dart';
 

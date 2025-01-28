@@ -117,32 +117,39 @@ class HDWalletService {
   Future<List<String>> recoverAddresses(
     NetworkType network,
     String mnemonic,
+    int testLastIdx, // 지갑 생성/복구 테스트용 라스트 인덱스 넣기
   ) async {
     List<String> foundAddresses = [];
-    int emptyAddressCount = 0; // 연속으로 발견된 빈 주소의 수
-    int index = 0; // 주소 생성 인덱스
 
-    // 연속으로 20개의 빈 주소가 나올 때까지 주소 탐색
-    // - HD 월렛 표준에서 권장하는 방식
-    // - 사용자가 20개의 주소를 건너뛰고 사용할 가능성은 매우 낮다고 가정
-    while (emptyAddressCount < 20) {
-      // 현재 인덱스로 주소 생성
-      final address = await generateHDAddress(network, mnemonic, index);
-
-      // 생성된 주소의 블록체인 활동 내역 확인
-      // - 잔액이 있거나
-      // - 트랜잭션 내역이 있는 경우
-      final hasActivity = await checkAddressActivity(network, address);
-
-      if (hasActivity) {
-        foundAddresses.add(address); // 활동 내역이 있는 주소 저장
-        emptyAddressCount = 0; // 빈 주소 카운터 리셋
-      } else {
-        emptyAddressCount++; // 빈 주소 카운트 증가
-      }
-
-      index++; // 다음 인덱스로 이동
+    /// 복구 테스트용 코드
+    for (var i = 0; i < testLastIdx; i++) {
+      final address = await generateHDAddress(network, mnemonic, i);
+      foundAddresses.add(address);
     }
+
+    // int emptyAddressCount = 0; // 연속으로 발견된 빈 주소의 수
+    // int index = 0; // 주소 생성 인덱스
+    // // 연속으로 20개의 빈 주소가 나올 때까지 주소 탐색
+    // // - HD 월렛 표준에서 권장하는 방식
+    // // - 사용자가 20개의 주소를 건너뛰고 사용할 가능성은 매우 낮다고 가정 (HD월렛 관행)
+    // while (emptyAddressCount < 20) {
+    //   // 현재 인덱스로 주소 생성
+    //   final address = await generateHDAddress(network, mnemonic, index);
+    //
+    //   // 생성된 주소의 블록체인 활동 내역 확인
+    //   // - 잔액이 있거나
+    //   // - 트랜잭션 내역이 있는 경우
+    //   final hasActivity = await checkAddressActivity(network, address);
+    //
+    //   if (hasActivity) {
+    //     foundAddresses.add(address); // 활동 내역이 있는 주소 저장
+    //     emptyAddressCount = 0; // 빈 주소 카운터 리셋
+    //   } else {
+    //     emptyAddressCount++; // 빈 주소 카운트 증가
+    //   }
+    //
+    //   index++; // 다음 인덱스로 이동
+    // }
 
     // 발견된 모든 활성 주소 반환
     return foundAddresses;

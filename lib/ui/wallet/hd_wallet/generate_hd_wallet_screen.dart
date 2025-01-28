@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:planet/data/test_hd_wallet.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/service/hd_wallet_service.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/util/app_ui.dart';
+import 'package:planet/ui/wallet/hd_wallet/hd_wallet_tile.dart';
+import 'package:planet/ui/wallet/hd_wallet/restore_hd_wallet_screen.dart';
 
-import '../../custom_theme.dart';
-import '../../generate_planet/generate_planet.dart';
+import '../../../custom_theme.dart';
 
 class GenerateHdWalletScreen extends StatefulWidget {
   const GenerateHdWalletScreen({super.key});
@@ -19,27 +21,18 @@ class GenerateHdWalletScreen extends StatefulWidget {
 }
 
 class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
-  String mnemonic = "";
-  int ethIdx = 0;
-  List<String> ethAddress = [];
-
-  int btcIdx = 0;
-  List<String> btcAddress = [];
-
-  int solIdx = 0;
-  List<String> solAddress = [];
-
   HDWalletService walletService = HDWalletService();
 
   @override
   void initState() {
-    mnemonic = walletService.generateMnemonic();
+    TestHdWallet.initialize();
+    TestHdWallet.mnemonic = walletService.generateMnemonic();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(btcAddress);
+    print(TestHdWallet.btcAddress);
     return Scaffold(
       backgroundColor: CustomColors.current.background,
       appBar: AppBar(
@@ -63,7 +56,13 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              _label(title: "니모닉", value: mnemonic),
+              _label(title: "니모닉", value: TestHdWallet.mnemonic),
+              const SizedBox(height: 12),
+              DefaultButton(
+                  title: "복구 테스트",
+                  onTap: () {
+                    RestoreHdWalletScreen.push(context);
+                  }),
               const SizedBox(height: 12),
 
               /// 버튼들
@@ -74,9 +73,11 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                       title: "이더리움",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(
-                            NetworkType.ethereum, mnemonic, ethIdx);
-                        ethIdx += 1;
-                        ethAddress.add(address);
+                            NetworkType.ethereum,
+                            TestHdWallet.mnemonic,
+                            TestHdWallet.ethIdx);
+                        TestHdWallet.ethIdx += 1;
+                        TestHdWallet.ethAddress.add(address);
                         setState(() {});
                       },
                     ),
@@ -87,9 +88,11 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                       title: "비트코인",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(
-                            NetworkType.bitcoin, mnemonic, btcIdx);
-                        btcIdx += 1;
-                        btcAddress.add(address);
+                            NetworkType.bitcoin,
+                            TestHdWallet.mnemonic,
+                            TestHdWallet.btcIdx);
+                        TestHdWallet.btcIdx += 1;
+                        TestHdWallet.btcAddress.add(address);
                         setState(() {});
                       },
                     ),
@@ -100,9 +103,11 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                       title: "솔라나",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(
-                            NetworkType.solana, mnemonic, solIdx);
-                        solIdx += 1;
-                        solAddress.add(address);
+                            NetworkType.solana,
+                            TestHdWallet.mnemonic,
+                            TestHdWallet.solIdx);
+                        TestHdWallet.solIdx += 1;
+                        TestHdWallet.solAddress.add(address);
                         setState(() {});
                       },
                     ),
@@ -122,7 +127,8 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                           "ETH\n",
                           style: fontB(16, color: CustomColors.current.text),
                         ),
-                        ...ethAddress.reversed.map((e) => _planetTile(e)),
+                        ...TestHdWallet.ethAddress.reversed
+                            .map((e) => HdWalletTile(address: e)),
                       ],
                     ),
                   ),
@@ -134,7 +140,8 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                           "BTC\n",
                           style: fontB(16, color: CustomColors.current.text),
                         ),
-                        ...btcAddress.reversed.map((e) => _planetTile(e)),
+                        ...TestHdWallet.btcAddress.reversed
+                            .map((e) => HdWalletTile(address: e)),
                       ],
                     ),
                   ),
@@ -146,7 +153,9 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                           "SOL\n",
                           style: fontB(16, color: CustomColors.current.text),
                         ),
-                        ...solAddress.reversed.map((e) => _planetTile(e)),
+                        ...TestHdWallet.solAddress.reversed.map(
+                          (e) => HdWalletTile(address: e),
+                        ),
                       ],
                     ),
                   ),
@@ -155,35 +164,6 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  _planetTile(String address) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          PlanetWidget(
-            data: address,
-            size: 50,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            address,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: fontR(12,
-                color: CustomColors.current.text.withValues(alpha: 0.4)),
-          ),
-        ],
       ),
     );
   }
