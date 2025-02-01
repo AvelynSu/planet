@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/wallet/generate_wallet_screen.dart';
+import 'package:planet/ui/wallet/get_balance_test_screen.dart';
 import 'package:planet/ui/wallet/hd_wallet/generate_hd_wallet_screen.dart';
 
 import 'custom_theme.dart';
@@ -89,6 +90,13 @@ class _FirstScreenState extends State<FirstScreen> {
               title: '월렛 테스트',
               onTap: () {
                 GenerateWalletScreen.push(context);
+              },
+            ),
+            const SizedBox(height: 12),
+            DefaultButton(
+              title: '잔액 불러오기 테스트',
+              onTap: () {
+                GetBalanceTestScreen.push(context);
               },
             ),
             const SizedBox(height: 100),
