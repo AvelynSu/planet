@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/start/start/cubit/start_cubit.dart';
 
-import '../../../enum/screen_status.dart';
-import '../util/app_ui.dart';
-import 'cubit/sample_cubit.dart';
+import '../../../../enum/screen_status.dart';
+import '../../util/app_ui.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -23,15 +23,15 @@ class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => SampleCubit(),
-      child: BlocListener<SampleCubit, SampleState>(
+      create: (BuildContext context) => StartCubit(),
+      child: BlocListener<StartCubit, StartState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.fail) {}
 
           if (state.status == ScreenStatus.success) {}
         },
         listenWhen: (pre, cur) => pre.status != cur.status,
-        child: BlocBuilder<SampleCubit, SampleState>(
+        child: BlocBuilder<StartCubit, StartState>(
           builder: (context, state) {
             return Scaffold(
               backgroundColor: CustomColors.current.background,

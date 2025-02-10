@@ -6,10 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
 
-part 'sample_state.dart';
+part 'start_state.dart';
 
-class SampleCubit extends Cubit<SampleState> {
-  SampleCubit() : super(const SampleState());
+class StartCubit extends Cubit<StartState> {
+  StartCubit() : super(const StartState());
 
   initialize() async {}
 
