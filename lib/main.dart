@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planet/ui/start/start_screen.dart';
 
 import 'custom_theme.dart';
 
@@ -43,6 +44,6 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const StartScreen();
   }
 }

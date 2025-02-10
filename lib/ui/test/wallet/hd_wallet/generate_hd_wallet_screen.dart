@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:planet/data/test_hd_wallet.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/service/hd_wallet_service.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/hd_wallet_tile.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/restore_hd_wallet_screen.dart';
 import 'package:planet/ui/util/app_ui.dart';
@@ -58,7 +58,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
               const SizedBox(height: 40),
               _label(title: "니모닉", value: TestHdWallet.mnemonic),
               const SizedBox(height: 12),
-              DefaultButton(
+              TestDefaultButton(
                   title: "복구 테스트",
                   onTap: () {
                     RestoreHdWalletScreen.push(context);
@@ -69,7 +69,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: DefaultButton(
+                    child: TestDefaultButton(
                       title: "이더리움",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(
@@ -84,7 +84,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: DefaultButton(
+                    child: TestDefaultButton(
                       title: "비트코인",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(
@@ -99,7 +99,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: DefaultButton(
+                    child: TestDefaultButton(
                       title: "솔라나",
                       onTap: () async {
                         var address = await walletService.generateHDAddress(

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/service/wallet_service.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:web3dart/credentials.dart';
 
@@ -81,7 +81,7 @@ class _TestGenerateWalletScreenState extends State<TestGenerateWalletScreen> {
               _label(title: "주소", value: address),
               const SizedBox(height: 12),
 
-              DefaultButton(
+              TestDefaultButton(
                 title: "지갑 생성",
                 onTap: () async {
                   var value = walletService.generateMnemonic();

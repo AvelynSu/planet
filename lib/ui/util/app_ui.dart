@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,5 +22,10 @@ class AppUi {
             settings: RouteSettings(name: name),
           ));
     }
+  }
+
+  static double bottomPadding(BuildContext context) {
+    var bottom = MediaQuery.of(context).padding.bottom;
+    return bottom < 15 ? 16 : min(16, bottom);
   }
 }

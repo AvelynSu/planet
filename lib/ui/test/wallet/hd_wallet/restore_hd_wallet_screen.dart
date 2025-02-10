@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/service/hd_wallet_service.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/hd_wallet_tile.dart';
 import 'package:planet/ui/util/app_ui.dart';
 
@@ -58,7 +58,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
               const SizedBox(height: 40),
               _label(title: "니모닉", value: TestHdWallet.mnemonic),
               const SizedBox(height: 12),
-              DefaultButton(
+              TestDefaultButton(
                   title: "복구 하기",
                   onTap: () async {
                     List<Future<List<String>>> tasks = [];

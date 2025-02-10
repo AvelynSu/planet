@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planet/service/constants.dart';
 import 'package:planet/service/token_service.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/test_default_button.dart';
 
 import '../../../custom_theme.dart';
 import '../../../service/wallet_balance_service.dart';
@@ -41,7 +41,7 @@ class _TestGetBalanceTestScreenState extends State<TestGetBalanceTestScreen> {
       ),
       body: Column(
         children: [
-          DefaultButton(
+          TestDefaultButton(
               title: "지갑이 보유한 이더리움",
               onTap: () async {
                 final service = TokenService(
@@ -52,7 +52,7 @@ class _TestGetBalanceTestScreenState extends State<TestGetBalanceTestScreen> {
 
                 service.dispose();
               }),
-          DefaultButton(
+          TestDefaultButton(
             title: "내 잔액 확인",
             onTap: () async {
               final service = WalletBalanceService(

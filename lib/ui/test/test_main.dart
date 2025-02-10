@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/generate_wallet_screen.dart';
 import 'package:planet/ui/test/wallet/get_balance_test_screen.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/generate_hd_wallet_screen.dart';
@@ -73,7 +73,7 @@ class _TestMainScreenState extends State<TestMainScreen> {
               size: 200,
             ),
             const SizedBox(height: 40),
-            DefaultButton(
+            TestDefaultButton(
               title: '행성 변경',
               onTap: () {
                 data = DateTime.now().toString();
@@ -81,27 +81,27 @@ class _TestMainScreenState extends State<TestMainScreen> {
               },
             ),
             const SizedBox(height: 12),
-            DefaultButton(
+            TestDefaultButton(
               title: 'HD 월렛 테스트',
               onTap: () {
                 GenerateHdWalletScreen.push(context);
               },
             ),
             const SizedBox(height: 12),
-            DefaultButton(
+            TestDefaultButton(
               title: '월렛 테스트',
               onTap: () {
                 TestGenerateWalletScreen.push(context);
               },
             ),
             const SizedBox(height: 12),
-            DefaultButton(
+            TestDefaultButton(
               title: '잔액 불러오기 테스트',
               onTap: () {
                 TestGetBalanceTestScreen.push(context);
               },
             ),
-            DefaultButton(
+            TestDefaultButton(
               title: '출금',
               onTap: () {
                 TestWithdrawScreen.push(context);
