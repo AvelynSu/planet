@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planet/service/constants.dart';
 import 'package:planet/service/token_service.dart';
 import 'package:planet/ui/common/default_button.dart';
 
@@ -63,7 +64,7 @@ class _GetBalanceTestScreenState extends State<GetBalanceTestScreen> {
                   // 모든 지원 토큰의 잔액 조회
                   final balances = await service.getAllTokenBalances(
                     walletAddress: address,
-                    supportedTokens: SupportedTokens.mainnetTokens,
+                    supportedTokens: Constants.mainnetTokens,
                   );
 
                   // 결과 출력

@@ -4,6 +4,7 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/wallet/generate_wallet_screen.dart';
 import 'package:planet/ui/wallet/get_balance_test_screen.dart';
 import 'package:planet/ui/wallet/hd_wallet/generate_hd_wallet_screen.dart';
+import 'package:planet/ui/wallet/withdrawal_sceren.dart';
 
 import 'custom_theme.dart';
 
@@ -97,6 +98,12 @@ class _FirstScreenState extends State<FirstScreen> {
               title: '잔액 불러오기 테스트',
               onTap: () {
                 GetBalanceTestScreen.push(context);
+              },
+            ),
+            DefaultButton(
+              title: '출금',
+              onTap: () {
+                WithdrawScreen.push(context);
               },
             ),
             const SizedBox(height: 100),
