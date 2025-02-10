@@ -23,6 +23,9 @@ class _AppState extends State<App> {
         return MaterialApp(
           title: "Planet Wallet",
           debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: 'WorkSans',
+          ),
           home: AppScreen(),
         );
       },
