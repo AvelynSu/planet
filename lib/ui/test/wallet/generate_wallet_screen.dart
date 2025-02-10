@@ -7,20 +7,21 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:web3dart/credentials.dart';
 
-import '../../custom_theme.dart';
+import '../../../custom_theme.dart';
 
-class GenerateWalletScreen extends StatefulWidget {
-  const GenerateWalletScreen({super.key});
+class TestGenerateWalletScreen extends StatefulWidget {
+  const TestGenerateWalletScreen({super.key});
 
   static push(BuildContext context) {
-    AppUi.push(context, GenerateWalletScreen());
+    AppUi.push(context, const TestGenerateWalletScreen());
   }
 
   @override
-  State<GenerateWalletScreen> createState() => _GenerateWalletScreenState();
+  State<TestGenerateWalletScreen> createState() =>
+      _TestGenerateWalletScreenState();
 }
 
-class _GenerateWalletScreenState extends State<GenerateWalletScreen> {
+class _TestGenerateWalletScreenState extends State<TestGenerateWalletScreen> {
   String mnemonic = "";
   Uint8List seed = Uint8List(0);
   EthPrivateKey? privateKey;

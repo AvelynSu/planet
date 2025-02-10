@@ -15,10 +15,10 @@ class TokenService {
   // 해단 지갑의 거래내역 모두 가져오기
   Future<List<TokenInfo>> getWalletTokens(String walletAddress) async {
     const apiKey = '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF';
-    final url = 'https://api.etherscan.io/api' +
-        '?module=account' +
-        '&action=tokentx' /* 토큰 거래 내역*/ +
-        '&address=$walletAddress' +
+    final url = 'https://api.etherscan.io/api'
+        '?module=account'
+        '&action=tokentx' /* 토큰 거래 내역*/
+        '&address=$walletAddress'
         '&apikey=$apiKey';
 
     final response = await http.get(Uri.parse(url));

@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3dart/web3dart.dart';
 
@@ -132,14 +133,14 @@ class TransactionService {
         // 최대 1분 대기 (2초 * 30)
         isConfirmed = await checkTransactionStatus(txHash);
         if (!isConfirmed) {
-          await Future.delayed(Duration(seconds: 2)); // 2초마다 확인
+          await Future.delayed(const Duration(seconds: 2)); // 2초마다 확인
           attempts++;
         }
       }
 
       return isConfirmed;
     } catch (e) {
-      print('Transaction failed: $e');
+      debugPrint('Transaction failed: $e');
       return false;
     }
   }

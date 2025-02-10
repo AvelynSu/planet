@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3dart/web3dart.dart';
 
@@ -30,7 +31,7 @@ class WalletBalanceService {
           await web3client.getBalance(EthereumAddress.fromHex(address));
       return balance.getInWei;
     } catch (e) {
-      print('Error getting ETH balance: $e');
+      debugPrint('Error getting ETH balance: $e');
       throw Exception('Failed to get ETH balance');
     }
   }
@@ -60,7 +61,7 @@ class WalletBalanceService {
       // 4. 결과 반환 (BigInt 타입)
       return result.first as BigInt;
     } catch (e) {
-      print('Error getting token balance: $e');
+      debugPrint('Error getting token balance: $e');
       throw Exception('Failed to get token balance');
     }
   }
@@ -93,7 +94,7 @@ class WalletBalanceService {
 
       return balances;
     } catch (e) {
-      print('Error getting all balances: $e');
+      debugPrint('Error getting all balances: $e');
       throw Exception('Failed to get all balances');
     }
   }

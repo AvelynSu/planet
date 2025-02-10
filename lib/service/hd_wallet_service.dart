@@ -6,6 +6,7 @@ import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
@@ -181,7 +182,7 @@ class HDWalletService {
 
       return balance.getInWei > BigInt.zero || transactionCount > 0;
     } catch (e) {
-      print('Error checking Ethereum activity: $e');
+      debugPrint('Error checking Ethereum activity: $e');
       return false;
     } finally {
       client.dispose();
@@ -202,7 +203,7 @@ class HDWalletService {
       }
       return false;
     } catch (e) {
-      print('Error checking Bitcoin activity: $e');
+      debugPrint('Error checking Bitcoin activity: $e');
       return false;
     }
   }
@@ -221,7 +222,7 @@ class HDWalletService {
 
       return balance.value > 0 || transactions.isNotEmpty;
     } catch (e) {
-      print('Error checking Solana activity: $e');
+      debugPrint('Error checking Solana activity: $e');
       return false;
     }
   }

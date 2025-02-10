@@ -26,7 +26,7 @@ class CustomThemeMode {
 
 // 커스텀 색상 관리
 class CustomColors {
-  static const lightTheme = _ColorTheme(
+  static const lightTheme = ColorTheme(
     text: Colors.yellow,
     appbarText: Colors.white,
     background: Colors.white,
@@ -34,7 +34,7 @@ class CustomColors {
     buttonBackground: Colors.deepOrange,
   );
 
-  static const darkTheme = _ColorTheme(
+  static const darkTheme = ColorTheme(
     text: Colors.white,
     appbarText: Colors.white,
     background: Color.fromRGBO(31, 31, 31, 1),
@@ -42,18 +42,18 @@ class CustomColors {
     buttonBackground: Colors.black,
   );
 
-  static _ColorTheme get current =>
+  static ColorTheme get current =>
       CustomThemeMode.isLight ? lightTheme : darkTheme;
 }
 
-class _ColorTheme {
+class ColorTheme {
   final Color text;
   final Color appbarText;
   final Color background;
   final Color appBarBackground;
   final Color buttonBackground;
 
-  const _ColorTheme({
+  const ColorTheme({
     required this.text,
     required this.background,
     required this.appbarText,

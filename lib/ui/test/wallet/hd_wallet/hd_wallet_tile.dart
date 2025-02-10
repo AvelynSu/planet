@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../custom_theme.dart';
-import '../../../generate_planet/generate_planet.dart';
+import '../../../../custom_theme.dart';
+import '../../../../generate_planet/generate_planet.dart';
 
 class HdWalletTile extends StatelessWidget {
   final String address;

@@ -1,20 +1,20 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
-import '../../service/transaction_service.dart';
-import '../util/app_ui.dart';
+import '../../../service/transaction_service.dart';
+import '../../util/app_ui.dart';
 
-class WithdrawScreen extends StatefulWidget {
+class TestWithdrawScreen extends StatefulWidget {
+  const TestWithdrawScreen({super.key});
+
   static push(BuildContext context) {
-    AppUi.push(context, WithdrawScreen());
+    AppUi.push(context, const TestWithdrawScreen());
   }
 
   @override
-  _WithdrawScreenState createState() => _WithdrawScreenState();
+  State<TestWithdrawScreen> createState() => _TestWithdrawScreenState();
 }
 
-class _WithdrawScreenState extends State<WithdrawScreen> {
+class _TestWithdrawScreenState extends State<TestWithdrawScreen> {
   final _addressController = TextEditingController();
   final _amountController = TextEditingController();
   GasPriority _selectedGasPriority = GasPriority.medium;
@@ -35,14 +35,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       final fees = await _transactionService.estimateGasFeesByPriority();
       setState(() => _gasFees = fees);
     } catch (e) {
-      print('Error loading gas fees: $e');
+      debugPrint('Error loading gas fees: $e');
     }
   }
 
   Future<void> _withdraw() async {
     if (_addressController.text.isEmpty || _amountController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('주소와 금액을 입력해주세요')),
+        const SnackBar(content: Text('주소와 금액을 입력해주세요')),
       );
       return;
     }
@@ -51,8 +51,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
     try {
       // 1. ETH -> Wei 변환
-      final amountInWei =
-          BigInt.from(double.parse(_amountController.text) * pow(10, 18));
+      // final amountInWei =
+      //     BigInt.from(double.parse(_amountController.text) * pow(10, 18));
 
       // 2. 트랜잭션 실행
       // final success = await _transactionService.sendAndWaitForTransaction(
@@ -63,13 +63,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       // );
 
       if (false) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('출금이 완료되었습니다')),
-        );
-        Navigator.pop(context); // 화면 닫기
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('출금이 완료되었습니다')),
+        // );
+        // Navigator.pop(context); // 화면 닫기
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('출금에 실패했습니다')),
+          const SnackBar(content: Text('출금에 실패했습니다')),
         );
       }
     } catch (e) {
@@ -84,31 +84,32 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ETH 출금')),
+      appBar: AppBar(title: const Text('ETH 출금')),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             // 주소 입력
             TextField(
               controller: _addressController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: '받는 주소',
                 hintText: '0x...',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // 금액 입력
             TextField(
               controller: _amountController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
                 labelText: '금액 (ETH)',
                 hintText: '0.01',
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // 가스비 선택
             if (_gasFees != null) ...[
@@ -136,12 +137,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               ),
             ],
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // 출금 버튼
             ElevatedButton(
               onPressed: _isLoading ? null : _withdraw,
-              child: _isLoading ? CircularProgressIndicator() : Text('출금하기'),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text('출금하기'),
             ),
           ],
         ),
