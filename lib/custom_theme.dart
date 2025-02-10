@@ -125,7 +125,7 @@ TextStyle fontTH(double size, {Color? color, double? height}) => TextStyle(
       color: color,
     );
 
-const primary = fgBrandPrimary;
+const primary = Color(0xffFF0050);
 
 const fgBrandPrimary = Color(0xff0050F0);
 const borderBrand = Color(0xff8AAFF8);
