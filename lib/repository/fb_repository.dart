@@ -9,6 +9,8 @@ class ApiRepository {
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
+  /// 로컬에 니모닉 저장
+
   /// 사용 가능한 닉네임인지 확인
   Future<bool> enablePlanetName(String name) async {
     var res = await _planetCol.where("planetName", isEqualTo: name).get();
