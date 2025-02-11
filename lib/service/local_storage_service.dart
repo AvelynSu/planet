@@ -1,23 +1,58 @@
-// // 1. 니모닉 생성 또는 입력 받음
-// String originalMnemonic = "apple banana cat ...";
-//
-// // 2. 암호화
-// String encryptionKey = await getEncryptionKey(); // 안전한 키 생성/조회
-// String encryptedMnemonic = encryptMnemonic(originalMnemonic, encryptionKey);
-//
-// // 3. 안전하게 저장
-// final storage = FlutterSecureStorage();
-// await storage.write(key: 'mnemonic', value: encryptedMnemonic);
-//
-//
-// Future<String> showStoredMnemonic() async {
-// // 1. 저장된 암호화된 니모닉 읽기
-// final storage = FlutterSecureStorage();
-// String? encryptedMnemonic = await storage.read(key: 'mnemonic');
-//
-// // 2. 복호화
-// String encryptionKey = await getEncryptionKey();
-// String decryptedMnemonic = decryptMnemonic(encryptedMnemonic!, encryptionKey);
-//
-// return decryptedMnemonic; // UI에 표시
-// }
+import 'dart:convert';
+
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:planet/model/planet_dto.dart';
+
+class LocalStorageService {
+  static Future<void> saveMnemonics(List<PlanetDto> mnemonics) async {
+    const storage = FlutterSecureStorage();
+    final jsonList = mnemonics.map((m) => m.toJson()).toList();
+    final encodedJson = jsonEncode(jsonList);
+
+    await storage.write(key: 'planets', value: encodedJson);
+  }
+
+  static Future<List<PlanetDto>> getLocalPlanets() async {
+    const storage = FlutterSecureStorage();
+    final encodedJson = await storage.read(key: 'planets');
+
+    if (encodedJson == null) return [];
+
+    final jsonList = jsonDecode(encodedJson) as List;
+    return jsonList.map((json) => PlanetDto.fromJson(json)).toList();
+  }
+}
+
+class MnemonicCrypto {
+  static const String _keyString = 'test_secure_key';
+
+  // 니모닉 암호화
+  static String encryptMnemonic(String mnemonic) {
+    try {
+      final key = encrypt.Key.fromUtf8(_keyString);
+      final iv = encrypt.IV.fromLength(16);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+      final encrypted = encrypter.encrypt(mnemonic, iv: iv);
+      return encrypted.base64;
+    } catch (e) {
+      throw Exception('Encryption failed');
+    }
+  }
+
+  // 니모닉 복호화
+  static String decryptMnemonic(String encryptedMnemonic) {
+    try {
+      final key = encrypt.Key.fromUtf8(_keyString);
+      final iv = encrypt.IV.fromLength(16);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+      final decrypted = encrypter.decrypt64(encryptedMnemonic, iv: iv);
+      return decrypted;
+    } catch (e) {
+      print('복호화 중 에러 발생: $e');
+      throw Exception('Decryption failed');
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/util/app_constant.dart';
 
@@ -17,15 +18,32 @@ class ApiRepository {
     return res.docs.isEmpty;
   }
 
-  /// 주소로 행성 불러오기. 만약에 없으면 닉네임 설정 해야함
-  Future<PlanetDto?> getPlanetByAddress(String address) async {
+  /// 주소로 행성 불러오기.
+  Future<PlanetDto> getPlanetByAddress(String address) async {
     var res = await _planetCol.where("address", isEqualTo: address).get();
 
     return res.docs.isEmpty
-        ? null
+        ? PlanetDto.empty
         : PlanetDto.fromJson(
             res.docs.first.data(),
-            res.docs.first.id,
+            id: res.docs.first.id,
           );
+  }
+
+  /// 로컬에 있는 플래닛 정보로 FB에서 불러오기
+  Future<List<PlanetDto>> getPlanetByLocalInfo(List<PlanetDto> local) async {
+    List<Future<PlanetDto>> planetTask = [];
+    for (var item in local) {
+      var planet = getPlanetByAddress(item.address);
+      planetTask.add(planet);
+    }
+
+    var planets = await Future.wait(planetTask);
+    return planets;
+  }
+
+  Future<void> signOut() async {
+    const storage = FlutterSecureStorage();
+    await storage.deleteAll();
   }
 }

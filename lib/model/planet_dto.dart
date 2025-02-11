@@ -5,15 +5,18 @@ class PlanetDto extends Equatable {
   final String planetName;
   final String address;
 
+  final String mnemonic;
+
   const PlanetDto({
     this.id = "",
     this.planetName = "",
     this.address = "",
+    this.mnemonic = "",
   });
 
   static const empty = PlanetDto();
 
-  factory PlanetDto.fromJson(Map<String, dynamic> json, String id) {
+  factory PlanetDto.fromJson(Map<String, dynamic> json, {String id = ""}) {
     return PlanetDto(
       id: id,
       planetName: json['planetName'] ?? '',
@@ -33,10 +36,13 @@ class PlanetDto extends Equatable {
     String? id,
     String? address,
     String? planetName,
+    String? mnemonic,
   }) {
     return PlanetDto(
+      id: id ?? this.id,
       address: address ?? this.address,
       planetName: planetName ?? this.planetName,
+      mnemonic: mnemonic ?? this.mnemonic,
     );
   }
 
@@ -45,5 +51,6 @@ class PlanetDto extends Equatable {
         id,
         planetName,
         address,
+        mnemonic,
       ];
 }

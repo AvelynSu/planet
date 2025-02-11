@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/repository/fb_repository.dart';
+import 'package:planet/service/local_storage_service.dart';
 
 import 'bloc.dart';
 
@@ -28,21 +28,31 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
     FirebaseAnalytics.instance.logAppOpen();
 
+    var localPlanets = await LocalStorageService.getLocalPlanets();
+
+    if (localPlanets.isEmpty) {
+      yield AppUnInitialized.sign;
+    } else {
+      if (localPlanets.length == 1 && localPlanets.first.planetName.isEmpty) {
+        yield AppUnInitialized.planetName;
+      } else {
+        var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+        yield AppLoaded(planets: planets);
+      }
+    }
+
     // await userRepository.signOut();
   }
 
   Stream<AppState> mapAppUpdateToState(AppUpdate event) async* {
     try {
-      var user = await userRepository.getUser();
+      var localPlanets = await LocalStorageService.getLocalPlanets();
+      var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
 
       yield AppLoaded(
-        user: user,
-        subjects: subjects,
-        store: store,
+        planets: planets,
       );
-    } catch (err) {
-      debugPrint(err);
-    }
+    } catch (_) {}
   }
 
   Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {

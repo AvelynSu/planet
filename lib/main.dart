@@ -1,13 +1,23 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/repository/fb_repository.dart';
-import 'package:planet/ui/start/set_nickname/set_nickname_screen.dart';
+import 'package:planet/ui/common/splash_screen.dart';
+import 'package:planet/ui/start/start/start_screen.dart';
 
 import 'bloc/app/app_bloc.dart';
 import 'bloc/app/app_event.dart';
 import 'custom_theme.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   CustomThemeMode.instance;
   runApp(
     MultiRepositoryProvider(
@@ -44,7 +54,7 @@ class _AppState extends State<App> {
             theme: ThemeData(
               fontFamily: 'WorkSans',
             ),
-            home: AppScreen(),
+            home: const AppScreen(),
           ),
         );
       },
@@ -62,6 +72,23 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext context) {
-    return const SetNicknameScreen();
+    return BlocListener<AppBloc, AppState>(
+      listener: (context, state) async {},
+      listenWhen: (pre, cur) => cur != pre,
+      child: BlocBuilder<AppBloc, AppState>(
+        builder: (context, state) {
+          Widget screen = const SplashScreen();
+          if (state is AppUnInitialized) {
+            if (state.requiredSign) {
+              screen = const StartScreen();
+            } else if (state.requiredFirstPlanetNickname) {}
+          } else if (state is AppLoaded) {
+            screen = Container();
+          }
+
+          return screen;
+        },
+      ),
+    );
   }
 }

@@ -22,7 +22,7 @@ class AppUnInitialized extends AppState {
         requiredSign: true,
       );
 
-  static AppUnInitialized get storeInfo =>
+  static AppUnInitialized get planetName =>
       const AppUnInitialized(requiredFirstPlanetNickname: true);
 
   @override
