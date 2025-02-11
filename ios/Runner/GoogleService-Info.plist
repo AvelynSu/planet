@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.shiftfn.planet</string>
+	<string>com.shiftfunction.planet</string>
 	<key>PROJECT_ID</key>
 	<string>planet-908b5</string>
 	<key>STORAGE_BUCKET</key>

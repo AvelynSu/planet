@@ -56,40 +56,43 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                 body: Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 200),
-                        child: PlanetWidget(
-                          data: text,
-                          size: 172,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 200),
+                          child: PlanetWidget(
+                            data: text,
+                            size: 172,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 60),
-                      LinedField(
-                        hintText: "Enter Planet Name",
-                        align: TextAlign.center,
-                        onChange: (value) {
-                          text = value;
-                          setState(() {});
-                        },
-                      ),
-                      const SizedBox(height: 40),
-                      DefaultButton(
-                        title: "Planet Wallet",
-                        color: Colors.white.withValues(alpha: 0.2),
-                        textColor: Colors.white,
-                        onTap: () {
-                          var item =
-                              wordItems[Random().nextInt(wordItems.length - 1)];
-                          DefaultDialog.show(
-                            context,
-                            title: item.author,
-                            description: item.text,
-                          );
-                        },
-                      ),
-                    ],
+                        const SizedBox(height: 60),
+                        LinedField(
+                          hintText: "Enter Planet Name",
+                          align: TextAlign.center,
+                          onChange: (value) {
+                            text = value;
+                            setState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 40),
+                        DefaultButton(
+                          title: "Planet Wallet",
+                          color: Colors.white.withValues(alpha: 0.2),
+                          textColor: Colors.white,
+                          onTap: () {
+                            var item = wordItems[
+                                Random().nextInt(wordItems.length - 1)];
+                            DefaultDialog.show(
+                              context,
+                              title: item.author,
+                              description: item.text,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
