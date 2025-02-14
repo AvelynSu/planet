@@ -14,6 +14,18 @@ enum NetworkType {
     }
   }
 
+  factory NetworkType.fromJson(String key) {
+    switch (key) {
+      case "ethereum":
+        return NetworkType.ethereum;
+      case "bitcoin":
+        return NetworkType.bitcoin;
+      case "solana":
+        return NetworkType.solana;
+    }
+    return NetworkType.ethereum;
+  }
+
   String get symbol {
     switch (this) {
       case NetworkType.ethereum:

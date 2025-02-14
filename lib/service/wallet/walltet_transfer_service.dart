@@ -1,50 +1,20 @@
 // 사용자 입력 (받는사람 주소, 보낼금액, 가스비 우선순위) → 가스비 계산 → 트랜잭션 생성 → 서명 → 전송 → 결과 확인
 
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:planet/service/wallet/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
-class TransactionInput {
-  final String toAddress; // 받는 사람 주소
-  final double amount; // 보낼 금액
-  final GasPriority gasPriority; // 가스비 우선순위 선택
-  TransactionInput(
-    this.toAddress,
-    this.amount,
-    this.gasPriority,
-  );
-}
+import '../../enum/gas_priority.dart';
+import '../../model/transfer_fee.dart';
 
-class TransactionFee {
-  final BigInt gasPrice; // 가스 단위 가격
-  final BigInt gasLimit; // 최대 사용 가능한 가스량
-  final BigInt estimatedFee; // 예상 총 수수료 (gasPrice * gasLimit)
-
-  TransactionFee({
-    required this.gasPrice,
-    required this.gasLimit,
-    required this.estimatedFee,
-  });
-
-  // Wei 단위의 수수료를 ETH 단위로 변환
-  double get feeInEth => estimatedFee / BigInt.from(pow(10, 18));
-
-  // 사용자 표시용 포맷팅
-  String get formatted => '${feeInEth.toStringAsFixed(8)} ETH';
-}
-
-enum GasPriority { slow, medium, fast }
-
-class TransactionService {
+class WalletTransferService {
   final Web3Client web3client;
 
-  TransactionService({
-    required String rpcUrl, // 이더리움 노드 RPC URL
-  }) : web3client = Web3Client(rpcUrl, http.Client());
+  WalletTransferService()
+      : web3client = Web3Client(WalletConfig().rpcUrl, http.Client());
 
-  Future<Map<GasPriority, TransactionFee>> estimateGasFeesByPriority() async {
+  Future<Map<GasPriority, TransferFee>> estimateGasFeesByPriority() async {
     // 기본 가스 가격 조회 및 BigInt로 변환
     final baseGasPrice =
         (await web3client.getGasPrice()).getInWei; // getInWei로 BigInt 얻기
@@ -63,7 +33,7 @@ class TransactionService {
     // 각 우선순위별 TransactionFee 생성
     return {
       for (var priority in GasPriority.values)
-        priority: TransactionFee(
+        priority: TransferFee(
           gasPrice: gasPrices[priority]!,
           gasLimit: gasLimit,
           estimatedFee: gasPrices[priority]! * gasLimit,
@@ -71,6 +41,9 @@ class TransactionService {
     };
   }
 
+  // 트랜잭션을 전송만 하고 끝냄
+  // 트랜잭션 해시(txHash)만 반환
+  // 성공/실패 여부는 모름
   Future<String> sendTransaction({
     required String toAddress,
     required BigInt amount,
@@ -110,7 +83,9 @@ class TransactionService {
     }
   }
 
-  //
+  // 트랜잭션을 전송하고 결과까지 기다림
+  // 최대 1분간 2초마다 상태 확인
+  // 최종 성공/실패 여부를 알려줌
   Future<bool> sendAndWaitForTransaction({
     required String toAddress,
     required BigInt amount,

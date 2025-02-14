@@ -1,15 +1,18 @@
 import 'package:equatable/equatable.dart';
 
+import '../enum/network_type.dart';
+
 class PlanetDto extends Equatable {
   final String id;
   final String planetName;
+  final NetworkType? networkType;
   final String address;
-
   final String mnemonic;
 
   const PlanetDto({
     this.id = "",
     this.planetName = "",
+    this.networkType,
     this.address = "",
     this.mnemonic = "",
   });
@@ -19,6 +22,7 @@ class PlanetDto extends Equatable {
   factory PlanetDto.fromJson(Map<String, dynamic> json, {String id = ""}) {
     return PlanetDto(
       id: id,
+      networkType: NetworkType.fromJson(json["networkType"]),
       planetName: json['planetName'] ?? '',
       address: json["address"] ?? "",
     );

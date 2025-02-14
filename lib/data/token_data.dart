@@ -1,8 +1,8 @@
 import '../model/token_info.dart';
 
-class Constants {
+class TokenData {
   // 메인넷 토큰 리스트 (ETH)
-  static const List<TokenInfo> mainnetTokens = [
+  static const List<TokenInfo> ethTokens = [
     TokenInfo(
       symbol: 'USDT',
       name: 'Tether USD',

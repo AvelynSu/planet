@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:planet/data/test_hd_wallet.dart';
 import 'package:planet/enum/network_type.dart';
-import 'package:planet/service/hd_wallet_service.dart';
+import 'package:planet/model/planet_dto.dart';
+import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/hd_wallet_tile.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/restore_hd_wallet_screen.dart';
@@ -21,7 +22,7 @@ class GenerateHdWalletScreen extends StatefulWidget {
 }
 
 class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
-  HDWalletService walletService = HDWalletService();
+  WalletService walletService = WalletService();
 
   @override
   void initState() {
@@ -77,7 +78,9 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                             TestHdWallet.mnemonic,
                             TestHdWallet.ethIdx);
                         TestHdWallet.ethIdx += 1;
-                        TestHdWallet.ethAddress.add(address);
+                        TestHdWallet.ethAddress.add(PlanetDto(
+                            networkType: NetworkType.ethereum,
+                            address: address));
                         setState(() {});
                       },
                     ),
@@ -92,7 +95,9 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                             TestHdWallet.mnemonic,
                             TestHdWallet.btcIdx);
                         TestHdWallet.btcIdx += 1;
-                        TestHdWallet.btcAddress.add(address);
+                        TestHdWallet.btcAddress.add(PlanetDto(
+                            networkType: NetworkType.bitcoin,
+                            address: address));
                         setState(() {});
                       },
                     ),
@@ -107,7 +112,8 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
                             TestHdWallet.mnemonic,
                             TestHdWallet.solIdx);
                         TestHdWallet.solIdx += 1;
-                        TestHdWallet.solAddress.add(address);
+                        TestHdWallet.solAddress.add(PlanetDto(
+                            networkType: NetworkType.solana, address: address));
                         setState(() {});
                       },
                     ),

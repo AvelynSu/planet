@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:planet/model/transfer_fee.dart';
 
-import '../../../service/transaction_service.dart';
+import '../../../enum/gas_priority.dart';
+import '../../../service/wallet/walltet_transfer_service.dart';
 import '../../util/app_ui.dart';
 
 class TestWithdrawScreen extends StatefulWidget {
@@ -18,11 +20,9 @@ class _TestWithdrawScreenState extends State<TestWithdrawScreen> {
   final _addressController = TextEditingController();
   final _amountController = TextEditingController();
   GasPriority _selectedGasPriority = GasPriority.medium;
-  final _transactionService = TransactionService(
-    rpcUrl: 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba',
-  );
+  final _transactionService = WalletTransferService();
   bool _isLoading = false;
-  Map<GasPriority, TransactionFee>? _gasFees;
+  Map<GasPriority, TransferFee>? _gasFees;
 
   @override
   void initState() {

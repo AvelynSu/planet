@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:planet/service/constants.dart';
-import 'package:planet/service/token_service.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 
 import '../../../custom_theme.dart';
-import '../../../service/wallet_balance_service.dart';
+import '../../../data/token_data.dart';
+import '../../../service/wallet/wallet_balance_service.dart';
 import '../../util/app_ui.dart';
 
 class TestGetBalanceTestScreen extends StatefulWidget {
@@ -41,30 +40,27 @@ class _TestGetBalanceTestScreenState extends State<TestGetBalanceTestScreen> {
       ),
       body: Column(
         children: [
-          TestDefaultButton(
-              title: "지갑이 보유한 이더리움",
-              onTap: () async {
-                final service = TokenService(
-                  rpcUrl:
-                      'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba',
-                );
-                // var tokens = await service.getWalletTokens(address);
-
-                service.dispose();
-              }),
+          // TestDefaultButton(
+          //     title: "지갑이 보유한 이더리움",
+          //     onTap: () async {
+          //       final service = TokenService(
+          //         rpcUrl:
+          //             'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba',
+          //       );
+          //       // var tokens = await service.getWalletTokens(address);
+          //
+          //       service.dispose();
+          //     }),
           TestDefaultButton(
             title: "내 잔액 확인",
             onTap: () async {
-              final service = WalletBalanceService(
-                rpcUrl:
-                    'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba',
-              );
+              final service = WalletBalanceService();
 
               try {
                 // 모든 지원 토큰의 잔액 조회
                 final balances = await service.getAllTokenBalances(
                   walletAddress: address,
-                  supportedTokens: Constants.mainnetTokens,
+                  supportedTokens: TokenData.ethTokens,
                 );
 
                 // 결과 출력

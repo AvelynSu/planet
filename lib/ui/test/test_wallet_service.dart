@@ -5,7 +5,7 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
-class WalletService {
+class TestWalletService {
   // 니모닉 생성
   String generateMnemonic() {
     return bip39.generateMnemonic();

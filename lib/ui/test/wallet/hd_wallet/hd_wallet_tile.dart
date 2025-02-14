@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../custom_theme.dart';
 import '../../../../generate_planet/generate_planet.dart';
+import '../../../../model/planet_dto.dart';
 
 class HdWalletTile extends StatelessWidget {
-  final String address;
+  final PlanetDto address;
 
   const HdWalletTile({super.key, required this.address});
 
@@ -22,12 +23,12 @@ class HdWalletTile extends StatelessWidget {
         children: [
           const SizedBox(height: 12),
           PlanetWidget(
-            data: address,
+            data: address.address,
             size: 50,
           ),
           const SizedBox(height: 24),
           Text(
-            address,
+            address.address,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: fontR(12,

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/start/start/cubit/start_cubit.dart';
 
 import '../../../../enum/screen_status.dart';
+import '../../create_wallet/create_wallet_screen.dart';
 import '../../util/app_ui.dart';
 
 class StartScreen extends StatefulWidget {
@@ -62,13 +64,21 @@ class _StartScreenState extends State<StartScreen> {
                     Column(
                       children: [
                         DefaultButton(
+                          color: Colors.white,
+                          textColor: Colors.black,
                           title: "Create Wallet",
-                          onTap: () {},
+                          onTap: () {
+                            CreateWalletScreen.push(context);
+                          },
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         DefaultButton(
+                          borderColor: Colors.white.withValues(alpha: 0.3),
                           title: "Import Another Planet",
-                          onTap: () {},
+                          onTap: () {
+                            DefaultDialog.show(context,
+                                description: "준비중 입니다.");
+                          },
                         ),
                       ],
                     ),

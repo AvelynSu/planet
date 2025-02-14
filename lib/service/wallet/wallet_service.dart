@@ -12,9 +12,11 @@ import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../enum/network_type.dart';
+import '../../enum/network_type.dart';
+import '../../model/planet_dto.dart';
 
-class HDWalletService {
+// 지갑을 만들고, 복구할때 사용하는 서비스
+class WalletService {
   // 니모닉 생성
   String generateMnemonic() {
     return bip39.generateMnemonic();
@@ -115,17 +117,22 @@ class HDWalletService {
 // HD 월렛의 주소 복구 기능
 // - 하나의 니모닉에서 여러 개의 주소가 생성될 수 있음
 // - 생성된 주소들 중 실제 사용된 주소를 찾아내는 과정
-  Future<List<String>> recoverAddresses(
+  Future<List<PlanetDto>> recoverAddresses(
     NetworkType network,
     String mnemonic,
     int testLastIdx, // 지갑 생성/복구 테스트용 라스트 인덱스 넣기
   ) async {
-    List<String> foundAddresses = [];
+    List<PlanetDto> foundPlanets = [];
 
-    /// 복구 테스트용 코드
     for (var i = 0; i < testLastIdx; i++) {
       final address = await generateHDAddress(network, mnemonic, i);
-      foundAddresses.add(address);
+      foundPlanets.add(PlanetDto(
+        id: "",
+        networkType: network,
+        planetName: "",
+        address: address,
+        mnemonic: mnemonic,
+      ));
     }
 
     // int emptyAddressCount = 0; // 연속으로 발견된 빈 주소의 수
@@ -153,7 +160,7 @@ class HDWalletService {
     // }
 
     // 발견된 모든 활성 주소 반환
-    return foundAddresses;
+    return foundPlanets;
   }
 
   // 블록체인 상태 확인

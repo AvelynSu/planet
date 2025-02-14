@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:planet/service/wallet/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../model/token_info.dart';
+import '../../model/token_info.dart';
 
 class WalletBalanceService {
   final Web3Client web3client;
@@ -19,11 +20,10 @@ class WalletBalanceService {
     }
   ]''';
 
-  WalletBalanceService({
-    required String rpcUrl, // 이더리움 노드 RPC URL
-  }) : web3client = Web3Client(rpcUrl, http.Client());
+  WalletBalanceService()
+      : web3client = Web3Client(WalletConfig().rpcUrl, http.Client());
 
-  /// 지갑의 ETH 잔액 조회
+  /// 지갑의 ETH 잔액 조회 (네이티브 토큰)
   Future<BigInt> getEthBalance(String address) async {
     try {
       // getBalance는 Wei 단위로 잔액을 반환 (1 ETH = 10^18 Wei)
@@ -36,7 +36,7 @@ class WalletBalanceService {
     }
   }
 
-  /// 지정된 ERC-20 토큰의 잔액 조회
+  /// 지정된 ERC-20 토큰의 잔액 조회 (스마트컨트렉트로 만들어진 토큰
   Future<BigInt> getTokenBalance({
     required String walletAddress, // 잔액을 조회할 지갑 주소
     required String tokenAddress, // 토큰 컨트랙트 주소

@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:planet/generate_planet/generate_planet.dart';
-import 'package:planet/service/wallet_service.dart';
 import 'package:planet/ui/common/test_default_button.dart';
+import 'package:planet/ui/test/test_wallet_service.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:web3dart/credentials.dart';
 
@@ -28,7 +28,7 @@ class _TestGenerateWalletScreenState extends State<TestGenerateWalletScreen> {
   String publicKey = "";
   String address = "";
 
-  WalletService walletService = WalletService();
+  TestWalletService walletService = TestWalletService();
 
   @override
   Widget build(BuildContext context) {
