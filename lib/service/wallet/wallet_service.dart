@@ -8,6 +8,7 @@ import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:planet/ui/util/wallet_config.dart';
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
@@ -178,7 +179,7 @@ class WalletService {
   // 이더리움 활동 확인
   Future<bool> _checkEthereumActivity(String address) async {
     // Web3Client 설정 필요
-    final client = Web3Client('YOUR_ETHEREUM_RPC_URL', http.Client());
+    final client = Web3Client(WalletConfig().rpcUrl, http.Client());
 
     try {
       // 잔액 확인

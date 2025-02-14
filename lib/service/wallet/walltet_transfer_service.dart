@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:planet/service/wallet/wallet_config.dart';
+import 'package:planet/ui/util/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../enum/gas_priority.dart';
