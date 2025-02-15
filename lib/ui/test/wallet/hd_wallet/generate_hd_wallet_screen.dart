@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planet/data/test_hd_wallet.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
@@ -9,6 +8,7 @@ import 'package:planet/ui/test/wallet/hd_wallet/restore_hd_wallet_screen.dart';
 import 'package:planet/ui/util/app_ui.dart';
 
 import '../../../../custom_theme.dart';
+import '../../../util/data/test_hd_wallet.dart';
 
 class GenerateHdWalletScreen extends StatefulWidget {
   const GenerateHdWalletScreen({super.key});

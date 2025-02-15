@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planet/generate_planet/generate_planet.dart';
+import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/generate_wallet_screen.dart';
 import 'package:planet/ui/test/wallet/get_balance_test_screen.dart';

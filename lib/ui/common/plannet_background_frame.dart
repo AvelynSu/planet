@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../generate_planet/generate_planet.dart';
+import 'generate_planet.dart';
 
 class PlanetBackgroundFrame extends StatefulWidget {
   final String data;

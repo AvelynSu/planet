@@ -1,21 +1,22 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/generate_planet/generate_planet.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
+import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/line_text_field.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
-import 'package:planet/ui/start/set_nickname/cubit/set_nickname_cubit.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../util/app_ui.dart';
+import 'cubit/set_nickname_cubit.dart';
 
 class SetNicknameScreen extends StatefulWidget {
   final PlanetDto planetDto;
@@ -93,6 +94,22 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                               const SizedBox(height: 12),
                               LinedField(
                                 hintBorderColor: Colors.transparent,
+                                inputFormatters: [
+                                  TextInputFormatter.withFunction(
+                                      (oldValue, newValue) {
+                                    final lowerCaseText =
+                                        newValue.text.toLowerCase();
+                                    final regExp = RegExp(r'^[a-z0-9._]*$');
+
+                                    if (regExp.hasMatch(lowerCaseText)) {
+                                      return TextEditingValue(
+                                        text: lowerCaseText,
+                                        selection: newValue.selection,
+                                      );
+                                    }
+                                    return oldValue;
+                                  }),
+                                ],
                                 controller: _controller,
                                 initialValue: state.nickname,
                                 hintText: "Enter Planet Name",

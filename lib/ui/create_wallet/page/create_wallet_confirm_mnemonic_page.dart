@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
-import 'package:planet/ui/start/set_nickname/set_nickname_screen.dart';
+
+import '../set_nickname/set_nickname_screen.dart';
 
 class CreateWalletConfirmMnemonicPage extends StatefulWidget {
   const CreateWalletConfirmMnemonicPage({super.key});
@@ -152,15 +153,10 @@ class _CreateWalletConfirmMnemonicPageState
                           mnemonic: state.mnemonic,
                         ),
                       );
-                      DefaultDialog.show(
-                        context,
-                        title: "월렝 생성 성공 !",
-                        description: "행성 이름을 설정해주세요",
-                      );
                     } else {
                       selected = [];
                       setState(() {});
-                      DefaultDialog.show(context, description: "다시 시도해주세요");
+                      DefaultDialog.show(context, description: "Try Again");
                     }
                   }
                 });

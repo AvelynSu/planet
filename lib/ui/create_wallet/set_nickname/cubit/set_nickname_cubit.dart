@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
-import 'package:planet/data/planet_name_data.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -14,6 +13,7 @@ import 'package:planet/service/wallet/wallet_service.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
+import '../../../util/data/planet_name_data.dart';
 
 part 'set_nickname_state.dart';
 
@@ -33,9 +33,10 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
 
     var planet =
         Data.planetNames[Random().nextInt(Data.planetNames.length - 1)];
+    planet = planet.replaceAll(" ", "").toLowerCase();
     var idx = Random().nextInt(10000);
 
-    while (!allNickName.contains("$planet${idx}")) {
+    while (!allNickName.contains("$planet$idx")) {
       idx = Random().nextInt(10000);
       break;
     }

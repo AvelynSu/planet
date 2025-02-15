@@ -1,4 +1,4 @@
-import '../model/token_info.dart';
+import '../../../model/token_info.dart';
 
 class TokenData {
   // 메인넷 토큰 리스트 (ETH)

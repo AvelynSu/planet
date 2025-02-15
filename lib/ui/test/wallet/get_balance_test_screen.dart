@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 
 import '../../../custom_theme.dart';
-import '../../../data/token_data.dart';
 import '../../../service/wallet/wallet_balance_service.dart';
 import '../../util/app_ui.dart';
+import '../../util/data/token_data.dart';
 
 class TestGetBalanceTestScreen extends StatefulWidget {
   const TestGetBalanceTestScreen({super.key});
