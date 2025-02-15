@@ -34,24 +34,29 @@ class AppUnInitialized extends AppState {
 
 class AppLoaded extends AppState {
   final List<PlanetDto> planets;
+  final PlanetDto current;
 
   const AppLoaded({
     this.planets = const [],
+    this.current = PlanetDto.empty,
   });
 
   static const empty = AppLoaded();
 
   AppLoaded copyWith({
     List<PlanetDto>? planets,
+    PlanetDto? current,
   }) {
     return AppLoaded(
       planets: planets ?? this.planets,
+      current: current ?? this.current,
     );
   }
 
   @override
   List<Object?> get props => [
         planets,
+        current,
       ];
 }
 

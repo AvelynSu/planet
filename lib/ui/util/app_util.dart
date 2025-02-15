@@ -14,6 +14,18 @@ class AppUtil {
     return "$hours:$minutes:$seconds";
   }
 
+  static String shortenWalletAddress(String address) {
+    if (address.length <= 15) {
+      // 너무 짧은 주소는 전체 표시
+      return address;
+    }
+
+    String firstPart = address.substring(0, 5); // 앞 10자리
+    String lastPart = address.substring(address.length - 5); // 뒤 5자리
+
+    return '$firstPart...$lastPart';
+  }
+
   static List<dynamic> aDifferenceB({
     required List<dynamic> a,
     required List<dynamic> b,

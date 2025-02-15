@@ -33,11 +33,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     if (localPlanets.isEmpty) {
       yield AppUnInitialized.sign;
     } else {
-      if (localPlanets.length == 1 && localPlanets.first.planetName.isEmpty) {
+      if (localPlanets.length == 1 && localPlanets.first.name.isEmpty) {
         yield AppUnInitialized.planetName;
       } else {
         var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
-        yield AppLoaded(planets: planets);
+        var current = planets.where((e) => e.isCurrent).firstOrNull;
+
+        yield AppLoaded(
+          planets: planets,
+          current: current ?? planets.first,
+        );
       }
     }
 
@@ -48,9 +53,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       var localPlanets = await LocalStorageService.getLocalPlanets();
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+      var current = planets.where((e) => e.isCurrent).firstOrNull;
 
       yield AppLoaded(
         planets: planets,
+        current: current ?? planets.first,
       );
     } catch (_) {}
   }

@@ -27,7 +27,7 @@ class ApiRepository {
   Future<PlanetDto> addPlanet(PlanetDto planet) async {
     var res = await _planetCol.add(planet.toJson());
     await _planetNameDoc.update({
-      "items": FieldValue.arrayUnion([planet.planetName])
+      "items": FieldValue.arrayUnion([planet.name])
     });
     return planet.copyWith(id: res.id);
   }

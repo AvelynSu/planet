@@ -130,7 +130,7 @@ class WalletService {
       foundPlanets.add(PlanetDto(
         id: "",
         networkType: network,
-        planetName: "",
+        name: "",
         address: address,
         mnemonic: mnemonic,
       ));

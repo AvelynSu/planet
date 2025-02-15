@@ -62,8 +62,9 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
         networkType: NetworkType.ethereum,
         address: address,
         mnemonic: planetDto.mnemonic,
-        planetName: state.nickname,
+        name: state.nickname,
         createdAt: DateTime.now(),
+        isCurrent: true,
       );
       await apiRepository.addPlanet(planet);
       await LocalStorageService.saveMnemonics([planet]);

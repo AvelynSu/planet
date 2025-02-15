@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:planet/bloc/app/app_bloc.dart';
-import 'package:planet/bloc/app/app_event.dart';
-import 'package:planet/custom_theme.dart';
-import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/home/sample_screen.dart';
 
 import '../../enum/menu_type.dart';
 import '../common/base_scaffold.dart';
+import '../my/sample_screen.dart';
+import '../planets/sample_screen.dart';
 import 'bottom_bar.dart';
 
 class AppView extends StatefulWidget {
@@ -52,24 +50,11 @@ class _AppViewState extends State<AppView> {
   Widget _buildMainView(MenuType menuType) {
     switch (menuType) {
       case MenuType.home:
-        return Container();
+        return const HomeScreen();
       case MenuType.planets:
-        return Container();
+        return const PlanetsScreen();
       case MenuType.my:
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: hPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DefaultButton(
-                title: "로그아웃",
-                onTap: () {
-                  context.read<AppBloc>().add(AppSignOut());
-                },
-              ),
-            ],
-          ),
-        );
+        return const MyScreen();
     }
   }
 }
