@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/repository/fb_repository.dart';
+import 'package:planet/ui/app/app_view.dart';
 import 'package:planet/ui/common/splash_screen.dart';
 import 'package:planet/ui/start/start/start_screen.dart';
 
@@ -83,7 +84,7 @@ class _AppScreenState extends State<AppScreen> {
               screen = const StartScreen();
             } else if (state.requiredFirstPlanetNickname) {}
           } else if (state is AppLoaded) {
-            screen = Container();
+            screen = const AppView();
           }
 
           return screen;

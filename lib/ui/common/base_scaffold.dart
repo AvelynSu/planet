@@ -123,7 +123,8 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         // 실제 화면
         Scaffold(
           resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
-          backgroundColor: widget.backgroundColor ?? Colors.white,
+          backgroundColor:
+              widget.backgroundColor ?? CustomColors.current.background,
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -157,10 +158,11 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   _appBar() {
     if (existAppBar) {
-      Color? color = widget.appBarContentColor ?? Colors.white;
+      Color? color =
+          widget.appBarContentColor ?? CustomColors.current.background;
       Color bgColor = widget.isTransparentAppbar
           ? Colors.transparent
-          : (widget.backgroundColor ?? Colors.white);
+          : (widget.backgroundColor ?? CustomColors.current.background);
 
       return Container(
         margin: EdgeInsets.only(top: AppUi.statusBarHeight(context)),

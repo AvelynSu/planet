@@ -57,7 +57,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {
     await apiRepository.signOut();
-
     add(AppInitialize());
   }
 }

@@ -26,7 +26,7 @@ class AppUi {
 
   static double bottomPadding(BuildContext context) {
     var bottom = MediaQuery.of(context).padding.bottom;
-    return bottom < 15 ? 16 : min(16, bottom);
+    return bottom < 15 ? 16 : max(16, bottom);
   }
 
   static double statusBarHeight(BuildContext context) {
