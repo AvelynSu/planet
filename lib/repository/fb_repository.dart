@@ -6,9 +6,31 @@ import 'package:planet/ui/util/app_constant.dart';
 
 class ApiRepository {
   final fbAuth = auth.FirebaseAuth.instance;
-
+  final _planetNameDoc = FirebaseFirestore.instance
+      .collection(AppConstant.fbCommon)
+      .doc(AppConstant.fbPlanetNameDoc);
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
+
+  /// 닉네임 전부 불러오기
+  Future<List<String>> getAllNickName() async {
+    var res = await _planetNameDoc.get();
+
+    var result = (res.data()!["items"] as List<dynamic>)
+        .map((e) => e as String)
+        .toList();
+
+    return result;
+  }
+
+  /// 행성 저장하기
+  Future<PlanetDto> addPlanet(PlanetDto planet) async {
+    var res = await _planetCol.add(planet.toJson());
+    await _planetNameDoc.update({
+      "items": FieldValue.arrayUnion([planet.planetName])
+    });
+    return planet.copyWith(id: res.id);
+  }
 
   /// 로컬에 니모닉 저장
 

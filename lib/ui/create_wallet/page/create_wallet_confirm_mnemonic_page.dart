@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
+import 'package:planet/ui/start/set_nickname/set_nickname_screen.dart';
 
 class CreateWalletConfirmMnemonicPage extends StatefulWidget {
   const CreateWalletConfirmMnemonicPage({super.key});
@@ -122,13 +124,18 @@ class _CreateWalletConfirmMnemonicPageState
 
             return GestureDetector(
               onTap: () {
-                if (selected.length >= 4) return;
+                if (selected.length >= 4) {
+                  if (selected.length == 4 && selected.last == item) {
+                    selected.remove(item);
+                    setState(() {});
+                  }
+                  return;
+                }
 
                 if (selected.contains(item)) {
                   if (selected.last == item) {
                     selected.remove(item);
                     setState(() {});
-                    return;
                   }
                   return;
                 }
@@ -138,7 +145,18 @@ class _CreateWalletConfirmMnemonicPageState
                   if (selected.length == 4) {
                     var isCorrect = _verifyMnemonic();
                     if (isCorrect) {
-                      cubit.updatePage(state.page + 1);
+                      Navigator.pop(context);
+                      SetNicknameScreen.push(
+                        context,
+                        planetDto: PlanetDto(
+                          mnemonic: state.mnemonic,
+                        ),
+                      );
+                      DefaultDialog.show(
+                        context,
+                        title: "월렝 생성 성공 !",
+                        description: "행성 이름을 설정해주세요",
+                      );
                     } else {
                       selected = [];
                       setState(() {});

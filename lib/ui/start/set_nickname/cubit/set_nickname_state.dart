@@ -8,7 +8,7 @@ class SetNicknameState extends Equatable {
 
   const SetNicknameState({
     this.status = ScreenStatus.initial,
-    this.nickname = "shiftfn",
+    this.nickname = "",
     this.exception = CustomException.empty,
   });
 

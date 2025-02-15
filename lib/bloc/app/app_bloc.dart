@@ -27,7 +27,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
     FirebaseAnalytics.instance.logAppOpen();
-
+    // await LocalStorageService.clearMnemonics();
     var localPlanets = await LocalStorageService.getLocalPlanets();
 
     if (localPlanets.isEmpty) {

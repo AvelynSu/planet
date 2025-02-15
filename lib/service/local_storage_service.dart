@@ -22,6 +22,11 @@ class LocalStorageService {
     final jsonList = jsonDecode(encodedJson) as List;
     return jsonList.map((json) => PlanetDto.fromJson(json)).toList();
   }
+
+  static Future<void> clearMnemonics() async {
+    const storage = FlutterSecureStorage();
+    await storage.deleteAll();
+  }
 }
 
 class MnemonicCrypto {

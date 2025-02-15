@@ -6,7 +6,6 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
 import 'package:planet/ui/create_wallet/page/create_wallet_confirm_mnemonic_page.dart';
 import 'package:planet/ui/create_wallet/page/create_wallet_show_mnemonic_page.dart';
-import 'package:planet/ui/start/set_nickname/set_nickname_screen.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../util/app_ui.dart';
@@ -45,10 +44,6 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 break;
               case 1:
                 page = CreateWalletConfirmMnemonicPage();
-
-              case 2:
-                page = SetNicknameScreen();
-                break;
             }
 
             return BaseScaffold(
