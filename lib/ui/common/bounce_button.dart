@@ -57,7 +57,7 @@ class _BounceButtonState extends State<BounceButton>
       onTapUp: (_) async {
         _controller.reverse();
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        // await Future.delayed(const Duration(milliseconds: 100));
         widget.onTap();
       },
       child: Transform.scale(

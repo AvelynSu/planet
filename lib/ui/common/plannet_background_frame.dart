@@ -5,11 +5,15 @@ import '../../generate_planet/generate_planet.dart';
 class PlanetBackgroundFrame extends StatefulWidget {
   final String data;
   final Widget body;
+  final double topPadding;
+  final double scale;
 
   const PlanetBackgroundFrame({
     super.key,
     required this.data,
     required this.body,
+    this.scale = 3.3,
+    this.topPadding = 50,
   });
 
   @override
@@ -30,9 +34,9 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
             children: [
               /// 행성크게
               Transform.scale(
-                scale: 3.3,
+                scale: widget.scale,
                 child: Container(
-                  margin: const EdgeInsets.only(top: 50),
+                  margin: EdgeInsets.only(top: widget.topPadding),
                   child: PlanetWidget(
                     data: widget.data,
                     size: 172,
@@ -46,7 +50,7 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    stops: const [0.5, 1],
+                    stops: const [0.3, 1],
                     colors: [
                       Colors.black,
                       Colors.black.withValues(alpha: 0.7),

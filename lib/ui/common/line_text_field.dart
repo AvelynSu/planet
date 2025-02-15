@@ -205,10 +205,15 @@ class _LinedFieldState extends State<LinedField> {
               color: widget.hintBorderColor ?? textPlaceholder.withOpacity(0.5),
               borderRadius: BorderRadius.circular(100),
             ),
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.center,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: onFocus ? 1 * MediaQuery.of(context).size.width : 0,
+              width: onFocus
+                  ? (text.isEmpty
+                      ? 0
+                      : (text.length / (widget.maxLength ?? 20)) *
+                          MediaQuery.of(context).size.width)
+                  : 0,
               decoration: BoxDecoration(
                 color: widget.borderColor ?? primary,
                 borderRadius: BorderRadius.circular(100),

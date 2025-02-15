@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
+import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
+import 'package:planet/ui/create_wallet/page/create_wallet_confirm_mnemonic_page.dart';
+import 'package:planet/ui/create_wallet/page/create_wallet_show_mnemonic_page.dart';
+import 'package:planet/ui/start/set_nickname/set_nickname_screen.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../util/app_ui.dart';
@@ -22,7 +26,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => CreateWalletCubit(),
+      create: (BuildContext context) => CreateWalletCubit()..initialize(),
       child: BlocListener<CreateWalletCubit, CreateWalletState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.fail) {}
@@ -32,41 +36,47 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<CreateWalletCubit, CreateWalletState>(
           builder: (context, state) {
+            var cubit = context.read<CreateWalletCubit>();
+            Widget page = Container();
+
+            switch (state.page) {
+              case 0:
+                page = CreateWalletShowMnemonicPage();
+                break;
+              case 1:
+                page = CreateWalletConfirmMnemonicPage();
+
+              case 2:
+                page = SetNicknameScreen();
+                break;
+            }
+
             return BaseScaffold(
+              isTransparentAppbar: true,
               onBack: () {
-                Navigator.pop(context);
+                if (state.page == 0) {
+                  Navigator.pop(context);
+                } else {
+                  context.read<CreateWalletCubit>().updatePage(state.page - 1);
+                }
               },
               backgroundColor: CustomColors.current.background,
               body: Container(
-                padding: EdgeInsets.symmetric(horizontal: hPadding),
                 child: Column(
                   children: [
-                    // GridView.builder(
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   gridDelegate:
-                    //       const SliverGridDelegateWithFixedCrossAxisCount(
-                    //     crossAxisCount: 3, // 한 행에 3개의 아이템
-                    //     mainAxisSpacing: 10.0, // 수직 간격
-                    //     crossAxisSpacing: 10.0, // 수평 간격
-                    //     // childAspectRatio 대신 mainAxisExtent 사용
-                    //     mainAxisExtent: 40, // 각 아이템의 높이를 100으로 고정
-                    //   ),
-                    //   shrinkWrap: true,
-                    //   itemBuilder: (context, i) {
-                    //     var items = state.mnemonic.split(" ");
-                    //     var item = items.length > i ? items[i] : "";
-                    //     return Container(
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.white,
-                    //         borderRadius: BorderRadius.circular(8),
-                    //         border: Border.all(color: Colors.grey[300]!),
-                    //       ),
-                    //       child: Center(
-                    //         child: Text(item),
-                    //       ),
-                    //     );
-                    //   },
-                    // )
+                    Expanded(
+                      child: page,
+                    ),
+                    if (state.page == 0)
+                      DefaultButton(
+                        showBottomPadding: true,
+                        title: "다음",
+                        onTap: () {
+                          if (state.page == 0) {
+                            cubit.updatePage(state.page + 1);
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),

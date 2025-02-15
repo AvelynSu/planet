@@ -54,7 +54,7 @@ class _AppState extends State<App> {
             theme: ThemeData(
               fontFamily: 'WorkSans',
             ),
-            home: const AppScreen(),
+            home: AppScreen(),
           ),
         );
       },
