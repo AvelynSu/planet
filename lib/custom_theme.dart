@@ -11,13 +11,13 @@ class CustomThemeMode {
 
   static bool get isLight => themeMode.value == ThemeMode.light;
 
-  static void change() {
-    switch (themeMode.value) {
+  static void change(ThemeMode mode) {
+    switch (mode) {
       case ThemeMode.light:
-        themeMode.value = ThemeMode.dark;
+        themeMode.value = ThemeMode.light;
         break;
       case ThemeMode.dark:
-        themeMode.value = ThemeMode.light;
+        themeMode.value = ThemeMode.dark;
         break;
       default:
     }

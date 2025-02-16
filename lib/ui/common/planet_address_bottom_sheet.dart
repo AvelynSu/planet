@@ -56,7 +56,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
               CustomBottomSheetHeader(
                 title: widget.planet.networkType?.title ?? "",
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(

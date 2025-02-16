@@ -3,5 +3,5 @@ class AppConstant {
   static String fbCommon = "common";
   static String fbPlanetNameDoc = "planet_name";
 
-  static String spCurrentPlanetAddress = "spCurrentPlanetAddress";
+  static String spThemeMode = "spThemeMode";
 }
