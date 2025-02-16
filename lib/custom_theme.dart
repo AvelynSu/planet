@@ -37,7 +37,7 @@ class CustomColors {
   static const darkTheme = ColorTheme(
     text: Colors.white,
     appbarText: Colors.white,
-    background: Color.fromRGBO(0, 0, 0, 0.95),
+    background: Color.fromRGBO(0, 0, 0, 0.98),
     appBarBackground: Color.fromRGBO(51, 51, 51, 1),
     buttonBackground: Colors.black,
   );

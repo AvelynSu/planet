@@ -123,14 +123,15 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         // 실제 화면
         Scaffold(
           resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
-          backgroundColor:
-              widget.backgroundColor ?? CustomColors.current.background,
+          // backgroundColor:
+          //     widget.backgroundColor ?? CustomColors.current.background,
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
             },
-            child: Container(
-              color: Colors.transparent,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              color: widget.backgroundColor ?? CustomColors.current.background,
               height: double.infinity,
               width: double.infinity,
               child: Stack(
