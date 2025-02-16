@@ -29,7 +29,10 @@ class _AppViewState extends State<AppView> {
           children: [
             Expanded(
               child: Container(
-                child: _buildMainView(type),
+                child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 200),
+                  child: _buildMainView(type),
+                ),
               ),
             ),
 

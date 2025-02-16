@@ -7,6 +7,7 @@ import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 
 import '../../../enum/screen_status.dart';
+import '../common/planet_address_bottom_sheet.dart';
 import '../util/app_ui.dart';
 import 'cubit/sample_cubit.dart';
 
@@ -69,7 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         CopyComponent(
-                          value: state.planet.address,
+                          planet: state.planet,
+                          onSuccess: () {
+                            PlanetAddressBottomSheet.show(context,
+                                planet: state.planet);
+                          },
                         ),
                       ],
                     ),

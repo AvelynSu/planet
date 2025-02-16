@@ -37,6 +37,17 @@ enum NetworkType {
     }
   }
 
+  String get title {
+    switch (this) {
+      case NetworkType.ethereum:
+        return "ETHEREUM";
+      case NetworkType.bitcoin:
+        return "BITCOIN";
+      case NetworkType.solana:
+        return "SOLANA";
+    }
+  }
+
   String getDerivationPath(int addressIndex) {
     if (this == NetworkType.solana) {
       return "m/44'/$coinType'/0'/0'/$addressIndex'";

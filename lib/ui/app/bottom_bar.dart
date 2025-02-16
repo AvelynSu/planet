@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planet/ui/common/bounce_button.dart';
 
 import '../../custom_theme.dart';
 import '../../enum/menu_type.dart';
@@ -60,7 +61,7 @@ class _BottomBarState extends State<BottomBar> {
   Widget _item({required MenuType type}) {
     bool isSelected = widget.selectedType == type;
 
-    return GestureDetector(
+    return BounceButton(
       onTap: () {
         widget.onTap(type);
       },
