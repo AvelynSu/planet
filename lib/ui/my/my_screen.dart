@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/util/app_constant.dart';
 import 'package:planet/ui/util/bold_generator.dart';
 
@@ -128,11 +130,22 @@ class _MyScreenState extends State<MyScreen> {
                         showArrow: false,
                         subText: "1.0.0",
                       ),
+                      SettingRowTile(
+                        onTap: () async {
+                          var result = await DefaultDialog.show(
+                            context,
+                            description:
+                                "니모닉을 백업 하셨나요?\n니모닉 확인 후 로그아웃 할 수 있습니다.",
+                          );
+                          context.read<AppBloc>().add(AppSignOut());
+                        },
+                        title: "Sign Out",
+                      ),
                     ],
                   )
                 ],
               ),
-            ); 
+            );
           },
         ),
       ),
