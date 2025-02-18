@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../custom_theme.dart';
+import 'package:gif/gif.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -16,12 +15,26 @@ class _LoadingState extends State<Loading> {
       color: Colors.transparent,
       alignment: Alignment.center,
       child: Container(
-        width: double.infinity,
-        height: double.infinity,
+        width: 50,
+        height: 50,
+        clipBehavior: Clip.antiAlias,
         alignment: Alignment.center,
-        color: Colors.black.withOpacity(0.2),
-        child: CircularProgressIndicator(
-          color: primary,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Gif(
+          image: AssetImage("assets/icons/planet.gif"),
+          // controller: _controller,
+          // // if duration and fps is null, original gif fps will be used.
+          // //fps: 30,
+          duration: const Duration(seconds: 3),
+          autostart: Autostart.loop,
+          // placeholder: (context) => const Text('Loading...'),
+          // onFetchCompleted: () {
+          //   _controller.reset();
+          //   _controller.forward();
+          // },
         ),
       ),
     );

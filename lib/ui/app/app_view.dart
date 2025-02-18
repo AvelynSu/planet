@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planet/ui/home/sample_screen.dart';
+import 'package:planet/ui/home/home_screen.dart';
 
 import '../../enum/menu_type.dart';
 import '../common/base_scaffold.dart';

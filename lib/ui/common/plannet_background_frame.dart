@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../custom_theme.dart';
 import 'generate_planet.dart';
 
 class PlanetBackgroundFrame extends StatefulWidget {
@@ -50,10 +51,11 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    stops: const [0.3, 1],
+                    stops: [(CustomThemeMode.isLight ? 0.35 : 0.3), 1],
                     colors: [
-                      Colors.black,
-                      Colors.black.withValues(alpha: 0.7),
+                      C.current.background,
+                      C.current.background.withValues(
+                          alpha: CustomThemeMode.isLight ? 0.82 : 0.7),
                     ],
                   ),
                 ),

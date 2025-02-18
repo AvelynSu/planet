@@ -35,7 +35,7 @@ class SettingRowTile extends StatelessWidget {
             Expanded(
               child: Text(
                 title ?? "",
-                style: fontR(16, color: Colors.white),
+                style: fontR(16, color: C.current.mainText),
               ),
             ),
             Row(
@@ -50,6 +50,7 @@ class SettingRowTile extends StatelessWidget {
                     margin: const EdgeInsets.only(left: 12),
                     child: CustomImage(
                       path: "icons/ic_small_arrow.svg",
+                      color: C.current.sub01,
                       width: 20,
                     ),
                   ),

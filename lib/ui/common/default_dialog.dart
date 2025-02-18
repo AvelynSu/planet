@@ -81,6 +81,10 @@ class DefaultDialog extends StatefulWidget {
     );
   }
 
+  static showComingSoon(BuildContext context) {
+    showTimerDialog(context, description: "Coming Soom..");
+  }
+
   static showTimerDialog(
     BuildContext context, {
     String? title,
@@ -139,8 +143,11 @@ class _DefaultDialogState extends State<DefaultDialog> {
             children: [
               Container(
                 constraints: const BoxConstraints(minHeight: 140),
-                padding: const EdgeInsets.only(
-                    left: 30, right: 30, top: 32, bottom: 16),
+                padding: EdgeInsets.only(
+                    left: 30,
+                    right: 30,
+                    top: widget.hideButton ? 16 : 32,
+                    bottom: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

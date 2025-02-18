@@ -42,9 +42,12 @@ class _CopyComponentState extends State<CopyComponent> {
           children: [
             Text(
               AppUtil.shortenWalletAddress(widget.planet.address),
-              style: fontR(16, color: Color(0xff5C5964)),
+              style: fontR(16, color: C.current.sub01),
             ),
-            CustomImage(path: "icons/ic_copy.svg"),
+            CustomImage(
+              path: "icons/ic_copy.svg",
+              color: C.current.sub01,
+            ),
           ],
         ),
       ),

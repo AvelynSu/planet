@@ -39,6 +39,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
         var current = planets.where((e) => e.isCurrent).firstOrNull;
 
+        await Future.delayed(const Duration(seconds: 3));
+
         yield AppLoaded(
           planets: planets,
           current: current ?? planets.first,

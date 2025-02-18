@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             state.planet.name,
                             style: fontR(
                               24,
-                              color: Colors.white,
+                              color: C.current.mainText,
                             ),
                           ),
                         ),

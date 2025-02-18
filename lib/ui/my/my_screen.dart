@@ -62,8 +62,8 @@ class _MyScreenState extends State<MyScreen> {
                   BoldMsgGenerator.toRichText(
                     text: "You're on\n*${appState.current.name}*",
                     textAlign: TextAlign.center,
-                    style: fontR(24, color: Colors.white, height: 1.5),
-                    boldStyle: fontB(24, color: Colors.white),
+                    style: fontR(24, color: C.current.mainText, height: 1.5),
+                    boldStyle: fontB(24, color: C.current.mainText),
                   ),
                   const SizedBox(height: 60),
                   Row(
@@ -87,12 +87,22 @@ class _MyScreenState extends State<MyScreen> {
                   const SizedBox(height: 60),
                   Column(
                     children: [
-                      SettingRowTile(onTap: () {}, title: "Announcements"),
+                      SettingRowTile(
+                        onTap: () {
+                          DefaultDialog.showComingSoon(context);
+                        },
+                        title: "Announcements",
+                      ),
                       SettingRowTile(onTap: () {}, title: "FAQ"),
                       SettingRowTile(
-                          onTap: () {}, title: "Currency", subText: "USD"),
+                        onTap: () {},
+                        showArrow: false,
+                        title: "Currency",
+                        subText: "USD",
+                      ),
                       SettingRowTile(
                         onTap: () {},
+                        showArrow: false,
                         title: "Theme Setting",
                         child: Row(
                           children: [
@@ -110,6 +120,7 @@ class _MyScreenState extends State<MyScreen> {
                                   setThemeTheme(e);
                                 },
                                 child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
                                   width: 25,
                                   height: 25,
                                   decoration: BoxDecoration(
@@ -180,7 +191,7 @@ class _MyScreenState extends State<MyScreen> {
             const SizedBox(height: 8),
             Text(
               title,
-              style: fontR(13, color: Colors.white),
+              style: fontR(13, color: C.current.mainText),
             ),
           ],
         ),
