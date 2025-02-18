@@ -39,7 +39,7 @@ class CustomColors {
     appbarText: Colors.white,
     background: Color.fromRGBO(0, 0, 0, 0.98),
     appBarBackground: Color.fromRGBO(51, 51, 51, 1),
-    buttonBackground: Colors.black,
+    buttonBackground: Colors.white,
   );
 
   static ColorTheme get current =>

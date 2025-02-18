@@ -29,7 +29,7 @@ class DefaultButton extends StatefulWidget {
     this.isReverse = false,
     this.color,
     this.style,
-    this.textColor = Colors.white,
+    this.textColor = Colors.black,
     this.showBottomPadding = false,
     this.borderColor,
     this.prefixIcon,
