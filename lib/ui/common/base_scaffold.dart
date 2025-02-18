@@ -131,7 +131,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
-              color: widget.backgroundColor ?? CustomColors.current.background,
+              color: widget.backgroundColor ?? C.current.background,
               height: double.infinity,
               width: double.infinity,
               child: Stack(
@@ -159,11 +159,10 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   _appBar() {
     if (existAppBar) {
-      Color? color =
-          widget.appBarContentColor ?? CustomColors.current.background;
+      Color? color = widget.appBarContentColor ?? C.current.background;
       Color bgColor = widget.isTransparentAppbar
           ? Colors.transparent
-          : (widget.backgroundColor ?? CustomColors.current.background);
+          : (widget.backgroundColor ?? C.current.background);
 
       return Container(
         margin: EdgeInsets.only(top: AppUi.statusBarHeight(context)),

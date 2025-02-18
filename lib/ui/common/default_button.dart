@@ -43,9 +43,9 @@ class DefaultButton extends StatefulWidget {
 class DefaultButtonState extends State<DefaultButton> {
   @override
   Widget build(BuildContext context) {
-    var activateColor = widget.color ?? CustomColors.current.buttonBackground;
+    var activateColor = widget.color ?? C.current.onBackground;
     var deactivateColor =
-        CustomColors.color(const Color(0xffEDEDED), const Color(0xff1E1E28));
+        C.color(const Color(0xffEDEDED), const Color(0xff1E1E28));
     var requiredBoldGenerator = widget.title.contains('*');
     var buttonTitleColor = widget.isReverse
         ? widget.onTap == null

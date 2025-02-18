@@ -50,19 +50,19 @@ class _TestMainScreenState extends State<TestMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: CustomColors.current.appBarBackground,
+        backgroundColor: C.current.lightBase,
         title: Text(
           "Shift Fn",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9),
+            color: C.current.sub01.withValues(alpha: 0.9),
           ),
         ),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        color: CustomColors.current.background,
+        color: C.current.background,
         alignment: Alignment.center,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

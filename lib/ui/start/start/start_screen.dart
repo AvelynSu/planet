@@ -36,7 +36,7 @@ class _StartScreenState extends State<StartScreen> {
         child: BlocBuilder<StartCubit, StartState>(
           builder: (context, state) {
             return Scaffold(
-              backgroundColor: CustomColors.current.background,
+              backgroundColor: C.current.background,
               body: Container(
                 padding: EdgeInsets.symmetric(horizontal: hPadding),
                 child: Column(

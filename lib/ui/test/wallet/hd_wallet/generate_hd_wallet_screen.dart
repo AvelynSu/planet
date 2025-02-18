@@ -35,17 +35,17 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
   Widget build(BuildContext context) {
     // print(TestHdWallet.btcAddress);
     return Scaffold(
-      backgroundColor: CustomColors.current.background,
+      backgroundColor: C.current.background,
       appBar: AppBar(
-        iconTheme: IconThemeData(
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9)),
-        backgroundColor: CustomColors.current.appBarBackground,
+        iconTheme:
+            IconThemeData(color: C.current.mainText.withValues(alpha: 0.9)),
+        backgroundColor: C.current.lightBase,
         title: Text(
           "Create Wallet",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9),
+            color: C.current.mainText.withValues(alpha: 0.9),
           ),
         ),
       ),
@@ -169,8 +169,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
         children: [
           Text(
             title,
-            style: fontR(14,
-                color: CustomColors.current.text.withValues(alpha: 0.5)),
+            style: fontR(14, color: C.current.mainText.withValues(alpha: 0.5)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -178,7 +177,7 @@ class _GenerateHdWalletScreenState extends State<GenerateHdWalletScreen> {
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: fontR(14, color: CustomColors.current.text, height: 1.5),
+              style: fontR(14, color: C.current.mainText, height: 1.5),
             ),
           ),
         ],

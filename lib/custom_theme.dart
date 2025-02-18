@@ -24,46 +24,46 @@ class CustomThemeMode {
   }
 }
 
-// 커스텀 색상 관리
-class CustomColors {
-  static const lightTheme = ColorTheme(
-    text: Colors.yellow,
-    appbarText: Colors.white,
+class C {
+  final Color primary;
+  final Color onBackground;
+  final Color mainText;
+  final Color sub01; // AAAAAA // 5C5964
+  final Color background;
+  final Color lightBase; // EDEDED // 1E1E28
+
+  const C({
+    required this.primary,
+    required this.mainText,
+    required this.background,
+    required this.onBackground,
+    required this.sub01,
+    required this.lightBase,
+  });
+
+  static const lightTheme = C(
+    primary: Color(0xffFF0050),
+    mainText: Colors.black,
+    sub01: Color(0xffAAAAAA),
     background: Colors.white,
-    appBarBackground: Colors.deepOrange,
-    buttonBackground: Colors.deepOrange,
+    onBackground: Colors.black,
+    lightBase: Color(0xffEDEDED),
   );
 
-  static const darkTheme = ColorTheme(
-    text: Colors.white,
-    appbarText: Colors.white,
-    background: Color.fromRGBO(0, 0, 0, 0.98),
-    appBarBackground: Color.fromRGBO(51, 51, 51, 1),
-    buttonBackground: Colors.white,
+  static const darkTheme = C(
+    primary: Color(0xffFF0050),
+    mainText: Colors.white,
+    sub01: Color(0xff5C5964),
+    background: Colors.black,
+    onBackground: Colors.white,
+    lightBase: Color(0xff1E1E28),
   );
 
-  static ColorTheme get current =>
-      CustomThemeMode.isLight ? lightTheme : darkTheme;
+  static C get current => CustomThemeMode.isLight ? lightTheme : darkTheme;
 
   static Color color(Color light, Color dark) {
     return CustomThemeMode.isLight ? light : dark;
   }
-}
-
-class ColorTheme {
-  final Color text;
-  final Color appbarText;
-  final Color background;
-  final Color appBarBackground;
-  final Color buttonBackground;
-
-  const ColorTheme({
-    required this.text,
-    required this.background,
-    required this.appbarText,
-    required this.appBarBackground,
-    required this.buttonBackground,
-  });
 }
 
 double hPadding = 20;

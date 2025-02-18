@@ -55,7 +55,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                   context.read<CreateWalletCubit>().updatePage(state.page - 1);
                 }
               },
-              backgroundColor: CustomColors.current.background,
+              backgroundColor: C.current.background,
               body: Container(
                 child: Column(
                   children: [

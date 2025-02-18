@@ -35,17 +35,17 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.current.background,
+      backgroundColor: C.current.background,
       appBar: AppBar(
-        iconTheme: IconThemeData(
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9)),
-        backgroundColor: CustomColors.current.appBarBackground,
+        iconTheme:
+            IconThemeData(color: C.current.mainText.withValues(alpha: 0.9)),
+        backgroundColor: C.current.lightBase,
         title: Text(
           "Restore Wallet",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9),
+            color: C.current.mainText.withValues(alpha: 0.9),
           ),
         ),
       ),
@@ -95,7 +95,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
                       children: [
                         Text(
                           "ETH\n",
-                          style: fontB(16, color: CustomColors.current.text),
+                          style: fontB(16, color: C.current.mainText),
                         ),
                         ...ethAddress.reversed
                             .map((e) => HdWalletTile(address: e)),
@@ -108,7 +108,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
                       children: [
                         Text(
                           "BTC\n",
-                          style: fontB(16, color: CustomColors.current.text),
+                          style: fontB(16, color: C.current.mainText),
                         ),
                         ...btcAddress.reversed
                             .map((e) => HdWalletTile(address: e)),
@@ -121,7 +121,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
                       children: [
                         Text(
                           "SOL\n",
-                          style: fontB(16, color: CustomColors.current.text),
+                          style: fontB(16, color: C.current.mainText),
                         ),
                         ...solAddress.reversed.map(
                           (e) => HdWalletTile(address: e),
@@ -145,8 +145,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
         children: [
           Text(
             title,
-            style: fontR(14,
-                color: CustomColors.current.text.withValues(alpha: 0.5)),
+            style: fontR(14, color: C.current.mainText.withValues(alpha: 0.5)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -154,7 +153,7 @@ class _RestoreHdWalletScreenState extends State<RestoreHdWalletScreen> {
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: fontR(14, color: CustomColors.current.text, height: 1.5),
+              style: fontR(14, color: C.current.mainText, height: 1.5),
             ),
           ),
         ],

@@ -19,7 +19,7 @@ class _TestDefaultButtonState extends State<TestDefaultButton> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: CustomColors.current.buttonBackground,
+      color: C.current.onBackground,
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
@@ -29,7 +29,7 @@ class _TestDefaultButtonState extends State<TestDefaultButton> {
           height: 52,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: CustomColors.current.buttonBackground,
+            color: C.current.background,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -38,7 +38,7 @@ class _TestDefaultButtonState extends State<TestDefaultButton> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: CustomColors.current.text,
+              color: C.current.mainText,
             ),
           ),
         ),

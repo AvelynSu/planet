@@ -24,17 +24,17 @@ class _TestGetBalanceTestScreenState extends State<TestGetBalanceTestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.current.background,
+      backgroundColor: C.current.background,
       appBar: AppBar(
-        iconTheme: IconThemeData(
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9)),
-        backgroundColor: CustomColors.current.appBarBackground,
+        iconTheme:
+            IconThemeData(color: C.current.mainText.withValues(alpha: 0.9)),
+        backgroundColor: C.current.lightBase,
         title: Text(
           "잔액 불러오기",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: CustomColors.current.appbarText.withValues(alpha: 0.9),
+            color: C.current.mainText.withValues(alpha: 0.9),
           ),
         ),
       ),
