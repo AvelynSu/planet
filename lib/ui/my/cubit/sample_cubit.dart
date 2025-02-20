@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_state.dart';
+import 'package:planet/model/planet_dto.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
@@ -9,13 +12,28 @@ import '../../../../model/custom_exception.dart';
 part 'sample_state.dart';
 
 class MyCubit extends Cubit<MyState> {
-  MyCubit() : super(const MyState());
+  final AppBloc appBloc;
 
-  initialize() async {}
+  MyCubit({
+    required this.appBloc,
+  }) : super(const MyState()) {
+    subscription = appBloc.stream.listen((e) => update(e as AppLoaded));
+  }
+
+  late StreamSubscription subscription;
+
+  update(AppLoaded appState) {
+    emit(state.copyWith(planetDto: appState.current));
+  }
+
+  initialize() async {
+    var appState = (appBloc.state as AppLoaded);
+    emit(state.copyWith(planetDto: appState.current));
+  }
 
   @override
   Future<void> close() {
-    // TODO: implement close
+    subscription.cancel();
     return super.close();
   }
 }

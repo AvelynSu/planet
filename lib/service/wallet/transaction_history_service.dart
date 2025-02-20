@@ -40,8 +40,8 @@ class WalletHistoryService {
         '&startblock=0'
         '&endblock=99999999'
         '&page=1'
-        '&offset=100' // 최근 100개 거래
-        '&sort=desc' // 최신순
+        '&offset=100'
+        '&sort=desc'
         '&apikey=${config.etherscanApiKey}';
 
     final response = await http.get(Uri.parse(url));
@@ -82,10 +82,16 @@ class WalletHistoryService {
     String tokenAddress,
   ) async {
     final allTokenTxs = await getTokenTransactions(address);
-    return allTokenTxs
-        .where((tx) =>
-            tx.tokenAddress?.toLowerCase() == tokenAddress.toLowerCase())
-        .toList();
+
+    final filteredTxs = allTokenTxs.where((tx) {
+      print("트랜잭션 토큰 주소: ${tx.tokenAddress}");
+      print("필터링할 토큰 주소: $tokenAddress");
+      return tx.tokenAddress?.toLowerCase() == tokenAddress.toLowerCase();
+    }).toList();
+
+    print("필터링된 트랜잭션 개수: ${filteredTxs.length}");
+
+    return filteredTxs;
   }
 }
 

@@ -69,60 +69,81 @@ class C {
 double hPadding = 20;
 
 /// font =======================================================================
-TextStyle fontH(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontH(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w900,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontB(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontB(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w700,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontSB(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontSB(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w600,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontM(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontM(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w500,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontR(double size, {Color? color, double? height}) => TextStyle(
-      fontFamily: 'Pretendard',
+TextStyle fontR(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
+      fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w400,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontL(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontL(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w300,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
-TextStyle fontTH(double size, {Color? color, double? height}) => TextStyle(
+TextStyle fontTH(double size,
+        {Color? color, double? height, bool isIalic = false}) =>
+    TextStyle(
       fontFamily: 'WorkSans',
       fontSize: size,
       fontWeight: FontWeight.w100,
       height: height ?? 1,
       color: color,
+      fontStyle: isIalic ? FontStyle.italic : null,
     );
 
 const primary = Color(0xffFF0050);

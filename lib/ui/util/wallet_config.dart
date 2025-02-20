@@ -18,5 +18,5 @@ class WalletConfig {
         chainId = _env == _Environment.prod ? 1 : 5,
         etherscanApiKey = _env == _Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
-            : "";
+            : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF";
 }

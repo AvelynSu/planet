@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/import_wallet/import_wallet_screen.dart';
 import 'package:planet/ui/start/start/cubit/start_cubit.dart';
@@ -47,15 +47,24 @@ class _StartScreenState extends State<StartScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomImage(
-                              path: "icons/ic_planet_logo.png",
-                              width: 180,
+                            Gif(
+                              image: AssetImage("assets/icons/planet.gif"),
+                              width: 200,
+                              duration: const Duration(seconds: 3),
+                              autostart: Autostart.loop,
                             ),
+
+                            // CustomImage(
+                            //   path: "icons/ic_planet_logo.png",
+                            //   width: 180,
+                            // ),
                             Text(
                               'Make Your\nOwn Planet',
                               textAlign: TextAlign.center,
-                              style:
-                                  fontR(24, color: Colors.white, height: 1.4),
+                              style: fontR(28,
+                                  color: Colors.white,
+                                  height: 1.4,
+                                  isIalic: true),
                             ),
                           ],
                         ),

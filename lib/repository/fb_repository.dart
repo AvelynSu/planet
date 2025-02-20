@@ -42,6 +42,12 @@ class ApiRepository {
     return planet.copyWith(id: res.id);
   }
 
+  /// 이름 변경
+  Future<PlanetDto> updatePlanet(PlanetDto planet, String name) async {
+    var res = await _planetCol.doc(planet.id).update({"name": name});
+    return planet.copyWith(name: name);
+  }
+
   /// 로컬에 니모닉 저장
 
   /// 사용 가능한 닉네임인지 확인

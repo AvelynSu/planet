@@ -213,7 +213,10 @@ class _LinedFieldState extends State<LinedField> {
                       ? 0
                       : (text.length / (widget.maxLength ?? 20)) *
                           MediaQuery.of(context).size.width)
-                  : 0,
+                  : (text.isEmpty
+                      ? 0
+                      : (text.length / (widget.maxLength ?? 20)) *
+                          MediaQuery.of(context).size.width),
               decoration: BoxDecoration(
                 color: widget.borderColor ?? primary,
                 borderRadius: BorderRadius.circular(100),

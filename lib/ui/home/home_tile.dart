@@ -18,15 +18,26 @@ class HomeTile extends StatelessWidget {
         horizontal: hPadding,
         vertical: 16,
       ),
+      margin: EdgeInsets.only(
+        bottom: 12,
+        left: hPadding,
+        right: hPadding,
+      ),
+      decoration: BoxDecoration(
+          color: C.current.lightBase.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
-            margin: EdgeInsets.only(right: 12),
+            width: 32,
+            height: 32,
+            clipBehavior: Clip.antiAlias,
+            margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: C.current.lightBase),
+              borderRadius: BorderRadius.circular(100),
+              // color: C.current.onBackground.withValues(alpha: 0.3),
+            ),
+            child: CustomImage(path: item.info.logoUrl ?? ""),
           ),
           Expanded(
             child: Text(

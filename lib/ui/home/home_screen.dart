@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
 import 'package:planet/ui/home/home_tile.dart';
+import 'package:planet/ui/token_balance/sample_screen.dart';
 
 import '../../../enum/screen_status.dart';
 import '../common/planet_address_bottom_sheet.dart';
@@ -62,15 +65,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: AppUi.statusBarHeight(context),
                         ),
-                        Container(height: 68),
+                        Container(height: 40),
 
                         /// 플래닛 이름
                         Column(
                           children: [
-                            PlanetWidget(
-                              data: state.data,
-                              size: 160,
-                            ),
+                            Stack(alignment: Alignment.center, children: [
+                              PlanetWidget(
+                                data: state.data,
+                                size: 160,
+                              ),
+                              Lottie.asset("assets/sparkle.json", width: 200),
+                            ]),
                             Container(
                               padding:
                                   const EdgeInsets.only(top: 20, bottom: 8),
@@ -99,7 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ...List.generate(5, (e) => Skeleton.homeTile),
                             ],
                           ),
-                        ...state.balances.map((e) => HomeTile(item: e)),
+                        ...state.balances.map(
+                          (e) => BounceButton(
+                            onTap: () {
+                              TokenHistoryScreen.push(context, info: e);
+                            },
+                            child: HomeTile(item: e),
+                          ),
+                        ),
                       ],
                     ),
                   ),

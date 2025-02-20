@@ -5,6 +5,7 @@ import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
+import 'package:planet/ui/change_nickname/change_nickname_screen.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
@@ -39,7 +40,8 @@ class _MyScreenState extends State<MyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => MyCubit(),
+      create: (BuildContext context) =>
+          MyCubit(appBloc: context.read<AppBloc>())..initialize(),
       child: BlocListener<MyCubit, MyState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.fail) {}
@@ -59,11 +61,17 @@ class _MyScreenState extends State<MyScreen> {
                   SizedBox(
                     height: AppUi.statusBarHeight(context) + 60,
                   ),
-                  BoldMsgGenerator.toRichText(
-                    text: "You're on\n*${appState.current.name}*",
-                    textAlign: TextAlign.center,
-                    style: fontR(24, color: C.current.mainText, height: 1.5),
-                    boldStyle: fontB(24, color: C.current.mainText),
+                  BounceButton(
+                    onTap: () {
+                      ChangeNicknameScreen.push(context,
+                          planetDto: appState.current);
+                    },
+                    child: BoldMsgGenerator.toRichText(
+                      text: "You're on\n*${appState.current.name}*",
+                      textAlign: TextAlign.center,
+                      style: fontR(24, color: C.current.mainText, height: 1.7),
+                      boldStyle: fontB(24, color: C.current.mainText),
+                    ),
                   ),
                   const SizedBox(height: 60),
                   Row(

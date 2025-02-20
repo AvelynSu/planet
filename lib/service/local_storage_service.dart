@@ -8,9 +8,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorageService {
   static Future<void> saveMnemonics(List<PlanetDto> mnemonics) async {
     const storage = FlutterSecureStorage();
-    final jsonList = mnemonics.map((m) => m.toJson(isLocal: true)).toList();
-    final encodedJson = jsonEncode(jsonList);
 
+    final existingData = await storage.read(key: 'planets');
+    List<dynamic> storedList =
+        existingData != null ? jsonDecode(existingData) : [];
+
+    List newMnemonics = mnemonics.map((m) => m.toJson(isLocal: true)).toList();
+
+    for (var newItem in newMnemonics) {
+      final existingIndex =
+          storedList.indexWhere((item) => item['id'] == newItem['id']);
+      if (existingIndex != -1) {
+        storedList[existingIndex] = newItem;
+      } else {
+        storedList.add(newItem);
+      }
+    }
+
+    final encodedJson = jsonEncode(storedList);
     await storage.write(key: 'planets', value: encodedJson);
   }
 
