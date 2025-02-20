@@ -12,6 +12,16 @@ class ApiRepository {
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
+  /// 행성 전부 불러오기
+  Future<List<PlanetDto>> getAllPlanetForTest() async {
+    var res = await _planetCol.get();
+
+    var result =
+        res.docs.map((e) => PlanetDto.fromJson(e.data(), id: e.id)).toList();
+
+    return result;
+  }
+
   /// 닉네임 전부 불러오기
   Future<List<String>> getAllNickName() async {
     var res = await _planetNameDoc.get();
@@ -41,7 +51,8 @@ class ApiRepository {
   }
 
   /// 주소로 행성 불러오기.
-  Future<PlanetDto> getPlanetByAddress(String address) async {
+  Future<PlanetDto> getPlanetByAddress(String address,
+      {String? mnemonic}) async {
     var res = await _planetCol.where("address", isEqualTo: address).get();
 
     return res.docs.isEmpty
@@ -49,14 +60,14 @@ class ApiRepository {
         : PlanetDto.fromJson(
             res.docs.first.data(),
             id: res.docs.first.id,
-          );
+          ).copyWith(mnemonic: mnemonic);
   }
 
   /// 로컬에 있는 플래닛 정보로 FB에서 불러오기
   Future<List<PlanetDto>> getPlanetByLocalInfo(List<PlanetDto> local) async {
     List<Future<PlanetDto>> planetTask = [];
     for (var item in local) {
-      var planet = getPlanetByAddress(item.address);
+      var planet = getPlanetByAddress(item.address, mnemonic: item.mnemonic);
       planetTask.add(planet);
     }
 

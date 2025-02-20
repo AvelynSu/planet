@@ -202,9 +202,7 @@ class _DefaultDialogState extends State<DefaultDialog> {
                             Navigator.pop(context);
                           },
                           title: widget.firstButtonLabel ??
-                              (widget.onSecondAction != null
-                                  ? "취소"
-                                  : "Smile ☺️"),
+                              (widget.onSecondAction != null ? "취소" : "확인"),
                           textColor: b5,
                         ),
                       ),

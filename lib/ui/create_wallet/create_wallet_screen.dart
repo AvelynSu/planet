@@ -47,7 +47,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
             }
 
             return BaseScaffold(
-              isTransparentAppbar: true,
+              isTransparentAppbar: false,
               onBack: () {
                 if (state.page == 0) {
                   Navigator.pop(context);
@@ -63,14 +63,17 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                       child: page,
                     ),
                     if (state.page == 0)
-                      DefaultButton(
-                        showBottomPadding: true,
-                        title: "다음",
-                        onTap: () {
-                          if (state.page == 0) {
-                            cubit.updatePage(state.page + 1);
-                          }
-                        },
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: hPadding),
+                        child: DefaultButton(
+                          showBottomPadding: true,
+                          title: "다음",
+                          onTap: () {
+                            if (state.page == 0) {
+                              cubit.updatePage(state.page + 1);
+                            }
+                          },
+                        ),
                       ),
                   ],
                 ),

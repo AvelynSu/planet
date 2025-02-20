@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_header.dart';
@@ -7,6 +11,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../custom_theme.dart';
 import 'copy_component.dart';
+import 'generate_planet.dart';
 
 class PlanetAddressBottomSheet extends StatefulWidget {
   final PlanetDto planet;
@@ -36,88 +41,147 @@ class PlanetAddressBottomSheet extends StatefulWidget {
 }
 
 class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
+  Uint8List? planetImage;
+  final GlobalKey planetKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _capturePlanetImage();
+    });
+  }
+
+  Future<void> _capturePlanetImage() async {
+    Uint8List? imageData = await captureWidgetAsImage(planetKey);
+    if (imageData != null) {
+      setState(() {
+        planetImage = imageData;
+      });
+    }
+  }
+
+  Future<Uint8List?> captureWidgetAsImage(GlobalKey globalKey,
+      {double pixelRatio = 3.0}) async {
+    try {
+      RenderRepaintBoundary boundary =
+          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      print("Error capturing widget as image: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(20),
-          topLeft: Radius.circular(20),
+    return Stack(children: [
+      // 숨겨진 PlanetWidget (이미지 변환용)
+      Positioned(
+        top: -9999, // 화면에 표시되지 않도록 함
+        left: -9999,
+        child: RepaintBoundary(
+          key: planetKey,
+          child: Container(
+            width: 50,
+            height: 50,
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: PlanetWidget(
+              data: widget.planet.name,
+              size: 60, // 원하는 크기
+            ),
+          ),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Column(
-            children: [
-              CustomBottomSheetHeader(
-                title: widget.planet.networkType?.title ?? "",
-              ),
-              const SizedBox(height: 40),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color(0xffEDEDED),
-                  ),
+      Container(
+        width: double.infinity,
+        margin:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              children: [
+                CustomBottomSheetHeader(
+                  title: widget.planet.networkType?.title ?? "",
                 ),
-                child: QrImageView(
-                  data: widget.planet.address,
-                  version: QrVersions.auto,
-                  embeddedImage:
-                      const AssetImage('assets/icons/ic_qr_image.png'),
-                  embeddedImageStyle: const QrEmbeddedImageStyle(
-                    size: Size(36, 36),
-                  ),
-                  size: 180.0,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 20, bottom: 8),
-                child: Text(
-                  widget.planet.name,
-                  style: fontR(
-                    24,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              CopyComponent(
-                planet: widget.planet,
-              ),
-              const SizedBox(height: 60),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: hPadding),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _button(
-                        title: "Copy",
-                        isReverse: true,
-                        onTap: () {},
-                      ),
+                const SizedBox(height: 40),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xffEDEDED),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _button(
-                        title: "Send",
-                        onTap: () {},
-                      ),
+                  ),
+                  child: QrImageView(
+                    data: widget.planet.address,
+                    version: QrVersions.auto,
+                    embeddedImage:
+                        planetImage != null ? MemoryImage(planetImage!) : null,
+                    embeddedImageStyle: const QrEmbeddedImageStyle(
+                      size: Size(36, 36),
                     ),
-                  ],
+                    size: 180.0,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: AppUi.bottomPadding(context),
-              ),
-            ],
-          )
-        ],
+                Container(
+                  padding: const EdgeInsets.only(top: 20, bottom: 8),
+                  child: Text(
+                    widget.planet.name,
+                    style: fontR(
+                      24,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                CopyComponent(
+                  planet: widget.planet,
+                ),
+                const SizedBox(height: 60),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: hPadding),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _button(
+                          title: "Copy",
+                          isReverse: true,
+                          onTap: () {},
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _button(
+                          title: "Send",
+                          onTap: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: AppUi.bottomPadding(context),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
-    );
+    ]);
   }
 
   _button({
@@ -128,6 +192,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
     return BounceButton(
       onTap: () {
         onTap();
+        Navigator.pop(context);
       },
       child: Container(
         height: 54,

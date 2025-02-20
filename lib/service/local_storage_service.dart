@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorageService {
   static Future<void> saveMnemonics(List<PlanetDto> mnemonics) async {
     const storage = FlutterSecureStorage();
-    final jsonList = mnemonics.map((m) => m.toJson()).toList();
+    final jsonList = mnemonics.map((m) => m.toJson(isLocal: true)).toList();
     final encodedJson = jsonEncode(jsonList);
 
     await storage.write(key: 'planets', value: encodedJson);

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
@@ -18,9 +19,10 @@ class CreateWalletConfirmMnemonicPage extends StatefulWidget {
 
 class _CreateWalletConfirmMnemonicPageState
     extends State<CreateWalletConfirmMnemonicPage> {
-  List<int> randomIdx = []; // 유저가 맞춰야하는 니모닉 인덱스
-  List<String> shuffled = []; // 선택 가능한 니모닉 목록
-  List<String> selected = []; // 유저가 선택한 니모닉
+  List<int> challengeIndices = []; // 유저가 맞춰야하는 니모닉 인덱스들
+  List<String> shuffledWords = []; // 선택 가능한 니모닉 목록
+  int currentStep = 0; // 현재 검증 단계 (0, 1, 2)
+  bool isVerifying = false; // 검증 중인지 여부
 
   @override
   void initState() {
@@ -32,150 +34,233 @@ class _CreateWalletConfirmMnemonicPageState
     var cubit = context.read<CreateWalletCubit>();
     var mnemonic = cubit.state.mnemonic.split(" ");
 
-    // 선택 가능한 니모닉 만들기 (섞인 상태)
-    shuffled = [...mnemonic]..shuffle();
+    // 유저가 선택해야 하는 니모닉 인덱스 3개 설정
+    challengeIndices = _getRandomNumbers(3);
 
-    // 유저가 선택해야 하는 니모닉 인덱스 설정
-    randomIdx = _getRandomNumbers();
+    // 현재 검증 단계 초기화
+    currentStep = 0;
+
+    // 화면 갱신
+    setState(() {});
   }
 
-  List<int> _getRandomNumbers() {
+  // count개의 랜덤한 인덱스 반환 (0~11)
+  List<int> _getRandomNumbers(int count) {
     final Set<int> numbers = {};
-    while (numbers.length < 4) {
+    while (numbers.length < count) {
       numbers.add(Random().nextInt(12));
     }
     return numbers.toList()..sort();
   }
 
-  bool _verifyMnemonic() {
-    var originalMnemonic =
-        context.read<CreateWalletCubit>().state.mnemonic.split(" ");
-    var isCorrect = true;
+  // 현재 단계에서 보여줄 선택지 생성
+  List<String> _getShuffledChoices() {
+    var cubit = context.read<CreateWalletCubit>();
+    var allWords = cubit.state.mnemonic.split(" ");
+    var correctWord = allWords[challengeIndices[currentStep]];
 
-    for (var i = 0; i < randomIdx.length; i++) {
-      if (selected[i] != originalMnemonic[randomIdx[i]]) {
-        isCorrect = false;
-        break;
+    // 정답 + 3개의 오답으로 구성된 선택지 생성
+    List<String> choices = [correctWord];
+
+    // 오답 추가 (중복되지 않도록)
+    while (choices.length < 4) {
+      int randomIndex = Random().nextInt(12);
+      if (randomIndex != challengeIndices[currentStep] &&
+          !choices.contains(allWords[randomIndex])) {
+        choices.add(allWords[randomIndex]);
       }
     }
-    return isCorrect;
+
+    // 선택지 섞기
+    choices.shuffle();
+    return choices;
+  }
+
+  // 단어 선택 처리
+  void _handleWordSelection(String selectedWord) {
+    if (isVerifying) return;
+
+    setState(() {
+      isVerifying = true;
+    });
+
+    var cubit = context.read<CreateWalletCubit>();
+    var allWords = cubit.state.mnemonic.split(" ");
+    var correctWord = allWords[challengeIndices[currentStep]];
+
+    if (selectedWord == correctWord) {
+      // 정답일 경우
+      if (currentStep == challengeIndices.length - 1) {
+        // 모든 단계 완료
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.pop(context);
+          SetNicknameScreen.push(
+            context,
+            planetDto: PlanetDto(
+              mnemonic: cubit.state.mnemonic,
+            ),
+          );
+        });
+      } else {
+        // 다음 단계로
+        Future.delayed(const Duration(milliseconds: 500), () {
+          setState(() {
+            currentStep++;
+            isVerifying = false;
+            shuffledWords = _getShuffledChoices();
+          });
+        });
+      }
+    } else {
+      // 오답일 경우
+      Future.delayed(const Duration(milliseconds: 500), () {
+        DefaultDialog.showTimerDialog(context,
+                description: "잘못된 단어입니다. 다시 시도해주세요.")
+            .then((_) {
+          setState(() {
+            isVerifying = false;
+          });
+        });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var cubit = context.read<CreateWalletCubit>();
     var state = cubit.state;
+    var allWords = state.mnemonic.split(" ");
+
+    // 첫 렌더링 시 선택지 초기화
+    if (shuffledWords.isEmpty) {
+      shuffledWords = _getShuffledChoices();
+    }
 
     return Column(
       children: [
-        const SizedBox(height: 100),
-        // 유저가 맞춰야 하는 니모닉 표시
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 10.0,
-            mainAxisExtent: 40,
-          ),
-          itemCount: 12,
-          shrinkWrap: true,
-          itemBuilder: (context, i) {
-            var items = state.mnemonic.split(" ");
-            var item = items.length > i ? items[i] : "";
-
-            var text = "";
-            if (randomIdx.contains(i)) {
-              var selectedIndex = randomIdx.indexOf(i);
-              text = selectedIndex < selected.length
-                  ? selected[selectedIndex]
-                  : "";
-            } else {
-              text = item;
-            }
-
-            bool isRandomItem = randomIdx.contains(i);
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  width: 3,
-                  color: isRandomItem ? Colors.blue : Colors.grey[300]!,
+        // 진행 상태 표시
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              challengeIndices.length,
+              (index) => Container(
+                width: 20,
+                height: 6,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: index <= currentStep
+                      ? C.current.primary
+                      : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              child: Center(child: Text(text)),
-            );
-          },
+            ),
+          ),
         ),
 
-        // 유저가 선택할 수 있는 니모닉 목록
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 10.0,
-            mainAxisExtent: 40,
-          ),
-          itemCount: shuffled.length,
-          shrinkWrap: true,
-          itemBuilder: (context, i) {
-            var item = shuffled.length > i ? shuffled[i] : "";
+        const SizedBox(height: 40),
 
-            return GestureDetector(
-              onTap: () {
-                if (selected.length >= 4) {
-                  if (selected.length == 4 && selected.last == item) {
-                    selected.remove(item);
-                    setState(() {});
-                  }
-                  return;
-                }
+        // 안내 메시지
+        Text('니모닉의 ${challengeIndices[currentStep] + 1}번째 단어를 선택해주세요',
+            style: fontB(18, color: C.current.mainText)),
 
-                if (selected.contains(item)) {
-                  if (selected.last == item) {
-                    selected.remove(item);
-                    setState(() {});
-                  }
-                  return;
-                }
+        const SizedBox(height: 20),
 
-                setState(() {
-                  selected.add(item);
-                  if (selected.length == 4) {
-                    var isCorrect = _verifyMnemonic();
-                    if (isCorrect) {
-                      Navigator.pop(context);
-                      SetNicknameScreen.push(
-                        context,
-                        planetDto: PlanetDto(
-                          mnemonic: state.mnemonic,
-                        ),
-                      );
-                    } else {
-                      selected = [];
-                      setState(() {});
-                      DefaultDialog.show(context, description: "Try Again");
-                    }
-                  }
-                });
-              },
-              child: Container(
+        // 니모닉 단어 표시 (현재 검증 중인 단어는 ?로 표시)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 10.0,
+              mainAxisExtent: 40,
+            ),
+            itemCount: 12,
+            shrinkWrap: true,
+            itemBuilder: (context, i) {
+              bool isCurrentChallenge = i == challengeIndices[currentStep];
+
+              return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: C.current.lightBase,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    width: 3,
-                    color: selected.contains(item)
-                        ? Colors.red
-                        : Colors.grey[300]!,
+                    color: isCurrentChallenge
+                        ? C.current.primary
+                        : C.current.sub01.withValues(alpha: 0.5),
+                    width: 2,
                   ),
                 ),
-                child: Center(child: Text(item)),
-              ),
-            );
-          },
+                child: Center(
+                  child: Text(
+                    isCurrentChallenge ? '?' : "${i + 1}. ${allWords[i]}",
+                    style: fontB(
+                      14,
+                      color: isCurrentChallenge
+                          ? C.current.primary
+                          : C.current.mainText,
+                    ).copyWith(
+                      fontWeight: isCurrentChallenge
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 60),
+
+        // 선택지
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16.0,
+              crossAxisSpacing: 16.0,
+              mainAxisExtent: 50,
+            ),
+            itemCount: shuffledWords.length,
+            shrinkWrap: true,
+            itemBuilder: (context, i) {
+              return GestureDetector(
+                onTap: isVerifying
+                    ? null
+                    : () => _handleWordSelection(shuffledWords[i]),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: C.current.lightBase,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      width: 2,
+                      color: Colors.grey[300]!,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      shuffledWords[i],
+                      style: fontM(16, color: C.current.mainText),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );

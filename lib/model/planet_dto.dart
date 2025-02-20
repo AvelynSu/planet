@@ -31,6 +31,7 @@ class PlanetDto extends Equatable {
       name: json['name'] ?? '',
       address: json["address"] ?? "",
       createdAt: FBFormatter.fromJsonDate(json["createdAt"]),
+      mnemonic: json["mnemonic"] ?? "",
     );
   }
 
@@ -39,6 +40,7 @@ class PlanetDto extends Equatable {
       'id': id,
       'name': name,
       'networkType': networkType?.name,
+      if (isLocal) 'mnemonic': mnemonic,
       'address': address,
       'createdAt': FBFormatter.toJsonDate(createdAt),
       'isCurrent': isCurrent,

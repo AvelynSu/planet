@@ -4,7 +4,7 @@ import 'package:planet/ui/home/home_screen.dart';
 import '../../enum/menu_type.dart';
 import '../common/base_scaffold.dart';
 import '../my/my_screen.dart';
-import '../test_transfer_screen.dart';
+import '../planets/sample_screen.dart';
 import 'bottom_bar.dart';
 
 class AppView extends StatefulWidget {
@@ -55,7 +55,7 @@ class _AppViewState extends State<AppView> {
       case MenuType.home:
         return const HomeScreen();
       case MenuType.planets:
-        return const TestTransferScreen();
+        return const PlanetsScreen();
       case MenuType.my:
         return const MyScreen();
     }

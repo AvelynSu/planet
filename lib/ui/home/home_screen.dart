@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
+            print(state.planet.mnemonic);
             return PlanetBackgroundFrame(
               scale: 3.2,
               topPadding: 50,

@@ -137,7 +137,7 @@ class _CustomFieldState extends State<CustomField> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: widget.borderColor ?? borderSecondary,
+                  color: widget.borderColor ?? C.current.sub01,
                 ),
               ),
               child: Row(children: [
@@ -156,8 +156,8 @@ class _CustomFieldState extends State<CustomField> {
                       expands: widget.expands,
                       controller: _controller,
                       textAlign: TextAlign.left,
-                      style:
-                          widget.textStyle ?? fontR(16, height: 1.3, color: b5),
+                      style: widget.textStyle ??
+                          fontR(16, height: 1.3, color: C.current.mainText),
                       cursorColor: widget.cursorColor ?? b5,
                       onChanged: (text) {
                         this.text = text;
@@ -172,8 +172,9 @@ class _CustomFieldState extends State<CustomField> {
                         filled: widget.backgroundColor != null,
                         counterText: '',
                         hintText: widget.hintText ?? '',
-                        hintStyle: widget.textStyle?.copyWith(color: b5) ??
-                            fontR(16, color: b3),
+                        hintStyle: widget.textStyle
+                                ?.copyWith(color: C.current.sub01) ??
+                            fontR(16, color: C.current.sub01),
                         contentPadding: widget.padding ??
                             EdgeInsets.symmetric(
                               vertical: widget.maxLine != null ? 12 : 0,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/bounce_button.dart';
@@ -31,7 +30,7 @@ class _CopyComponentState extends State<CopyComponent> {
         if (widget.onSuccess != null) {
           widget.onSuccess!();
         }
-        Fluttertoast.showToast(msg: "Success Copy");
+        // Fluttertoast.showToast(msg: "Success Copy");
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),

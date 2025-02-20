@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
@@ -26,11 +27,20 @@ class ImportWalletScreen extends StatefulWidget {
 
 class _ImportWalletScreenState extends State<ImportWalletScreen> {
   late TextEditingController _controller;
+  bool _isValidInput = false;
 
   @override
   void initState() {
     _controller = TextEditingController();
     super.initState();
+  }
+
+  void _validateInput(String text) {
+    final wordCount =
+        text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    _isValidInput =
+        (wordCount == 12 || wordCount == 24) && text.trim().isNotEmpty;
+    setState(() {});
   }
 
   @override
@@ -43,77 +53,241 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
       child: BlocListener<ImportWalletCubit, ImportWalletState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.fail) {}
-
           if (state.status == ScreenStatus.success) {}
         },
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<ImportWalletCubit, ImportWalletState>(
           builder: (context, state) {
             var cubit = context.read<ImportWalletCubit>();
-            Widget page = Container();
 
             return BaseScaffold(
               onLoading: state.status == ScreenStatus.loading,
-              title: "복구 문구를 입력하세요.",
+              title: "복구 문구 입력",
               onBack: () {
                 Navigator.pop(context);
               },
               backgroundColor: C.current.background,
-              body: Container(
-                child: Column(
-                  children: [
-                    Text(
-                      '회복 문구는 12개 또는 24개의 단어로 구성됩니다. 단어를 띄어쓰기로 구분하여 올바른 순서로 입력해주세요.',
-                      style: fontR(14, color: C.current.background),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: hPadding, vertical: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: C.current.sub01.withValues(alpha: 0.7),
-                        ),
-                        borderRadius: BorderRadius.circular(8),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 안내 메시지
+                      // Container(
+                      //   padding: const EdgeInsets.all(16),
+                      //   decoration: BoxDecoration(
+                      //     color: C.current.primary.withValues(alpha: 0.1),
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     border: Border.all(
+                      //       color: C.current.primary.withValues(alpha: 0.15),
+                      //       width: 1,
+                      //     ),
+                      //   ),
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(
+                      //         Icons.info_outline,
+                      //         color: C.current.primary,
+                      //         size: 24,
+                      //       ),
+                      //       const SizedBox(width: 12),
+                      //       Expanded(
+                      //         child: Text(
+                      //           '회복 문구는 12개 또는 24개의 단어로 구성됩니다. 단어를 띄어쓰기로 구분하여 올바른 순서로 입력해주세요.',
+                      //           style: fontR(14,
+                      //               color: C.current.primary, height: 1.5),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+
+                      const SizedBox(height: 28),
+
+                      // 입력 필드 라벨
+                      Text(
+                        '복구 문구',
+                        style: fontB(16, color: C.current.mainText),
                       ),
-                      child: Container(
+
+                      const SizedBox(height: 10),
+
+                      // 입력 필드
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: C.current.lightBase,
+                          border: Border.all(
+                            color: C.current.sub01.withValues(alpha: 0.7),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomField(
                               controller: _controller,
-                              maxLine: 3,
+                              maxLine: 5,
                               hintText:
                                   "word1 word2 word3 word4 word5 word6 ...",
                               onChange: (text) {
-                                var item = cubit.getTestValue();
-                                _controller.text = item;
-                                cubit.updateMnimonic(item);
-                                setState(() {});
+                                _validateInput(text);
+                                cubit.updateMnimonic(text);
                               },
                             ),
-                            Text(
-                              '붙여넣기',
-                              style: fontR(14, color: C.current.mainText),
+
+                            const SizedBox(height: 12),
+
+                            // 붙여넣기 버튼
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    final data =
+                                        await Clipboard.getData('text/plain');
+                                    if (data?.text != null) {
+                                      _controller.text = data!.text!;
+                                      _validateInput(_controller.text);
+                                      cubit.updateMnimonic(_controller.text);
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: C.current.sub01
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.content_paste_rounded,
+                                          size: 16,
+                                          color: C.current.primary,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '붙여넣기',
+                                          style: fontM(14,
+                                              color: C.current.primary),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    DefaultButton(
-                      title: "지갑만들기",
-                      onTap: () async {
-                        var planet = await cubit.getAddress();
-                        if (planet != PlanetDto.empty) {
-                          if (planet.name.isEmpty) {
-                            Navigator.pop(context);
-                            SetNicknameScreen.push(context, planetDto: planet);
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        }
-                      },
-                    ),
-                  ],
+
+                      const SizedBox(height: 12),
+
+                      // 단어 수 표시
+                      Text(
+                        '입력된 단어 수: ${_controller.text.trim().isEmpty ? 0 : _controller.text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length}',
+                        style: fontR(14, color: C.current.sub01),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      // 경고 메시지
+                      // if (_controller.text.isNotEmpty && !_isValidInput)
+                      //   Container(
+                      //     padding: const EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.red[50],
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       border: Border.all(
+                      //         color: Colors.red[200]!,
+                      //         width: 1,
+                      //       ),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Icon(
+                      //           Icons.warning_amber_rounded,
+                      //           color: Colors.red[700],
+                      //           size: 20,
+                      //         ),
+                      //         const SizedBox(width: 8),
+                      //         Expanded(
+                      //           child: Text(
+                      //             '복구 문구는 12개 또는 24개의 단어로 구성되어야 합니다.',
+                      //             style: fontR(13, color: Colors.red[700]),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+
+                      const SizedBox(height: 40),
+
+                      // 버튼
+                      DefaultButton(
+                        title: "지갑 복구하기",
+                        onTap: _isValidInput
+                            ? () async {
+                                var planet = await cubit.getAddress();
+                                if (planet != PlanetDto.empty) {
+                                  if (planet.name.isEmpty) {
+                                    Navigator.pop(context);
+                                    SetNicknameScreen.push(context,
+                                        planetDto: planet);
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                }
+                              }
+                            : null,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 테스트용 버튼 (개발 모드에서만 표시)
+                      // TODO: 프로덕션에서 제거하기
+                      Opacity(
+                        opacity: 0.5,
+                        child: GestureDetector(
+                          onTap: () {
+                            var item = cubit.getTestValue();
+                            _controller.text = item;
+                            _validateInput(item);
+                            cubit.updateMnimonic(item);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: C.current.sub01.withValues(alpha: 0.5),
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "테스트 문구 채우기",
+                                style: fontR(14, color: C.current.sub01),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
