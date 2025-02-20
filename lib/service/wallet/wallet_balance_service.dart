@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/util/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../model/token_info.dart';
+import '../../ui/util/data/token_data.dart';
 
 class WalletBalanceService {
   final Web3Client web3client;
@@ -67,10 +69,8 @@ class WalletBalanceService {
   }
 
   /// 지갑의 모든 지원 토큰 잔액 조회
-  Future<Map<String, double>> getAllTokenBalances({
-    required String walletAddress,
-    required List<TokenInfo> supportedTokens,
-  }) async {
+  Future<List<TokenBalance>> getAllTokenBalances(
+      {required String walletAddress}) async {
     Map<String, double> balances = {};
 
     try {
@@ -80,19 +80,34 @@ class WalletBalanceService {
       balances['ETH'] = ethBalance / BigInt.from(10).pow(18);
 
       // 2. 각 ERC-20 토큰 잔액 조회
-      for (var token in supportedTokens) {
-        final rawBalance = await getTokenBalance(
-          walletAddress: walletAddress,
-          tokenAddress: token.address,
-        );
+      for (var token in TokenData.ethTokens) {
+        if (token.symbol != "ETH") {
+          final rawBalance = await getTokenBalance(
+            walletAddress: walletAddress,
+            tokenAddress: token.address,
+          );
 
-        // 토큰의 decimals에 따라 변환
-        // 예: USDT는 6자리, 대부분의 토큰은 18자리
-        final actualBalance = rawBalance / BigInt.from(10).pow(token.decimals);
-        balances[token.symbol] = actualBalance;
+          // 토큰의 decimals에 따라 변환
+          // 예: USDT는 6자리, 대부분의 토큰은 18자리
+          final actualBalance =
+              rawBalance / BigInt.from(10).pow(token.decimals);
+          balances[token.symbol] = actualBalance;
+        }
       }
 
-      return balances;
+      List<TokenBalance> items = [];
+
+      for (var item in TokenData.ethTokens) {
+        items.add(
+          TokenBalance.fromInfo(
+            item,
+            walletAddress,
+            balances[item.symbol] ?? 0,
+          ),
+        );
+      }
+
+      return items;
     } catch (e) {
       debugPrint('Error getting all balances: $e');
       throw Exception('Failed to get all balances');

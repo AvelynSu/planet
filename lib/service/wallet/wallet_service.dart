@@ -8,6 +8,7 @@ import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:planet/model/custom_exception.dart';
 import 'package:planet/ui/util/wallet_config.dart';
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
@@ -26,7 +27,7 @@ class WalletService {
   Future<String> generateHDAddress(
       NetworkType network, String mnemonic, int index) async {
     if (!bip39.validateMnemonic(mnemonic)) {
-      throw Exception("Invalid mnemonic phrase");
+      throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
     }
 
     // 니모닉으로부터 시드 생성

@@ -68,7 +68,7 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
       );
       await apiRepository.addPlanet(planet);
       await LocalStorageService.saveMnemonics([planet]);
-      appBloc.add(AppUpdate());
+      appBloc.add(AppInitialize());
       emit(state.copyWith(status: ScreenStatus.success));
     } else {
       emit(

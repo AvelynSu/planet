@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_button.dart';
-import 'package:planet/ui/common/default_dialog.dart';
+import 'package:planet/ui/import_wallet/import_wallet_screen.dart';
 import 'package:planet/ui/start/start/cubit/start_cubit.dart';
 
 import '../../../../enum/screen_status.dart';
@@ -76,8 +76,7 @@ class _StartScreenState extends State<StartScreen> {
                           borderColor: Colors.white.withValues(alpha: 0.3),
                           title: "Import Another Planet",
                           onTap: () {
-                            DefaultDialog.show(context,
-                                description: "준비중 입니다.");
+                            ImportWalletScreen.push(context);
                           },
                         ),
                       ],

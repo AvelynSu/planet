@@ -159,7 +159,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   _appBar() {
     if (existAppBar) {
-      Color? color = widget.appBarContentColor ?? C.current.background;
+      Color? color = widget.appBarContentColor ?? C.current.mainText;
       Color bgColor = widget.isTransparentAppbar
           ? Colors.transparent
           : (widget.backgroundColor ?? C.current.background);

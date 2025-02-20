@@ -10,7 +10,6 @@ import 'package:planet/service/wallet/wallet_balance_service.dart';
 import 'package:planet/service/wallet/walltet_transfer_service.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/util/app_ui.dart';
-import 'package:planet/ui/util/data/token_data.dart';
 
 class TestTransferScreen extends StatefulWidget {
   const TestTransferScreen({super.key});
@@ -113,9 +112,8 @@ class _TestTransferScreenState extends State<TestTransferScreen> {
 
     final balance = await service.getAllTokenBalances(
       walletAddress: planet?.address ?? "",
-      supportedTokens: TokenData.ethTokens,
     );
-    this.balance = balance;
+    // this.balance = balance;
     setState(() {});
   }
 

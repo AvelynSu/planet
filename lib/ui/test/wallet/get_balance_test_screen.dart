@@ -4,7 +4,6 @@ import 'package:planet/ui/common/test_default_button.dart';
 import '../../../custom_theme.dart';
 import '../../../service/wallet/wallet_balance_service.dart';
 import '../../util/app_ui.dart';
-import '../../util/data/token_data.dart';
 
 class TestGetBalanceTestScreen extends StatefulWidget {
   const TestGetBalanceTestScreen({super.key});
@@ -58,15 +57,13 @@ class _TestGetBalanceTestScreenState extends State<TestGetBalanceTestScreen> {
 
               try {
                 // 모든 지원 토큰의 잔액 조회
-                final balances = await service.getAllTokenBalances(
-                  walletAddress: address,
-                  supportedTokens: TokenData.ethTokens,
-                );
+                final balances =
+                    await service.getAllTokenBalances(walletAddress: address);
 
                 // 결과 출력
-                balances.forEach((symbol, balance) {
-                  debugPrint('$symbol: $balance');
-                });
+                // balances.forEach((symbol, balance) {
+                //   debugPrint('$symbol: $balance');
+                // });
               } catch (e) {
                 debugPrint('Error: $e');
               } finally {

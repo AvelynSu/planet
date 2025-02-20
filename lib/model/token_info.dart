@@ -6,10 +6,12 @@ class TokenInfo {
   final String? logoUrl; // 토큰 로고 URL (옵션)
 
   const TokenInfo({
-    required this.symbol,
-    required this.name,
-    required this.address,
-    required this.decimals,
+    this.symbol = "",
+    this.name = "",
+    this.address = "",
+    this.decimals = 0,
     this.logoUrl,
   });
+
+  static const empty = TokenInfo();
 }

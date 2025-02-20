@@ -83,7 +83,9 @@ class _AppScreenState extends State<AppScreen> {
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
           Widget screen = const SplashScreen();
-          if (state is AppUnInitialized) {
+
+          if (state is AppLoading) {
+          } else if (state is AppUnInitialized) {
             if (state.requiredSign) {
               screen = const StartScreen();
             } else if (state.requiredFirstPlanetNickname) {}

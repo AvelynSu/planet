@@ -1,30 +1,34 @@
 part of 'sample_cubit.dart';
 
-class HomeState extends Equatable {
+class TokenBalanceState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
   final PlanetDto planet;
+  final TokenBalance balance;
+  final List<TransactionHistory> items;
 
-  const HomeState({
+  const TokenBalanceState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
     this.planet = PlanetDto.empty,
+    this.balance = TokenBalance.empty,
+    this.items = const [],
   });
 
-  String get data {
-    return planet.name;
-  }
-
-  HomeState copyWith({
+  TokenBalanceState copyWith({
     ScreenStatus? status,
     CustomException? exception,
     PlanetDto? planet,
+    TokenBalance? balance,
+    List<TransactionHistory>? items,
   }) {
-    return HomeState(
+    return TokenBalanceState(
       status: status ?? this.status,
       exception: exception ?? this.exception,
       planet: planet ?? this.planet,
+      balance: balance ?? this.balance,
+      items: items ?? this.items,
     );
   }
 
@@ -33,5 +37,7 @@ class HomeState extends Equatable {
         status,
         exception,
         planet,
+        balance,
+        items,
       ];
 }

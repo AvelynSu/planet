@@ -30,7 +30,8 @@ class SetNicknameScreen extends StatefulWidget {
     BuildContext context, {
     required PlanetDto planetDto,
   }) {
-    AppUi.push(context, SetNicknameScreen(planetDto: planetDto));
+    AppUi.push(context, SetNicknameScreen(planetDto: planetDto),
+        enablePushAnimation: false, enablePopAnimation: false);
   }
 
   @override

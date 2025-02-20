@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 
 enum ExceptionType {
   unknown,
+
+  invalidMnemonicPhrase,
 }
 
 class CustomException extends Equatable {

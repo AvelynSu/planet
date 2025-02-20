@@ -4,6 +4,13 @@ class TokenData {
   // 메인넷 토큰 리스트 (ETH)
   static const List<TokenInfo> ethTokens = [
     TokenInfo(
+      symbol: 'ETH',
+      name: 'Ethereum',
+      address:
+          '0x0000000000000000000000000000000000000000', // ETH는 네이티브 토큰이라 주소가 0 주소
+      decimals: 18,
+    ),
+    TokenInfo(
       symbol: 'USDT',
       name: 'Tether USD',
       address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',

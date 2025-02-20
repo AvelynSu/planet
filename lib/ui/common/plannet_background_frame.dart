@@ -25,6 +25,8 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(),
       width: double.infinity,
       height: double.infinity,
       child: Stack(

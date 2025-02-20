@@ -5,11 +5,13 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
+import 'package:planet/ui/common/skeleton.dart';
+import 'package:planet/ui/home/home_tile.dart';
 
 import '../../../enum/screen_status.dart';
 import '../common/planet_address_bottom_sheet.dart';
 import '../util/app_ui.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/home_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,43 +44,54 @@ class _HomeScreenState extends State<HomeScreen> {
               scale: 3.2,
               topPadding: 50,
               data: state.data,
-              body: Container(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: AppUi.statusBarHeight(context),
-                    ),
-                    Container(height: 68),
+              body: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: AppUi.statusBarHeight(context),
+                      ),
+                      Container(height: 68),
 
-                    /// 플래닛 이름
-                    Column(
-                      children: [
-                        PlanetWidget(
-                          data: state.data,
-                          size: 160,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 20, bottom: 8),
-                          child: Text(
-                            state.planet.name,
-                            style: fontR(
-                              24,
-                              color: C.current.mainText,
+                      /// 플래닛 이름
+                      Column(
+                        children: [
+                          PlanetWidget(
+                            data: state.data,
+                            size: 160,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(top: 20, bottom: 8),
+                            child: Text(
+                              state.planet.name,
+                              style: fontR(
+                                24,
+                                color: C.current.mainText,
+                              ),
                             ),
                           ),
+                          CopyComponent(
+                            planet: state.planet,
+                            onSuccess: () {
+                              PlanetAddressBottomSheet.show(context,
+                                  planet: state.planet);
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 28),
+                      if (state.status == ScreenStatus.loading)
+                        Column(
+                          children: [
+                            ...List.generate(10, (e) => Skeleton.homeTile),
+                          ],
                         ),
-                        CopyComponent(
-                          planet: state.planet,
-                          onSuccess: () {
-                            PlanetAddressBottomSheet.show(context,
-                                planet: state.planet);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                      ...state.balances.map((e) => HomeTile(item: e))
+                    ],
+                  ),
                 ),
               ),
             );
