@@ -25,7 +25,7 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
   }) : super(const ChangeNicknameState());
 
   initialize() async {
-    emit(state.copyWith(status: ScreenStatus.loading));
+    emit(state.copyWith(status: ScreenStatus.initial));
     await Future.delayed(Duration(milliseconds: 100));
     emit(state.copyWith(
       nickname: planet.name,

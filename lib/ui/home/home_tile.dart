@@ -14,43 +14,45 @@ class HomeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: hPadding,
-        vertical: 16,
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 16,
+        top: 16,
+        bottom: 16,
       ),
       margin: EdgeInsets.only(
         bottom: 12,
-        left: hPadding,
-        right: hPadding,
+        // left: hPadding,
+        // right: hPadding,
       ),
-      decoration: BoxDecoration(
-          color: C.current.lightBase.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12)),
+      // decoration: BoxDecoration(
+      //     color: C.current.lightBase.withValues(alpha: 0.4),
+      //     borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             clipBehavior: Clip.antiAlias,
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              // color: C.current.onBackground.withValues(alpha: 0.3),
+              color: C.current.onBackground.withValues(alpha: 0.1),
             ),
             child: CustomImage(path: item.info.logoUrl ?? ""),
           ),
           Expanded(
             child: Text(
               item.info.name,
-              style: fontM(16, color: C.current.mainText),
+              style: fontM(15, color: C.current.mainText),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "${item.balance}",
-                style: fontM(16, color: C.current.mainText),
+                "${item.balance}" + " ${item.info.symbol}",
+                style: fontM(15, color: C.current.mainText),
               ),
               const SizedBox(height: 4),
               Text(

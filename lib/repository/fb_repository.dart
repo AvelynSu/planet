@@ -44,6 +44,10 @@ class ApiRepository {
 
   /// 이름 변경
   Future<PlanetDto> updatePlanet(PlanetDto planet, String name) async {
+    await _planetNameDoc.update({
+      "items": FieldValue.arrayRemove([planet.name])
+    });
+
     var res = await _planetCol.doc(planet.id).update({"name": name});
     return planet.copyWith(name: name);
   }
@@ -52,7 +56,7 @@ class ApiRepository {
 
   /// 사용 가능한 닉네임인지 확인
   Future<bool> enablePlanetName(String name) async {
-    var res = await _planetCol.where("planetName", isEqualTo: name).get();
+    var res = await _planetCol.where("name", isEqualTo: name).get();
     return res.docs.isEmpty;
   }
 

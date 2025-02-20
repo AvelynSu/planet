@@ -9,6 +9,7 @@ import 'package:planet/ui/change_nickname/change_nickname_screen.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
+import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/util/app_constant.dart';
 import 'package:planet/ui/util/bold_generator.dart';
 
@@ -59,18 +60,18 @@ class _MyScreenState extends State<MyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: AppUi.statusBarHeight(context) + 60,
+                    height: AppUi.statusBarHeight(context) + 40,
                   ),
                   BounceButton(
-                    onTap: () {
-                      ChangeNicknameScreen.push(context,
-                          planetDto: appState.current);
-                    },
+                    onTap: () {},
                     child: BoldMsgGenerator.toRichText(
                       text: "You're on\n*${appState.current.name}*",
                       textAlign: TextAlign.center,
-                      style: fontR(24, color: C.current.mainText, height: 1.7),
-                      boldStyle: fontB(24, color: C.current.mainText),
+                      style: fontR(28,
+                          color: C.current.mainText,
+                          height: 1.7,
+                          isIalic: true),
+                      boldStyle: fontB(32, color: C.current.mainText),
                     ),
                   ),
                   const SizedBox(height: 60),
@@ -78,16 +79,22 @@ class _MyScreenState extends State<MyScreen> {
                     children: [
                       Expanded(
                         child: _verticalTile(
-                          onTap: () {},
+                          onTap: () {
+                            ChangeNicknameScreen.push(context,
+                                planetDto: appState.current);
+                          },
                           title: appState.current.name,
-                          iconPath: "icons/ic_qr_image.png",
+                          body: PlanetWidget(
+                            data: appState.current.name,
+                            size: 36,
+                          ),
                         ),
                       ),
                       Expanded(
                         child: _verticalTile(
                           onTap: () {},
-                          title: appState.current.name,
-                          iconPath: "icons/ic_qr_image.png",
+                          title: "Security",
+                          iconPath: "icons/ic_lock.svg",
                         ),
                       ),
                     ],
@@ -182,7 +189,8 @@ class _MyScreenState extends State<MyScreen> {
   _verticalTile({
     required Function onTap,
     required String title,
-    required String iconPath,
+    String? iconPath,
+    Widget? body,
   }) {
     return BounceButton(
       onTap: () {
@@ -192,10 +200,12 @@ class _MyScreenState extends State<MyScreen> {
         color: Colors.transparent,
         child: Column(
           children: [
-            CustomImage(
-              path: iconPath,
-              width: 40,
-            ),
+            if (body != null) body,
+            if (iconPath != null)
+              CustomImage(
+                path: iconPath,
+                width: 40,
+              ),
             const SizedBox(height: 8),
             Text(
               title,

@@ -81,7 +81,9 @@ class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
               },
               onLoading: state.status == ScreenStatus.loading,
               body: PlanetBackgroundFrame(
-                data: state.nickname,
+                data: state.status != ScreenStatus.initial
+                    ? state.nickname
+                    : null,
                 scale: 3.8,
                 topPadding: 80,
                 body: Container(
