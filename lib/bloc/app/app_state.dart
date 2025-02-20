@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/token_balance.dart';
 
 class AppState extends Equatable {
   const AppState();
@@ -35,10 +36,12 @@ class AppUnInitialized extends AppState {
 class AppLoaded extends AppState {
   final List<PlanetDto> planets;
   final PlanetDto current;
+  final List<TokenBalance> balance; // current
 
   const AppLoaded({
     this.planets = const [],
     this.current = PlanetDto.empty,
+    this.balance = const [],
   });
 
   static const empty = AppLoaded();
@@ -46,10 +49,12 @@ class AppLoaded extends AppState {
   AppLoaded copyWith({
     List<PlanetDto>? planets,
     PlanetDto? current,
+    List<TokenBalance>? balance,
   }) {
     return AppLoaded(
       planets: planets ?? this.planets,
       current: current ?? this.current,
+      balance: balance ?? this.balance,
     );
   }
 
@@ -57,6 +62,7 @@ class AppLoaded extends AppState {
   List<Object?> get props => [
         planets,
         current,
+        balance,
       ];
 }
 

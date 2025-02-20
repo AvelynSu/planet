@@ -44,53 +44,63 @@ class _HomeScreenState extends State<HomeScreen> {
               scale: 3.2,
               topPadding: 50,
               data: state.data,
-              body: SingleChildScrollView(
-                child: Container(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: AppUi.statusBarHeight(context),
-                      ),
-                      Container(height: 68),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<HomeCubit>().onUpdate();
+                },
+                color: C.current.mainText,
+                backgroundColor: Colors.transparent,
+                displacement: 40,
+                strokeWidth: 3,
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: AppUi.statusBarHeight(context),
+                        ),
+                        Container(height: 68),
 
-                      /// 플래닛 이름
-                      Column(
-                        children: [
-                          PlanetWidget(
-                            data: state.data,
-                            size: 160,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(top: 20, bottom: 8),
-                            child: Text(
-                              state.planet.name,
-                              style: fontR(
-                                24,
-                                color: C.current.mainText,
-                              ),
-                            ),
-                          ),
-                          CopyComponent(
-                            planet: state.planet,
-                            onSuccess: () {
-                              PlanetAddressBottomSheet.show(context,
-                                  planet: state.planet);
-                            },
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 28),
-                      if (state.status == ScreenStatus.loading)
+                        /// 플래닛 이름
                         Column(
                           children: [
-                            ...List.generate(10, (e) => Skeleton.homeTile),
+                            PlanetWidget(
+                              data: state.data,
+                              size: 160,
+                            ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.only(top: 20, bottom: 8),
+                              child: Text(
+                                state.planet.name,
+                                style: fontR(
+                                  24,
+                                  color: C.current.mainText,
+                                ),
+                              ),
+                            ),
+                            CopyComponent(
+                              planet: state.planet,
+                              onSuccess: () {
+                                PlanetAddressBottomSheet.show(context,
+                                    planet: state.planet);
+                              },
+                            ),
                           ],
                         ),
-                      ...state.balances.map((e) => HomeTile(item: e))
-                    ],
+
+                        const SizedBox(height: 28),
+                        if (state.status == ScreenStatus.loading)
+                          Column(
+                            children: [
+                              ...List.generate(5, (e) => Skeleton.homeTile),
+                            ],
+                          ),
+                        ...state.balances.map((e) => HomeTile(item: e)),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet_dto.dart';
-import 'package:planet/service/wallet/wallet_balance_service.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
@@ -18,28 +18,42 @@ class HomeCubit extends Cubit<HomeState> {
 
   HomeCubit({
     required this.appBloc,
-  }) : super(const HomeState());
+  }) : super(const HomeState()) {
+    _subscription =
+        appBloc.stream.listen((state) => updateApp(state as AppLoaded));
+  }
+
+  late StreamSubscription _subscription;
+
+  updateApp(AppLoaded appState) {
+    emit(state.copyWith(
+        balances: appState.balance,
+        planet: appState.current,
+        status: ScreenStatus.loaded));
+  }
 
   initialize() async {
     emit(state.copyWith(status: ScreenStatus.loading));
-    var current = (appBloc.state as AppLoaded).current;
-    emit(state.copyWith(planet: current));
-    WalletBalanceService service = WalletBalanceService();
+    updateApp(appBloc.state as AppLoaded);
 
-    var balances = await service.getAllTokenBalances(
-      walletAddress: current.address,
-    );
+    appBloc.add(AppUpdate(updateBalance: true));
 
-    emit(state.copyWith(
-      planet: current,
-      balances: balances,
-      status: ScreenStatus.loaded,
-    ));
+    // WalletBalanceService service = WalletBalanceService();
+    // var balances = await service.getAllTokenBalances(
+    //   walletAddress: current.address,
+    // );
+  }
+
+  onUpdate() async {
+    if (state.status != ScreenStatus.loading) {
+      emit(state.copyWith(status: ScreenStatus.loading, balances: []));
+      appBloc.add(AppUpdate(updateBalance: true));
+    }
   }
 
   @override
   Future<void> close() {
-    // TODO: implement close
+    _subscription.cancel();
     return super.close();
   }
 }

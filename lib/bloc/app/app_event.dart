@@ -13,10 +13,12 @@ class AppInitialize extends AppEvent {
 }
 
 class AppUpdate extends AppEvent {
-  AppUpdate();
+  final bool updateBalance;
+
+  AppUpdate({this.updateBalance = false});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [updateBalance];
 }
 
 class AppSignOut extends AppEvent {}
