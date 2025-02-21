@@ -1,5 +1,3 @@
-// 사용자 입력 (받는사람 주소, 보낼금액, 가스비 우선순위) → 가스비 계산 → 트랜잭션 생성 → 서명 → 전송 → 결과 확인
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:planet/ui/util/wallet_config.dart';
@@ -80,6 +78,73 @@ class WalletTransferService {
       return txHash;
     } catch (e) {
       throw Exception('Transaction failed: $e');
+    }
+  }
+
+  // Custom gas settings 버전의 트랜잭션 전송
+  Future<String> sendTransactionWithCustomGas({
+    required String toAddress,
+    required BigInt amount,
+    required Credentials credentials,
+    required BigInt gasPrice,
+    required BigInt gasLimit,
+  }) async {
+    try {
+      // 트랜잭션 생성
+      final transaction = Transaction(
+        to: EthereumAddress.fromHex(toAddress),
+        value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
+        maxGas: gasLimit.toInt(),
+        gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
+      );
+
+      // 트랜잭션 전송
+      final txHash = await web3client.sendTransaction(
+        credentials,
+        transaction,
+        chainId: 1,
+      );
+
+      return txHash;
+    } catch (e) {
+      throw Exception('Transaction failed: $e');
+    }
+  }
+
+  // 커스텀 가스 설정으로 트랜잭션을 전송하고 결과까지 기다림
+  Future<bool> sendAndWaitForTransactionWithCustomGas({
+    required String toAddress,
+    required BigInt amount,
+    required Credentials credentials,
+    required BigInt gasPrice,
+    required BigInt gasLimit,
+  }) async {
+    try {
+      // 1. 트랜잭션 전송
+      final txHash = await sendTransactionWithCustomGas(
+        toAddress: toAddress,
+        amount: amount,
+        credentials: credentials,
+        gasPrice: gasPrice,
+        gasLimit: gasLimit,
+      );
+
+      // 2. 트랜잭션 처리 완료 대기
+      bool isConfirmed = false;
+      int attempts = 0;
+      while (!isConfirmed && attempts < 30) {
+        // 최대 1분 대기 (2초 * 30)
+        isConfirmed = await checkTransactionStatus(txHash);
+        if (!isConfirmed) {
+          await Future.delayed(const Duration(seconds: 2)); // 2초마다 확인
+          attempts++;
+        }
+      }
+
+      return isConfirmed;
+    } catch (e) {
+      debugPrint('Transaction failed: $e');
+      return false;
     }
   }
 

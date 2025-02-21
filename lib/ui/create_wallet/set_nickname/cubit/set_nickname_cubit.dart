@@ -52,6 +52,9 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
   }
 
   onCreatePlanet() async {
+    if (state.nickname.isEmpty) {
+      return;
+    }
     emit(state.copyWith(status: ScreenStatus.loading));
 
     var enablePlanet = await apiRepository.enablePlanetName(state.nickname);

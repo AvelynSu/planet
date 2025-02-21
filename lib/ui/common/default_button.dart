@@ -11,7 +11,7 @@ class DefaultButton extends StatefulWidget {
   final String? description;
   final String? iconPath;
   final Color? color;
-  final Color textColor;
+  final Color? textColor;
   final TextStyle? style;
   final bool isReverse;
   final Function()? onTap;
@@ -29,7 +29,7 @@ class DefaultButton extends StatefulWidget {
     this.isReverse = false,
     this.color,
     this.style,
-    this.textColor = Colors.black,
+    this.textColor,
     this.showBottomPadding = false,
     this.borderColor,
     this.prefixIcon,
@@ -44,16 +44,15 @@ class DefaultButtonState extends State<DefaultButton> {
   @override
   Widget build(BuildContext context) {
     var activateColor = widget.color ?? C.current.onBackground;
-    var deactivateColor =
-        C.color(const Color(0xffEDEDED), const Color(0xff1E1E28));
+    var deactivateColor = C.current.lightBase;
     var requiredBoldGenerator = widget.title.contains('*');
     var buttonTitleColor = widget.isReverse
         ? widget.onTap == null
             ? b3
             : b5
         : widget.onTap == null
-            ? textDisabled
-            : widget.textColor;
+            ? C.current.sub01
+            : widget.textColor ?? C.current.background;
     return BounceButton(
       hasHaptic: false,
       onTap: () {
@@ -71,16 +70,16 @@ class DefaultButtonState extends State<DefaultButton> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: widget.isReverse
-                ? b1
+                ? C.current.onBackground
                 : widget.borderColor == null
                     ? (widget.onTap != null
                         ? Colors.white.withOpacity(0)
-                        : borderDisabledSubtle)
+                        : Colors.transparent)
                     : widget.borderColor!,
           ),
           boxShadow: widget.shadow != null ? [widget.shadow!] : [],
           color: widget.isReverse
-              ? b5
+              ? C.current.background
               : widget.onTap != null
                   ? activateColor
                   : deactivateColor,
@@ -106,13 +105,13 @@ class DefaultButtonState extends State<DefaultButton> {
                         text: widget.title,
                         textAlign: TextAlign.center,
                         style: widget.style ??
-                            (requiredBoldGenerator ? fontB(16) : fontSB(16))
+                            (requiredBoldGenerator ? fontB(18) : fontR(18))
                                 .copyWith(
                                     color: widget.isReverse
-                                        ? Colors.white
+                                        ? C.current.onBackground
                                         : buttonTitleColor,
                                     height: 1.4),
-                        boldStyle: fontB(16).copyWith(
+                        boldStyle: fontB(18).copyWith(
                             color:
                                 widget.isReverse ? white : buttonTitleColor)),
                   ),

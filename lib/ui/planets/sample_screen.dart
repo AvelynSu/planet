@@ -43,6 +43,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         child: BlocBuilder<PlanetsCubit, PlanetsState>(
           builder: (context, state) {
             return PlanetBackgroundFrame(
+              scale: 3.2,topPadding: 60,
               data: state.planet.name.isEmpty ? null : state.planet.name,
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,9 +110,13 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: C.current.onBackground.withValues(alpha: 0.15),
+            color: C.color(C.current.sub01.withValues(alpha: 0.3),
+                C.current.onBackground.withValues(alpha: 0.15)),
           ),
-          color: C.current.onBackground.withValues(alpha: 0.1),
+          color: C.color(
+            C.current.background.withValues(alpha: 0.2),
+            C.current.onBackground.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

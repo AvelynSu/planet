@@ -25,9 +25,9 @@ class HomeTile extends StatelessWidget {
         // left: hPadding,
         // right: hPadding,
       ),
-      // decoration: BoxDecoration(
-      //     color: C.current.lightBase.withValues(alpha: 0.4),
-      //     borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+          color: C.current.lightBase.withValues(alpha: 0),
+          borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
           Container(
@@ -37,7 +37,8 @@ class HomeTile extends StatelessWidget {
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: C.current.onBackground.withValues(alpha: 0.1),
+              color: C.color(C.current.sub01.withValues(alpha: 0.18),
+                  C.current.onBackground.withValues(alpha: 0.1)),
             ),
             child: CustomImage(path: item.info.logoUrl ?? ""),
           ),

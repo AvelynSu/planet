@@ -45,6 +45,33 @@ class WalletService {
     }
   }
 
+  Future<Credentials> getCredentialsFromMnemonic(
+    String mnemonic,
+    NetworkType type,
+    int idx,
+  ) async {
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
+    }
+
+    // 니모닉으로부터 시드 생성
+    final seed = bip39.mnemonicToSeed(mnemonic);
+
+    // 이더리움 경로 (첫 번째 계정 - index 0)
+    final path = "m/44'/60'/0'/0/$idx";
+
+    // HD 노드 생성
+    final bip32.BIP32 node = bip32.BIP32.fromSeed(seed);
+
+    // 경로에 따른 자식 키 생성
+    final child = node.derivePath(path);
+
+    // 프라이빗 키 생성
+    final privateKey = EthPrivateKey.fromHex(bytesToHex(child.privateKey!));
+
+    return privateKey;
+  }
+
   /// 주소 생성 ----------------------------------------------------------------------
 
   // 이더리움 주소 생성

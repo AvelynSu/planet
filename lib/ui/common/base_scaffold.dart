@@ -226,7 +226,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
                   widget.title!,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: fontB(17, color: color),
+                  style: fontR(18, color: color),
                 ),
               ),
             if (widget.appBarContent != null) widget.appBarContent!

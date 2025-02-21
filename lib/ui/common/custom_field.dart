@@ -137,7 +137,8 @@ class _CustomFieldState extends State<CustomField> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: widget.borderColor ?? C.current.sub01,
+                  color: widget.borderColor ??
+                      C.current.sub01.withValues(alpha: 0.5),
                 ),
               ),
               child: Row(children: [

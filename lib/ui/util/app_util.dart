@@ -4,6 +4,61 @@ import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 
 class AppUtil {
+  /// Formats a crypto amount with appropriate decimal places
+  static String formatAmount(String amount, {int maxDecimals = 8}) {
+    try {
+      final double value = double.parse(amount);
+
+      // If the value is a whole number, display without decimals
+      if (value == value.toInt()) {
+        return value.toInt().toString();
+      }
+
+      // Format with specified number of decimals
+      final String formatted = value.toStringAsFixed(maxDecimals);
+
+      // Remove trailing zeros
+      if (formatted.contains('.')) {
+        final String trimmed = formatted.replaceAll(RegExp(r'0+$'), '');
+        return trimmed.endsWith('.')
+            ? trimmed.substring(0, trimmed.length - 1)
+            : trimmed;
+      }
+
+      return formatted;
+    } catch (e) {
+      return amount;
+    }
+  }
+
+  static String weiToEth(BigInt wei, {int maxDecimals = 8}) {
+    try {
+      // 1 ETH = 10^18 Wei
+      final double ethValue = wei / BigInt.from(10).pow(18);
+      return formatAmount(ethValue.toString(), maxDecimals: maxDecimals);
+    } catch (e) {
+      return '0';
+    }
+  }
+
+  static BigInt convertToWei(String amount) {
+    // Handle empty input
+    if (amount.isEmpty) {
+      return BigInt.zero;
+    }
+
+    try {
+      // Parse the amount to double first
+      final double ethAmount = double.parse(amount);
+
+      // Convert to Wei (1 ETH = 10^18 Wei)
+      final BigInt weiAmount = BigInt.from(ethAmount * 1e18);
+      return weiAmount;
+    } catch (e) {
+      return BigInt.zero;
+    }
+  }
+
   static String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 

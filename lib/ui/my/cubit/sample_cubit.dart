@@ -17,13 +17,15 @@ class MyCubit extends Cubit<MyState> {
   MyCubit({
     required this.appBloc,
   }) : super(const MyState()) {
-    subscription = appBloc.stream.listen((e) => update(e as AppLoaded));
+    subscription = appBloc.stream.listen((e) => update(e));
   }
 
   late StreamSubscription subscription;
 
-  update(AppLoaded appState) {
-    emit(state.copyWith(planetDto: appState.current));
+  update(AppState appState) {
+    if (appState is AppLoaded) {
+      emit(state.copyWith(planetDto: appState.current));
+    }
   }
 
   initialize() async {

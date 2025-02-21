@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -118,8 +120,10 @@ class _DefaultDialogState extends State<DefaultDialog> {
   void initState() {
     super.initState();
     if (widget.hideButton) {
-      Future.delayed(widget.duration ?? const Duration(milliseconds: 800), () {
-        Navigator.pop(context);
+      Future.delayed(widget.duration ?? const Duration(milliseconds: 500), () {
+        if (mounted) {
+          Navigator.pop(context);
+        }
       });
     }
   }

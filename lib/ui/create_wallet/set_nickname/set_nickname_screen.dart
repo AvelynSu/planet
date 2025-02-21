@@ -46,6 +46,8 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
     super.initState();
   }
 
+  bool showGuidMsg = true;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -90,7 +92,8 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                               const SizedBox(height: 150),
                               Text(
                                 'My Planet is',
-                                style: fontB(28, color: Colors.white),
+                                style: fontB(28,
+                                    color: Colors.white, isIalic: true),
                               ),
                               const SizedBox(height: 12),
                               LinedField(
@@ -120,11 +123,22 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                                   cubit.updateValue(value);
                                 },
                               ),
-                              const SizedBox(height: 12),
+                              if (showGuidMsg &&
+                                  state.status != ScreenStatus.fail)
+                                Container(
+                                  margin: EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    "You can change your planet name",
+                                    style: fontR(14, color: C.current.sub01),
+                                  ),
+                                ),
                               if (state.status == ScreenStatus.fail)
-                                Text(
-                                  state.exception.errMsg ?? "",
-                                  style: fontR(14, color: primary),
+                                Container(
+                                  margin: EdgeInsets.only(top: 12),
+                                  child: Text(
+                                    state.exception.errMsg ?? "",
+                                    style: fontR(14, color: primary),
+                                  ),
                                 ),
                               const SizedBox(height: 100),
                               Container(

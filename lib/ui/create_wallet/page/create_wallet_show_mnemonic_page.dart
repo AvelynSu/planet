@@ -24,8 +24,8 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            '아래 12개의 단어를 순서대로 안전하게 저장하세요',
-            style: fontB(16, color: C.current.mainText),
+            "Securely store these 12 words in order.", //  '아래 12개의 단어를 순서대로 안전하게 저장하세요',
+            style: fontSB(16, color: C.current.mainText),
             textAlign: TextAlign.center,
           ),
         ),
@@ -36,19 +36,20 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            '다음 단계에서 일부 단어를 선택하여 확인할 예정입니다. 위 단어들을 잘 기억해두세요!',
-            style: fontR(14, color: C.current.mainText.withValues(alpha: 0.5)),
+            "In the next step, we will ask you to select some of these words for verification. Make sure to remember them well!", // '다음 단계에서 일부 단어를 선택하여 확인할 예정입니다.\n 단어들을 잘 기억해두세요!',
+            style: fontR(14,
+                color: C.current.mainText.withValues(alpha: 0.5), height: 1.3),
             textAlign: TextAlign.center,
           ),
         ),
 
-        const SizedBox(height: 30),
-
+        const SizedBox(height: 42),
         // 니모닉 단어 표시
         if (state.mnemonic.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: GridView.builder(
+              padding: EdgeInsets.all(0),
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
@@ -89,7 +90,7 @@ class _CreateWalletShowMnemonicPageState
             ),
           ),
 
-        const SizedBox(height: 40),
+        const SizedBox(height: 42),
 
         // 경고 박스
         Padding(
@@ -114,7 +115,8 @@ class _CreateWalletShowMnemonicPageState
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    '니모닉 단어들은 지갑 복구에 사용됩니다. 절대 다른 사람과 공유하지 마세요',
+                    "These mnemonic words are used to recover your wallet. Never share them with anyone else.",
+                    // '니모닉 단어들은 지갑 복구에 사용됩니다. 절대 다른 사람과 공유하지 마세요',
                     style: fontR(15, color: C.current.primary, height: 1.5),
                   ),
                 ),

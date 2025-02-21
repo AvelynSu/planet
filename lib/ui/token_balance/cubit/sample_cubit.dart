@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/model/token_balance.dart';
@@ -24,31 +25,46 @@ class TokenBalanceCubit extends Cubit<TokenBalanceState> {
     required this.appBloc,
     required this.initialValue,
   }) : super(const TokenBalanceState()) {
-    appSubscription = appBloc.stream.listen((state) => initialize());
+    appSubscription = appBloc.stream.listen((state) => updatePlanet());
   }
 
   final service = WalletHistoryService();
 
-  initialize() async {
+  updatePlanet() async {
     var appState = appBloc.state as AppLoaded;
-    updatePlanet(appState);
+    emit(state.copyWith(
+      status: ScreenStatus.loaded,
+      planet: appState.current,
+      balance: appState.balance
+          .where((e) => e.info.symbol == initialValue.info.symbol)
+          .first,
+    ));
   }
 
-  updatePlanet(AppLoaded appState) async {
-    emit(state.copyWith(status: ScreenStatus.loading));
-    var planet = appState.planets
-        .where((e) => e.address == initialValue.address)
-        .firstOrNull;
+  initialize() async {
+    try {
+      if (state.status != ScreenStatus.loading) {
+        var appState = appBloc.state as AppLoaded;
+        emit(state.copyWith(status: ScreenStatus.loading, items: []));
+        var planet = appState.current;
+        var history = await service.getSpecificTokenTransactions(
+          initialValue.address,
+          initialValue.info,
+        );
+        emit(state.copyWith(
+            planet: planet, balance: initialValue, items: history));
 
-    var history = await service.getSpecificTokenTransactions(
-      initialValue.address,
-      initialValue.info.address,
-    );
-    emit(state.copyWith(planet: planet, items: history));
+        await Future.delayed(Duration(milliseconds: 50));
+        appBloc.add(AppUpdate(updateBalance: true));
+      }
+    } catch (err) {
+      emit(state.copyWith(status: ScreenStatus.loaded, items: []));
+    }
   }
 
   @override
   Future<void> close() {
+    appSubscription?.cancel();
     return super.close();
   }
 }

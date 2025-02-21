@@ -5,6 +5,8 @@ enum ExceptionType {
   unknown,
 
   invalidMnemonicPhrase,
+
+  failTransferInitailize,
 }
 
 class CustomException extends Equatable {

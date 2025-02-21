@@ -67,7 +67,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                         padding: EdgeInsets.symmetric(horizontal: hPadding),
                         child: DefaultButton(
                           showBottomPadding: true,
-                          title: "다음",
+                          title: "Next",
                           onTap: () {
                             if (state.page == 0) {
                               cubit.updatePage(state.page + 1);

@@ -103,23 +103,19 @@ class _CreateWalletConfirmMnemonicPageState
         });
       } else {
         // 다음 단계로
-        Future.delayed(const Duration(milliseconds: 500), () {
-          setState(() {
-            currentStep++;
-            isVerifying = false;
-            shuffledWords = _getShuffledChoices();
-          });
+        setState(() {
+          currentStep++;
+          isVerifying = false;
+          shuffledWords = _getShuffledChoices();
         });
       }
     } else {
       // 오답일 경우
-      Future.delayed(const Duration(milliseconds: 500), () {
-        DefaultDialog.showTimerDialog(context,
-                description: "잘못된 단어입니다. 다시 시도해주세요.")
-            .then((_) {
-          setState(() {
-            isVerifying = false;
-          });
+      DefaultDialog.showTimerDialog(context,
+              description: "Incorrect word. Please try again.")
+          .then((_) {
+        setState(() {
+          isVerifying = false;
         });
       });
     }
@@ -146,7 +142,7 @@ class _CreateWalletConfirmMnemonicPageState
             children: List.generate(
               challengeIndices.length,
               (index) => Container(
-                width: 20,
+                width: 6,
                 height: 6,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
@@ -160,11 +156,15 @@ class _CreateWalletConfirmMnemonicPageState
           ),
         ),
 
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
 
         // 안내 메시지
-        Text('니모닉의 ${challengeIndices[currentStep] + 1}번째 단어를 선택해주세요',
-            style: fontB(18, color: C.current.mainText)),
+        Text(
+          "Select the ${challengeIndices[currentStep] + 1}th word\nof your mnemonic phrase.",
+          // '니모닉의 ${challengeIndices[currentStep] + 1}번째 단어를 선택해주세요',
+          style: fontR(18, color: C.current.mainText, height: 1.5),
+          textAlign: TextAlign.center,
+        ),
 
         const SizedBox(height: 20),
 
@@ -177,7 +177,7 @@ class _CreateWalletConfirmMnemonicPageState
               crossAxisCount: 3,
               mainAxisSpacing: 10.0,
               crossAxisSpacing: 10.0,
-              mainAxisExtent: 40,
+              mainAxisExtent: 44,
             ),
             itemCount: 12,
             shrinkWrap: true,
@@ -215,7 +215,7 @@ class _CreateWalletConfirmMnemonicPageState
           ),
         ),
 
-        const SizedBox(height: 60),
+        const SizedBox(height: 42),
 
         // 선택지
         Padding(

@@ -28,6 +28,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
+    // await apiRepository.signOut();
     yield AppLoading();
     FirebaseAnalytics.instance.logAppOpen();
     // await LocalStorageService.clearMnemonics();
@@ -72,7 +73,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield AppLoaded(
         planets: planets,
         balance: updateBalance,
-        current: current ?? planets.first,
+        current: current,
       );
     } catch (err) {
       print(err);

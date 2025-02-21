@@ -92,7 +92,9 @@ class _MyScreenState extends State<MyScreen> {
                       ),
                       Expanded(
                         child: _verticalTile(
-                          onTap: () {},
+                          onTap: () {
+                            DefaultDialog.showComingSoon(context);
+                          },
                           title: "Security",
                           iconPath: "icons/ic_lock.svg",
                         ),
@@ -161,9 +163,10 @@ class _MyScreenState extends State<MyScreen> {
                           var result = await DefaultDialog.show(
                             context,
                             description:
-                                "니모닉을 백업 하셨나요?\n니모닉 확인 후 로그아웃 할 수 있습니다.",
+                                "니모닉을 백업 하셨나요?\n니모닉 문자열을 잊어버리면 다시 로그인할 수 없습니다.",
                           );
                           context.read<AppBloc>().add(AppSignOut());
+                          setThemeTheme(ThemeMode.dark);
                         },
                         title: "Sign Out",
                       ),
@@ -205,6 +208,7 @@ class _MyScreenState extends State<MyScreen> {
               CustomImage(
                 path: iconPath,
                 width: 40,
+                color: C.current.mainText,
               ),
             const SizedBox(height: 8),
             Text(

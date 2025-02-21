@@ -73,16 +73,14 @@ class _StartScreenState extends State<StartScreen> {
                     Column(
                       children: [
                         DefaultButton(
-                          color: Colors.white,
-                          textColor: Colors.black,
-                          title: "Create Wallet",
+                          title: "Create Planet",
                           onTap: () {
                             CreateWalletScreen.push(context);
                           },
                         ),
                         const SizedBox(height: 12),
                         DefaultButton(
-                          borderColor: Colors.white.withValues(alpha: 0.3),
+                          isReverse: true,
                           title: "Import Another Planet",
                           onTap: () {
                             ImportWalletScreen.push(context);

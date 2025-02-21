@@ -44,6 +44,35 @@ class Skeleton extends StatefulWidget {
     );
   }
 
+  static Widget get historyTile {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 12,
+      ),
+      child: const Row(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Skeleton(width: 20, height: 20, r: 4),
+                const SizedBox(width: 8),
+                Skeleton(width: 40, height: 15, r: 4),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Skeleton(width: 160, height: 16, r: 4),
+              const SizedBox(height: 4),
+              Skeleton(width: 100, height: 16, r: 4),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   State<Skeleton> createState() => _SkeletonState();
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:planet/model/token_info.dart';
 import 'package:planet/ui/util/wallet_config.dart';
 
 import '../../model/transaction_history.dart';
@@ -27,9 +28,11 @@ class WalletHistoryService {
       throw Exception('Failed to get ETH transactions: ${data['message']}');
     }
 
-    return (data['result'] as List)
+    var result = (data['result'] as List)
         .map((tx) => TransactionHistory.fromEtherscanTx(tx, address))
         .toList();
+
+    return result.where((e) => e != TransactionHistory.empty).toList();
   }
 
   Future<List<TransactionHistory>> getTokenTransactions(String address) async {
@@ -71,7 +74,7 @@ class WalletHistoryService {
     ];
 
     // 시간순 정렬 (최신순)
-    allTransactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    allTransactions.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
 
     return allTransactions;
   }
@@ -79,17 +82,17 @@ class WalletHistoryService {
   /// 특정 토큰의 거래 내역만 조회
   Future<List<TransactionHistory>> getSpecificTokenTransactions(
     String address,
-    String tokenAddress,
+    TokenInfo info,
   ) async {
+    if (info.symbol == "ETH") {
+      return await getEthTransactions(address);
+    }
+
     final allTokenTxs = await getTokenTransactions(address);
 
     final filteredTxs = allTokenTxs.where((tx) {
-      print("트랜잭션 토큰 주소: ${tx.tokenAddress}");
-      print("필터링할 토큰 주소: $tokenAddress");
-      return tx.tokenAddress?.toLowerCase() == tokenAddress.toLowerCase();
+      return tx.tokenAddress?.toLowerCase() == info.address.toLowerCase();
     }).toList();
-
-    print("필터링된 트랜잭션 개수: ${filteredTxs.length}");
 
     return filteredTxs;
   }

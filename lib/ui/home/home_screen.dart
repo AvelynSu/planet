@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            print(state.planet.mnemonic);
             return PlanetBackgroundFrame(
               scale: 3.2,
               topPadding: 50,
@@ -71,9 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Column(
                           children: [
                             Stack(alignment: Alignment.center, children: [
-                              PlanetWidget(
-                                data: state.data,
-                                size: 160,
+                              Container(
+                                margin: const EdgeInsets.all(20),
+                                child: PlanetWidget(
+                                  data: state.data,
+                                  size: 160,
+                                ),
                               ),
                               Lottie.asset("assets/sparkle.json", width: 200),
                             ]),
