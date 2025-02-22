@@ -6,12 +6,11 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
-import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_field.dart';
-import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/create_wallet/set_nickname/set_nickname_screen.dart';
 import 'package:planet/ui/import_wallet/cubit/import_wallet_cubit.dart';
+import 'package:planet/ui/small_round_button.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../util/app_ui.dart';
@@ -148,48 +147,18 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                   const SizedBox(height: 12),
 
                                   // 붙여넣기 버튼
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      BounceButton(
-                                        onTap: () async {
-                                          final data = await Clipboard.getData(
-                                              'text/plain');
-                                          if (data?.text != null) {
-                                            _controller.text = data!.text!;
-                                            _validateInput(_controller.text);
-                                            cubit.updateMnimonic(
-                                                _controller.text);
-                                          }
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: C.current.sub01
-                                                .withValues(alpha: 0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              CustomImage(
-                                                  path: "icons/ic_copy.svg"),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                'Paste',
-                                                style: fontM(
-                                                  14,
-                                                  color: C.current.mainText
-                                                      .withValues(alpha: 0.8),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  SmallRoundButton(
+                                    onTap: () async {
+                                      final data =
+                                          await Clipboard.getData('text/plain');
+                                      if (data?.text != null) {
+                                        _controller.text = data!.text!;
+                                        _validateInput(_controller.text);
+                                        cubit.updateMnimonic(_controller.text);
+                                      }
+                                    },
+                                    iconPath: "icons/ic_copy.svg",
+                                    title: 'Paste',
                                   ),
                                 ],
                               ),

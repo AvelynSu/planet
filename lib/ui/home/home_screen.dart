@@ -9,7 +9,7 @@ import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
 import 'package:planet/ui/home/home_tile.dart';
-import 'package:planet/ui/token_balance/sample_screen.dart';
+import 'package:planet/ui/token_balance/token_history_screen.dart';
 
 import '../../../enum/screen_status.dart';
 import '../common/planet_address_bottom_sheet.dart';

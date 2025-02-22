@@ -11,8 +11,8 @@ import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/util/app_util.dart';
 
-import '../../../bloc/app/app_state.dart';
-import '../../../service/wallet/walltet_transfer_service.dart';
+import '../../../../bloc/app/app_state.dart';
+import '../../../../service/wallet/walltet_transfer_service.dart';
 
 part 'transfer_state.dart';
 
@@ -35,6 +35,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       final gasFees = await _transferService.estimateGasFeesByPriority();
 
       emit(state.copyWith(
+        balance: tokenBalance,
         status: ScreenStatus.loaded,
         gasFees: gasFees,
         selectedGasPriority: GasPriority.medium,

@@ -4,10 +4,14 @@ import '../../custom_theme.dart';
 
 class CustomBottomSheetHeader extends StatefulWidget {
   final String title;
+  final Color? barColor;
+  final Color? titleColor;
 
   const CustomBottomSheetHeader({
     super.key,
     required this.title,
+    this.barColor,
+    this.titleColor,
   });
 
   @override
@@ -20,9 +24,11 @@ class _CustomBottomSheetHeaderState extends State<CustomBottomSheetHeader> {
   Widget build(BuildContext context) {
     return Container(
       height: 78,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xffEDEDED)),
+          bottom: BorderSide(
+              color: (widget.barColor ?? Color(0xffCCCCCC))
+                  .withValues(alpha: 0.5)),
         ),
       ),
       child: Column(
@@ -33,7 +39,7 @@ class _CustomBottomSheetHeaderState extends State<CustomBottomSheetHeader> {
             height: 4,
             width: 35,
             decoration: BoxDecoration(
-              color: const Color(0xffCCCCCC),
+              color: widget.barColor ?? Color(0xffCCCCCC),
               borderRadius: BorderRadius.circular(100),
             ),
           ),
@@ -42,7 +48,7 @@ class _CustomBottomSheetHeaderState extends State<CustomBottomSheetHeader> {
               alignment: Alignment.center,
               child: Text(
                 widget.title,
-                style: fontM(18, color: Colors.black),
+                style: fontM(18, color: widget.titleColor ?? Colors.black),
               ),
             ),
           ),

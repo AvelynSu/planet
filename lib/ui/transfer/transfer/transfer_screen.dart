@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -14,7 +13,7 @@ import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:planet/ui/util/app_util.dart';
 
-import '../../enum/screen_status.dart';
+import '../../../enum/screen_status.dart';
 import 'component/gas_selector.dart';
 import 'component/transfer_status_modal.dart';
 import 'cubit/transfer_cubit.dart';
@@ -39,47 +38,13 @@ class TransferScreen extends StatefulWidget {
 }
 
 class _TransferScreenState extends State<TransferScreen> {
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
-  GasPriority _selectedGasPriority = GasPriority.medium;
-  bool _isAddressValid = false;
-  bool _isAmountValid = false;
+  final _addressController = TextEditingController();
+  final _amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
-
-  void _validateAddress(String address) {
-    setState(() {
-      // Basic Ethereum address validation
-      _isAddressValid = address.startsWith('0x') && address.length == 42;
-    });
-  }
-
-  void _validateAmount(String amount) {
-    if (amount.isEmpty) {
-      setState(() {
-        _isAmountValid = false;
-      });
-      return;
-    }
-
-    try {
-      final double inputAmount = double.parse(amount);
-      final double availableBalance = widget.tokenBalance.balance;
-
-      setState(() {
-        _isAmountValid = inputAmount > 0 && inputAmount <= availableBalance;
-      });
-    } catch (e) {
-      setState(() {
-        _isAmountValid = false;
-      });
-    }
-  }
-
-  bool get _isFormValid => _isAddressValid && _isAmountValid;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +134,6 @@ class _TransferScreenState extends State<TransferScreen> {
                                       controller: _addressController,
                                       hintText: "0x...",
                                       onChange: (text) {
-                                        _validateAddress(text);
                                         cubit.updateRecipientAddress(text);
                                       },
                                     ),
@@ -180,8 +144,6 @@ class _TransferScreenState extends State<TransferScreen> {
                                           await Clipboard.getData('text/plain');
                                       if (data?.text != null) {
                                         _addressController.text = data!.text!;
-                                        _validateAddress(
-                                            _addressController.text);
                                         cubit.updateRecipientAddress(
                                             _addressController.text);
                                       }
@@ -220,7 +182,6 @@ class _TransferScreenState extends State<TransferScreen> {
                                     // Set max available amount
                                     _amountController.text =
                                         "${widget.tokenBalance.balance}";
-                                    _validateAmount(_amountController.text);
                                     cubit.updateAmount(_amountController.text);
                                   },
                                   child: Container(
@@ -263,7 +224,6 @@ class _TransferScreenState extends State<TransferScreen> {
                                             RegExp(r'^\d*\.?\d*$')),
                                       ],
                                       onChange: (text) {
-                                        _validateAmount(text);
                                         cubit.updateAmount(text);
                                       },
                                     ),
@@ -293,11 +253,8 @@ class _TransferScreenState extends State<TransferScreen> {
                             if (state.gasFees.isNotEmpty)
                               GasPrioritySelector(
                                 gasFees: state.gasFees,
-                                selectedPriority: _selectedGasPriority,
+                                selectedPriority: state.selectedGasPriority,
                                 onPrioritySelected: (priority) {
-                                  setState(() {
-                                    _selectedGasPriority = priority;
-                                  });
                                   cubit.updateGasPriority(priority);
                                 },
                                 onCustomGasSet: (gasPrice, gasLimit) {
@@ -349,12 +306,12 @@ class _TransferScreenState extends State<TransferScreen> {
                                 ),
                               ),
 
-                            if (!_isAddressValid &&
+                            if (!state.isValidateAddress &&
                                 _addressController.text.isNotEmpty)
                               _buildErrorMessage(
                                   "Please enter a valid recipient address"),
 
-                            if (!_isAmountValid &&
+                            if (!state.isValidateAmount &&
                                 _amountController.text.isNotEmpty)
                               _buildErrorMessage("Please enter a valid amount"),
                           ],
@@ -370,7 +327,7 @@ class _TransferScreenState extends State<TransferScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: DefaultButton(
                       title: "Send",
-                      onTap: _isFormValid
+                      onTap: state.isFormValid
                           ? () => _confirmAndExecuteTransfer(context, cubit)
                           : null,
                     ),

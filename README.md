@@ -1,16 +1,9 @@
 # planet
 
-A new Flutter project.
 
-## Getting Started
+planet : 여러개의 토큰을 가지고 있는 지갑
+tokenInfo : 토큰의 순수한 정보 (커스텀 토큰 개념)
+tokenBalance : 토큰의 잔액 정보 (tokenInfo 를 가지고 있음)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+current : 지금 앱에서 다루고 있는 지갑
+balances : current 에 속해있는 토큰들 정보

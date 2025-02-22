@@ -29,6 +29,8 @@ class C {
   final Color onBackground;
   final Color mainText;
   final Color sub01; // AAAAAA // 5C5964
+  final Color sub02;
+
   final Color background;
   final Color lightBase; // EDEDED // 1E1E28
 
@@ -38,6 +40,7 @@ class C {
     required this.background,
     required this.onBackground,
     required this.sub01,
+    required this.sub02,
     required this.lightBase,
   });
 
@@ -45,6 +48,7 @@ class C {
     primary: Color(0xffFF0050),
     mainText: Colors.black,
     sub01: Color(0xffAAAAAA),
+    sub02: Color(0xffFCFCFC),
     background: Colors.white,
     onBackground: Colors.black,
     lightBase: Color(0xffEDEDED),
@@ -54,6 +58,7 @@ class C {
     primary: Color(0xffFF0050),
     mainText: Colors.white,
     sub01: Color(0xff5C5964),
+    sub02: Color(0xff111117),
     background: Colors.black,
     onBackground: Colors.white,
     lightBase: Color(0xff1E1E28),
