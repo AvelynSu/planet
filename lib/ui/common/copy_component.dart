@@ -5,7 +5,7 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 
-import '../util/app_util.dart';
+import '../../util/app_util.dart';
 
 class CopyComponent extends StatefulWidget {
   final PlanetDto planet;

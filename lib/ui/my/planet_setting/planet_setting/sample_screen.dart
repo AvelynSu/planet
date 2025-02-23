@@ -10,11 +10,11 @@ import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
 import 'package:planet/ui/common/setting_row_tile.dart';
 import 'package:planet/ui/my/planet_setting/planet_setting/backup_mnemonic_screen.dart';
-import 'package:planet/ui/util/app_util.dart';
 
 import '../../../../enum/screen_status.dart';
-import '../../../change_nickname/change_nickname_screen.dart';
-import '../../../util/app_ui.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/app_util.dart';
+import '../../change_nickname/change_nickname_screen.dart';
 import 'backup_privacte_key_screen.dart';
 import 'cubit/sample_cubit.dart';
 

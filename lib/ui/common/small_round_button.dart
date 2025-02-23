@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
-import '../custom_theme.dart';
-import 'common/bounce_button.dart';
-import 'common/custom_image.dart';
+import '../../custom_theme.dart';
+import 'bounce_button.dart';
+import 'custom_image.dart';
 
 class SmallRoundButton extends StatefulWidget {
   final Function onTap;

@@ -7,7 +7,7 @@ import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/app/app_view.dart';
 import 'package:planet/ui/common/splash_screen.dart';
 import 'package:planet/ui/start/start/start_screen.dart';
-import 'package:planet/ui/util/app_constant.dart';
+import 'package:planet/util/app_constant.dart';
 
 import 'bloc/app/app_bloc.dart';
 import 'bloc/app/app_event.dart';

@@ -11,9 +11,9 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 
-import '../../../../enum/screen_status.dart';
-import '../../../../model/custom_exception.dart';
-import '../../../util/data/planet_name_data.dart';
+import '../../../../../enum/screen_status.dart';
+import '../../../../../model/custom_exception.dart';
+import '../../../../../util/data/planet_name_data.dart';
 
 part 'set_nickname_state.dart';
 

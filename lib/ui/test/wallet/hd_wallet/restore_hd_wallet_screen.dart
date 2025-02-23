@@ -4,10 +4,10 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/hd_wallet_tile.dart';
-import 'package:planet/ui/util/app_ui.dart';
 
 import '../../../../custom_theme.dart';
-import '../../../util/data/test_hd_wallet.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/data/test_hd_wallet.dart';
 
 class RestoreHdWalletScreen extends StatefulWidget {
   const RestoreHdWalletScreen({super.key});

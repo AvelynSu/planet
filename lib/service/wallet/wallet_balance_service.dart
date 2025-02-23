@@ -3,10 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
-import 'package:planet/ui/util/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../ui/util/data/token_data.dart';
+import '../../util/data/token_data.dart';
+import '../../util/wallet_config.dart';
 
 class WalletBalanceService {
   final Web3Client web3client;

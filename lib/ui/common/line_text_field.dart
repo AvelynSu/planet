@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../custom_theme.dart';
-import '../util/bold_generator.dart';
+import '../../util/bold_generator.dart';
 import 'custom_image.dart';
 
 class LinedField extends StatefulWidget {

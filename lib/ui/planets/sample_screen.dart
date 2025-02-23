@@ -6,13 +6,13 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
-import 'package:planet/ui/util/bold_generator.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../custom_theme.dart';
+import '../../util/app_ui.dart';
+import '../../util/bold_generator.dart';
 import '../common/copy_component.dart';
 import '../common/planet_address_bottom_sheet.dart';
-import '../util/app_ui.dart';
 import 'cubit/sample_cubit.dart';
 
 class PlanetsScreen extends StatefulWidget {
@@ -43,7 +43,8 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         child: BlocBuilder<PlanetsCubit, PlanetsState>(
           builder: (context, state) {
             return PlanetBackgroundFrame(
-              scale: 3.2,topPadding: 60,
+              scale: 3.2,
+              topPadding: 60,
               data: state.planet.name.isEmpty ? null : state.planet.name,
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

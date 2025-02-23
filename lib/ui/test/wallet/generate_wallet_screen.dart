@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/test_wallet_service.dart';
-import 'package:planet/ui/util/app_ui.dart';
 import 'package:web3dart/credentials.dart';
 
 import '../../../custom_theme.dart';
+import '../../../util/app_ui.dart';
 
 class TestGenerateWalletScreen extends StatefulWidget {
   const TestGenerateWalletScreen({super.key});

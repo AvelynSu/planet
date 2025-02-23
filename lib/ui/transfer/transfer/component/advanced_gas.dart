@@ -6,9 +6,9 @@ import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/ui/common/custom_field.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/util/app_ui.dart';
 import 'package:web3dart/web3dart.dart';
 
+import '../../../../util/app_ui.dart';
 import '../../../common/custom_bottom_sheet_frame.dart';
 import 'advanced_gas_selector.dart';
 

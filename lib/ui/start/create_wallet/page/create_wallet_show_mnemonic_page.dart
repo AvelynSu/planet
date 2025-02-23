@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
-import 'package:planet/ui/small_round_button.dart';
+import 'package:planet/ui/common/small_round_button.dart';
 
-import '../../common/default_dialog.dart';
+import '../../../common/default_dialog.dart';
+import '../cubit/create_wallet_cubit.dart';
 
 class CreateWalletShowMnemonicPage extends StatefulWidget {
   const CreateWalletShowMnemonicPage({super.key});

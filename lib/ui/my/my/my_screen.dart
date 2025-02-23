@@ -10,12 +10,12 @@ import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/my/planet_setting/planet_setting/sample_screen.dart';
-import 'package:planet/ui/util/app_constant.dart';
-import 'package:planet/ui/util/bold_generator.dart';
+import 'package:planet/util/app_constant.dart';
 
-import '../../../enum/screen_status.dart';
-import '../common/setting_row_tile.dart';
-import '../util/app_ui.dart';
+import '../../../../enum/screen_status.dart';
+import '../../../util/app_ui.dart';
+import '../../../util/bold_generator.dart';
+import '../../common/setting_row_tile.dart';
 import 'cubit/sample_cubit.dart';
 
 class MyScreen extends StatefulWidget {

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:planet/model/token_info.dart';
-import 'package:planet/ui/util/wallet_config.dart';
 
 import '../../model/transaction_history.dart';
+import '../../util/wallet_config.dart';
 
 class WalletHistoryService {
   final config = WalletConfig();

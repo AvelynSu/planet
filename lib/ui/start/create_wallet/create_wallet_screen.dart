@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
-import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
-import 'package:planet/ui/create_wallet/page/create_wallet_confirm_mnemonic_page.dart';
-import 'package:planet/ui/create_wallet/page/create_wallet_show_mnemonic_page.dart';
+import 'package:planet/ui/start/create_wallet/page/create_wallet_confirm_mnemonic_page.dart';
+import 'package:planet/ui/start/create_wallet/page/create_wallet_show_mnemonic_page.dart';
 
 import '../../../../enum/screen_status.dart';
-import '../util/app_ui.dart';
+import '../../../util/app_ui.dart';
+import 'cubit/create_wallet_cubit.dart';
 
 class CreateWalletScreen extends StatefulWidget {
   const CreateWalletScreen({super.key});

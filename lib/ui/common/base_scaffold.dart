@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../custom_theme.dart';
-import '../util/app_ui.dart';
+import '../../util/app_ui.dart';
 import 'custom_image.dart';
 import 'custom_loading.dart';
 import 'default_dialog.dart';

@@ -3,8 +3,8 @@ import 'package:planet/ui/common/bounce_button.dart';
 
 import '../../custom_theme.dart';
 import '../../enum/menu_type.dart';
+import '../../util/app_ui.dart';
 import '../common/custom_image.dart';
-import '../util/app_ui.dart';
 
 class BottomBar extends StatefulWidget {
   final MenuType selectedType;

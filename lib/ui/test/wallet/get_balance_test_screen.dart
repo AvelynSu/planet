@@ -3,7 +3,7 @@ import 'package:planet/ui/common/test_default_button.dart';
 
 import '../../../custom_theme.dart';
 import '../../../service/wallet/wallet_balance_service.dart';
-import '../../util/app_ui.dart';
+import '../../../util/app_ui.dart';
 
 class TestGetBalanceTestScreen extends StatefulWidget {
   const TestGetBalanceTestScreen({super.key});

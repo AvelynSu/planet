@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/model/planet_dto.dart';
-import 'package:planet/ui/util/app_constant.dart';
+import 'package:planet/util/app_constant.dart';
 
 class ApiRepository {
   final fbAuth = auth.FirebaseAuth.instance;

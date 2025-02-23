@@ -9,13 +9,13 @@ import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
-import 'package:planet/ui/util/wallet_config.dart';
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../enum/network_type.dart';
 import '../../model/planet_dto.dart';
+import '../../util/wallet_config.dart';
 
 // 지갑을 만들고, 복구할때 사용하는 서비스
 class WalletService {

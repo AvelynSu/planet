@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:planet/ui/util/fb_formatter.dart';
+import 'package:planet/util/fb_formatter.dart';
 
 import '../enum/network_type.dart';
 

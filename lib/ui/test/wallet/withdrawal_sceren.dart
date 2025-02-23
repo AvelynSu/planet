@@ -3,7 +3,7 @@ import 'package:planet/model/transfer_fee.dart';
 
 import '../../../enum/gas_priority.dart';
 import '../../../service/wallet/walltet_transfer_service.dart';
-import '../../util/app_ui.dart';
+import '../../../util/app_ui.dart';
 
 class TestWithdrawScreen extends StatefulWidget {
   const TestWithdrawScreen({super.key});

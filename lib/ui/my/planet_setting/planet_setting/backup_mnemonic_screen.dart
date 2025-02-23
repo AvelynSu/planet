@@ -4,10 +4,10 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/small_round_button.dart';
+import 'package:planet/ui/common/small_round_button.dart';
 
 import '../../../../custom_theme.dart';
-import '../../../util/app_ui.dart';
+import '../../../../util/app_ui.dart';
 
 class BackupMnemonicScreen extends StatelessWidget {
   final PlanetDto planet;

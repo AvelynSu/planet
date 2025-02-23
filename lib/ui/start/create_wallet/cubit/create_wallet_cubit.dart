@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
-import '../../../service/wallet/wallet_service.dart';
+import '../../../../service/wallet/wallet_service.dart';
 
 part 'create_wallet_state.dart';
 

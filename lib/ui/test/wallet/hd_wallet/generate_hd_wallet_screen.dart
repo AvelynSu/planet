@@ -5,10 +5,10 @@ import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/common/test_default_button.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/hd_wallet_tile.dart';
 import 'package:planet/ui/test/wallet/hd_wallet/restore_hd_wallet_screen.dart';
-import 'package:planet/ui/util/app_ui.dart';
 
 import '../../../../custom_theme.dart';
-import '../../../util/data/test_hd_wallet.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/data/test_hd_wallet.dart';
 
 class GenerateHdWalletScreen extends StatefulWidget {
   const GenerateHdWalletScreen({super.key});

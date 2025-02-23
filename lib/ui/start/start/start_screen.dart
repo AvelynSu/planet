@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/default_button.dart';
-import 'package:planet/ui/import_wallet/import_wallet_screen.dart';
 import 'package:planet/ui/start/start/cubit/start_cubit.dart';
 
 import '../../../../enum/screen_status.dart';
-import '../../create_wallet/create_wallet_screen.dart';
-import '../../util/app_ui.dart';
+import '../../../util/app_ui.dart';
+import '../create_wallet/create_wallet_screen.dart';
+import '../import_wallet/import_wallet_screen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../enum/screen_status.dart';
-import '../../util/app_ui.dart';
+import '../../../util/app_ui.dart';
 import 'cubit/sample_cubit.dart';
 
 class SampleScreen extends StatefulWidget {

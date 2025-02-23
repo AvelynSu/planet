@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
 
+import '../cubit/create_wallet_cubit.dart';
 import '../set_nickname/set_nickname_screen.dart';
 
 class CreateWalletConfirmMnemonicPage extends StatefulWidget {

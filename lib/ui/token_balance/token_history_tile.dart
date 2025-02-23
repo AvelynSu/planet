@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/transaction_history.dart';
 import 'package:planet/ui/common/custom_image.dart';
-import 'package:planet/ui/util/bold_generator.dart';
+
+import '../../util/bold_generator.dart';
 
 class TokenHistoryTile extends StatefulWidget {
   final TransactionHistory item;

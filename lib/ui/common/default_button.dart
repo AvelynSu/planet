@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:planet/custom_theme.dart';
 
-import '../util/app_ui.dart';
-import '../util/bold_generator.dart';
+import '../../util/app_ui.dart';
+import '../../util/bold_generator.dart';
 import 'bounce_button.dart';
 import 'custom_image.dart';
 

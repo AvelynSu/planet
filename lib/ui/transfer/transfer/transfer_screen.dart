@@ -15,10 +15,10 @@ import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/transfer/transfer/component/transfer_label.dart';
 import 'package:planet/ui/transfer/transfer/trasnfer_success_screen.dart';
 import 'package:planet/ui/transfer/transfer_profile_component.dart';
-import 'package:planet/ui/util/app_ui.dart';
-import 'package:planet/ui/util/app_util.dart';
 
 import '../../../enum/screen_status.dart';
+import '../../../util/app_ui.dart';
+import '../../../util/app_util.dart';
 import 'component/gas_selector.dart';
 import 'component/transfer_status_modal.dart';
 import 'cubit/transfer_cubit.dart';

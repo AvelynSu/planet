@@ -11,9 +11,9 @@ import 'package:planet/ui/transfer/transfer/transfer_screen.dart';
 import 'package:planet/ui/transfer/transfer_amount_input/transfer_amount_input_screen.dart';
 
 import '../../../enum/screen_status.dart';
+import '../../util/app_ui.dart';
 import '../common/skeleton.dart';
 import '../transfer/select_friend/select_friend_screen.dart';
-import '../util/app_ui.dart';
 import 'cubit/sample_cubit.dart';
 
 class TokenHistoryScreen extends StatefulWidget {
@@ -120,6 +120,7 @@ class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
                                           toPlanet: planet,
                                           onSelect: (amount) {
                                             print(amount);
+
                                             /// 가스비 설정
                                             TransferScreen.push(
                                               context,

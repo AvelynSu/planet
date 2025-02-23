@@ -10,10 +10,10 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/transfer/transfer_amount_input/custom_number_keypad.dart';
 import 'package:planet/ui/transfer/transfer_profile_component.dart';
-import 'package:planet/ui/util/app_util.dart';
 
 import '../../../enum/screen_status.dart';
-import '../../util/app_ui.dart';
+import '../../../util/app_ui.dart';
+import '../../../util/app_util.dart';
 import 'cubit/transfer_amount_input_cubit.dart';
 
 class TransferAmountInputScreen extends StatefulWidget {

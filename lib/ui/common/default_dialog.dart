@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../custom_theme.dart';
-import '../util/bold_generator.dart';
+import '../../util/bold_generator.dart';
 
 class DefaultDialog extends StatefulWidget {
   final String? iconPath;

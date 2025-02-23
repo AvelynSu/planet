@@ -10,11 +10,11 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_header.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/util/app_ui.dart';
-import 'package:planet/ui/util/data/token_data.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../custom_theme.dart';
+import '../../util/app_ui.dart';
+import '../../util/data/token_data.dart';
 import '../transfer/transfer/transfer_screen.dart';
 import '../transfer/transfer_amount_input/transfer_amount_input_screen.dart';
 import 'copy_component.dart';

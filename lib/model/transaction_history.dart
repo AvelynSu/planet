@@ -1,4 +1,4 @@
-import '../ui/util/data/token_data.dart';
+import '../util/data/token_data.dart';
 
 class TransactionHistory {
   final String hash;

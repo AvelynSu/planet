@@ -12,8 +12,8 @@ import 'package:planet/ui/home/home_tile.dart';
 import 'package:planet/ui/token_balance/token_history_screen.dart';
 
 import '../../../enum/screen_status.dart';
+import '../../util/app_ui.dart';
 import '../common/planet_address_bottom_sheet.dart';
-import '../util/app_ui.dart';
 import 'cubit/home_cubit.dart';
 
 class HomeScreen extends StatefulWidget {

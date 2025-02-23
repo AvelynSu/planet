@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:planet/ui/util/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../enum/gas_priority.dart';
 import '../../model/transfer_fee.dart';
+import '../../util/wallet_config.dart';
 
 class WalletTransferService {
   final Web3Client web3client;

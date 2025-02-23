@@ -5,10 +5,10 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/small_round_button.dart';
+import 'package:planet/ui/common/small_round_button.dart';
 
 import '../../../../custom_theme.dart';
-import '../../../util/app_ui.dart';
+import '../../../../util/app_ui.dart';
 
 class BackupPrivateKeyScreen extends StatefulWidget {
   final PlanetDto planet;

@@ -15,30 +15,29 @@ import 'package:planet/ui/common/line_text_field.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 
 import '../../../../enum/screen_status.dart';
-import '../../util/app_ui.dart';
-import 'cubit/set_nickname_cubit.dart';
+import '../../../util/app_ui.dart';
+import 'cubit/change_nickname_cubit.dart';
 
-class SetNicknameScreen extends StatefulWidget {
-  final PlanetDto planetDto;
+class ChangeNicknameScreen extends StatefulWidget {
+  final PlanetDto planet;
 
-  const SetNicknameScreen({
+  const ChangeNicknameScreen({
     super.key,
-    required this.planetDto,
+    required this.planet,
   });
 
   static push(
     BuildContext context, {
     required PlanetDto planetDto,
   }) {
-    AppUi.push(context, SetNicknameScreen(planetDto: planetDto),
-        enablePushAnimation: false, enablePopAnimation: false);
+    AppUi.push(context, ChangeNicknameScreen(planet: planetDto));
   }
 
   @override
-  State<SetNicknameScreen> createState() => _SetNicknameScreenState();
+  State<ChangeNicknameScreen> createState() => _ChangeNicknameScreenState();
 }
 
-class _SetNicknameScreenState extends State<SetNicknameScreen> {
+class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
   TextEditingController? _controller;
 
   @override
@@ -46,17 +45,15 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
     super.initState();
   }
 
-  bool showGuidMsg = true;
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => SetNicknameCubit(
+      create: (BuildContext context) => ChangeNicknameCubit(
         appBloc: context.read<AppBloc>(),
         apiRepository: context.read<ApiRepository>(),
-        planetDto: widget.planetDto,
+        planet: widget.planet,
       )..initialize(),
-      child: BlocListener<SetNicknameCubit, SetNicknameState>(
+      child: BlocListener<ChangeNicknameCubit, ChangeNicknameState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.loaded) {
             if (_controller == null) {
@@ -73,13 +70,20 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
           }
         },
         listenWhen: (pre, cur) => pre.status != cur.status,
-        child: BlocBuilder<SetNicknameCubit, SetNicknameState>(
+        child: BlocBuilder<ChangeNicknameCubit, ChangeNicknameState>(
           builder: (context, state) {
-            var cubit = context.read<SetNicknameCubit>();
+            var cubit = context.read<ChangeNicknameCubit>();
             return BaseScaffold(
+              isTransparentAppbar: true,
+              title: "Change Planet Name",
+              onBack: () {
+                Navigator.pop(context);
+              },
               onLoading: state.status == ScreenStatus.loading,
               body: PlanetBackgroundFrame(
-                data: state.nickname,
+                data: state.status != ScreenStatus.initial
+                    ? state.nickname
+                    : null,
                 scale: 3.8,
                 topPadding: 80,
                 body: Container(
@@ -96,49 +100,39 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                                     color: Colors.white, isIalic: true),
                               ),
                               const SizedBox(height: 12),
-                              LinedField(
-                                hintBorderColor: Colors.transparent,
-                                inputFormatters: [
-                                  TextInputFormatter.withFunction(
-                                      (oldValue, newValue) {
-                                    final lowerCaseText =
-                                        newValue.text.toLowerCase();
-                                    final regExp = RegExp(r'^[a-z0-9._]*$');
+                              if (_controller != null)
+                                LinedField(
+                                  hintBorderColor: Colors.transparent,
+                                  inputFormatters: [
+                                    TextInputFormatter.withFunction(
+                                        (oldValue, newValue) {
+                                      final lowerCaseText =
+                                          newValue.text.toLowerCase();
+                                      final regExp = RegExp(r'^[a-z0-9._]*$');
 
-                                    if (regExp.hasMatch(lowerCaseText)) {
-                                      return TextEditingValue(
-                                        text: lowerCaseText,
-                                        selection: newValue.selection,
-                                      );
-                                    }
-                                    return oldValue;
-                                  }),
-                                ],
-                                controller: _controller,
-                                initialValue: state.nickname,
-                                hintText: "Enter Planet Name",
-                                align: TextAlign.center,
-                                style: fontR(22, color: primary),
-                                onChange: (value) {
-                                  cubit.updateValue(value);
-                                },
-                              ),
-                              if (showGuidMsg &&
-                                  state.status != ScreenStatus.fail)
-                                Container(
-                                  margin: EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    "You can change your planet name",
-                                    style: fontR(14, color: C.current.sub01),
-                                  ),
+                                      if (regExp.hasMatch(lowerCaseText)) {
+                                        return TextEditingValue(
+                                          text: lowerCaseText,
+                                          selection: newValue.selection,
+                                        );
+                                      }
+                                      return oldValue;
+                                    }),
+                                  ],
+                                  controller: _controller,
+                                  initialValue: state.nickname,
+                                  hintText: "Enter Planet Name",
+                                  align: TextAlign.center,
+                                  style: fontR(22, color: primary),
+                                  onChange: (value) {
+                                    cubit.updateValue(value);
+                                  },
                                 ),
+                              const SizedBox(height: 12),
                               if (state.status == ScreenStatus.fail)
-                                Container(
-                                  margin: EdgeInsets.only(top: 12),
-                                  child: Text(
-                                    state.exception.errMsg ?? "",
-                                    style: fontR(14, color: primary),
-                                  ),
+                                Text(
+                                  state.exception.errMsg ?? "",
+                                  style: fontR(14, color: primary),
                                 ),
                               const SizedBox(height: 100),
                               Container(
@@ -172,7 +166,7 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                                   const SizedBox(width: 30),
                                   _button(
                                     onTap: () {
-                                      cubit.onCreatePlanet();
+                                      cubit.onUpdateName();
                                     },
                                     iconPath: "icons/ic_check.svg",
                                   ),
