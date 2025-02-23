@@ -124,7 +124,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: C.current.lightBase,
+                                color: C.current.sub02,
                                 // border: Border.all(
                                 //   color: C.current.sub01.withValues(alpha: 0.7),
                                 // ),
@@ -242,33 +242,33 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
                         // 테스트용 버튼 (개발 모드에서만 표시)
                         // TODO: 프로덕션에서 제거하기
-                        Opacity(
-                          opacity: 0.8,
-                          child: GestureDetector(
-                            onTap: () {
-                              var item = cubit.getTestValue();
-                              _controller.text = item;
-                              _validateInput(item);
-                              cubit.updateMnimonic(item);
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: C.current.sub01.withValues(alpha: 0.5),
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Fill with Test Phrase",
-                                  style: fontR(14, color: C.current.sub01),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Opacity(
+                        //   opacity: 0.8,
+                        //   child: GestureDetector(
+                        //     onTap: () {
+                        //       var item = cubit.getTestValue();
+                        //       _controller.text = item;
+                        //       _validateInput(item);
+                        //       cubit.updateMnimonic(item);
+                        //     },
+                        //     child: Container(
+                        //       width: double.infinity,
+                        //       padding: const EdgeInsets.symmetric(vertical: 12),
+                        //       decoration: BoxDecoration(
+                        //         border: Border.all(
+                        //           color: C.current.sub01.withValues(alpha: 0.5),
+                        //         ),
+                        //         borderRadius: BorderRadius.circular(8),
+                        //       ),
+                        //       child: Center(
+                        //         child: Text(
+                        //           "Fill with Test Phrase",
+                        //           style: fontR(14, color: C.current.sub01),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

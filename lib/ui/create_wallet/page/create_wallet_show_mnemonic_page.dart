@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/create_wallet/cubit/create_wallet_cubit.dart';
+import 'package:planet/ui/small_round_button.dart';
+
+import '../../common/default_dialog.dart';
 
 class CreateWalletShowMnemonicPage extends StatefulWidget {
   const CreateWalletShowMnemonicPage({super.key});
@@ -24,7 +28,8 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "Securely store these 12 words in order.", //  '아래 12개의 단어를 순서대로 안전하게 저장하세요',
+            "Securely store these 12 words in order.",
+            //  '아래 12개의 단어를 순서대로 안전하게 저장하세요',
             style: fontSB(16, color: C.current.mainText),
             textAlign: TextAlign.center,
           ),
@@ -36,7 +41,8 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "In the next step, we will ask you to select some of these words for verification. Make sure to remember them well!", // '다음 단계에서 일부 단어를 선택하여 확인할 예정입니다.\n 단어들을 잘 기억해두세요!',
+            "In the next step, we will ask you to select some of these words for verification. Make sure to remember them well!",
+            // '다음 단계에서 일부 단어를 선택하여 확인할 예정입니다.\n 단어들을 잘 기억해두세요!',
             style: fontR(14,
                 color: C.current.mainText.withValues(alpha: 0.5), height: 1.3),
             textAlign: TextAlign.center,
@@ -90,9 +96,19 @@ class _CreateWalletShowMnemonicPageState
             ),
           ),
 
-        const SizedBox(height: 42),
+        const SizedBox(height: 24),
+        if (state.mnemonic.isNotEmpty)
+          SmallRoundButton(
+            onTap: () async {
+              await Clipboard.setData(ClipboardData(text: state.mnemonic));
+              DefaultDialog.showTimerDialog(context,
+                  description: "Success copy", duration: Duration(seconds: 1));
+            },
+            iconPath: "icons/ic_copy.svg",
+            title: "Copy Words",
+          ),
+        const SizedBox(height: 28),
 
-        // 경고 박스
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Container(

@@ -146,7 +146,8 @@ class _DefaultDialogState extends State<DefaultDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                constraints: const BoxConstraints(minHeight: 140),
+                constraints:
+                    BoxConstraints(minHeight: widget.hideButton ? 80 : 140),
                 padding: EdgeInsets.only(
                     left: 30,
                     right: 30,
