@@ -38,7 +38,7 @@ class TransferAmountInputScreen extends StatefulWidget {
       TransferAmountInputScreen(
         tokenInfo: tokenInfo,
         toPlanet: toPlanet,
-        onSelect: (text) {},
+        onSelect: onSelect,
       ),
     );
   }
@@ -125,11 +125,21 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                                     style: fontM(40, color: C.current.mainText),
                                   ),
                                 ),
+                                if (state.amount.isNotEmpty &&
+                                    !state.isValidateAmount)
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 12),
+                                    child: Text(
+                                      'You don’t have enough amount to send',
+                                      style:
+                                          fontR(14, color: C.current.primary),
+                                    ),
+                                  ),
                                 const SizedBox(height: 12),
                                 Text(
                                   "0.0 USD",
                                   style: fontR(14, color: C.current.sub01),
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -153,7 +163,11 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                       ),
                       child: DefaultButton(
                         title: "Submit",
-                        onTap: state.isValidateAmount ? () {} : null,
+                        onTap: state.isValidateAmount
+                            ? () {
+                                widget.onSelect(state.amount);
+                              }
+                            : null,
                       ),
                     ),
                   ],

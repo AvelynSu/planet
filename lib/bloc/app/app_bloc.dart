@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/model/token_balance.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/service/wallet/wallet_balance_service.dart';
@@ -68,6 +69,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       if (event.updateBalance) {
         updateBalance = await WalletBalanceService()
             .getAllTokenBalances(walletAddress: current.address);
+      } else if (event.updateBalanceToken != TokenInfo.empty) {
+        var updateTokenBalance = await WalletBalanceService().getTokenBalance(
+          address: current.address,
+          info: event.updateBalanceToken,
+        );
+
+        updateBalance = updateBalance.map((e) {
+          if (e.address == updateTokenBalance.address) {
+            return updateTokenBalance;
+          } else {
+            return e;
+          }
+        }).toList();
       }
 
       yield AppLoaded(

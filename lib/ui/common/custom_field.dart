@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../custom_theme.dart';
+import '../transfer/select_friend/friend_search_field.dart';
 import 'custom_image.dart';
 
 class CustomField extends StatefulWidget {
@@ -146,6 +147,7 @@ class _CustomFieldState extends State<CustomField> {
                   child: SizedBox(
                     height: widget.maxLine == null ? widget.height ?? 40 : null,
                     child: TextFormField(
+                      selectionControls: CustomColorSelectionHandle(primary),
                       keyboardAppearance: Brightness.dark,
                       obscureText: hidePassword,
                       obscuringCharacter: '*',

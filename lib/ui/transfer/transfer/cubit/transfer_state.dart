@@ -2,21 +2,22 @@ part of 'transfer_cubit.dart';
 
 class TokenTransferState extends Equatable {
   final ScreenStatus status;
+  final CustomException? exception;
 
   final TokenBalance balance;
 
-  final CustomException? exception;
-  final String recipientAddress;
+  final PlanetDto toPlanet;
   final String amount;
+
+  final bool useCustomGas;
   final Map<GasPriority, TransferFee> gasFees;
   final GasPriority selectedGasPriority;
-  final bool useCustomGas;
   final TransferFee? customGasFee;
 
   const TokenTransferState({
     this.status = ScreenStatus.loading,
     this.balance = TokenBalance.empty,
-    this.recipientAddress = '',
+    this.toPlanet = PlanetDto.empty,
     this.amount = '',
     this.gasFees = const {},
     this.selectedGasPriority = GasPriority.medium,
@@ -24,11 +25,6 @@ class TokenTransferState extends Equatable {
     this.customGasFee,
     this.exception,
   });
-
-  bool get isValidateAddress {
-    // Basic Ethereum address validation
-    return recipientAddress.startsWith('0x') && recipientAddress.length == 42;
-  }
 
   bool get isValidateAmount {
     if (amount.isEmpty) {
@@ -45,13 +41,13 @@ class TokenTransferState extends Equatable {
     }
   }
 
-  bool get isFormValid => isValidateAddress && isValidateAmount;
+  bool get isFormValid => isValidateAmount;
 
   TokenTransferState copyWith({
     ScreenStatus? status,
     CustomException? exception,
     TokenBalance? balance,
-    String? recipientAddress,
+    PlanetDto? toPlanet,
     String? amount,
     Map<GasPriority, TransferFee>? gasFees,
     GasPriority? selectedGasPriority,
@@ -60,7 +56,7 @@ class TokenTransferState extends Equatable {
   }) {
     return TokenTransferState(
       status: status ?? this.status,
-      recipientAddress: recipientAddress ?? this.recipientAddress,
+      toPlanet: toPlanet ?? this.toPlanet,
       balance: balance ?? this.balance,
       amount: amount ?? this.amount,
       gasFees: gasFees ?? this.gasFees,
@@ -74,7 +70,7 @@ class TokenTransferState extends Equatable {
   @override
   List<Object?> get props => [
         status,
-        recipientAddress,
+        toPlanet,
         amount,
         gasFees,
         selectedGasPriority,

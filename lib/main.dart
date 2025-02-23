@@ -58,6 +58,12 @@ class _AppState extends State<App> {
               debugShowCheckedModeBanner: false,
               themeMode: mode,
               theme: ThemeData(
+                primaryColor: primary,
+                textSelectionTheme: TextSelectionThemeData(
+                  cursorColor: primary,
+                  selectionColor: primary.withValues(alpha: 0.3),
+                  selectionHandleColor: primary,
+                ),
                 fontFamily: 'WorkSans',
               ),
               home: AppScreen(),

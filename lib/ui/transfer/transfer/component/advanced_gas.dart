@@ -123,7 +123,7 @@ class _AdvancedGasSettingsBottomSheetState
               onUpdateGasPriority: (item) {
                 _updateGasFromPriority(item);
               },
-              selectedPriority: widget.selectedPriority,
+              selectedPriority: _selectedPriority,
               useCustomGas: _useCustomGas,
               gasFees: widget.gasFees,
             ),
@@ -141,9 +141,8 @@ class _AdvancedGasSettingsBottomSheetState
                 Switch(
                   value: _useCustomGas,
                   onChanged: (value) {
-                    setState(() {
-                      _useCustomGas = value;
-                    });
+                    _useCustomGas = value;
+                    setState(() {});
                   },
                   activeColor: C.current.primary,
                 ),

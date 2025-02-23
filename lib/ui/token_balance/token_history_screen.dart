@@ -119,8 +119,14 @@ class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
                                           tokenInfo: widget.info.info,
                                           toPlanet: planet,
                                           onSelect: (amount) {
-                                            TransferScreen.push(context,
-                                                tokenBalance: tokenBalance);
+                                            print(amount);
+                                            /// 가스비 설정
+                                            TransferScreen.push(
+                                              context,
+                                              info: widget.info.info,
+                                              amount: amount,
+                                              toPlanet: planet,
+                                            );
                                           },
                                         );
                                       },

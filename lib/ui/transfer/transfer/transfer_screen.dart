@@ -1,15 +1,18 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/custom_exception.dart';
-import 'package:planet/model/token_balance.dart';
+import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
-import 'package:planet/ui/common/bounce_button.dart';
-import 'package:planet/ui/common/custom_field.dart';
+import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
+import 'package:planet/ui/transfer/transfer/component/transfer_label.dart';
+import 'package:planet/ui/transfer/transfer/trasnfer_success_screen.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:planet/ui/util/app_util.dart';
 
@@ -19,18 +22,25 @@ import 'component/transfer_status_modal.dart';
 import 'cubit/transfer_cubit.dart';
 
 class TransferScreen extends StatefulWidget {
-  final TokenBalance tokenBalance;
+  final TokenInfo info;
+  final String amount;
+  final PlanetDto toPlanet;
 
   const TransferScreen({
     super.key,
-    required this.tokenBalance,
+    required this.info,
+    required this.amount,
+    required this.toPlanet,
   });
 
   static push(
     BuildContext context, {
-    required TokenBalance tokenBalance,
+    required TokenInfo info,
+    required String amount,
+    required PlanetDto toPlanet,
   }) {
-    AppUi.push(context, TransferScreen(tokenBalance: tokenBalance));
+    AppUi.push(context,
+        TransferScreen(info: info, amount: amount, toPlanet: toPlanet));
   }
 
   @override
@@ -38,9 +48,6 @@ class TransferScreen extends StatefulWidget {
 }
 
 class _TransferScreenState extends State<TransferScreen> {
-  final _addressController = TextEditingController();
-  final _amountController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -51,7 +58,9 @@ class _TransferScreenState extends State<TransferScreen> {
     return BlocProvider(
       create: (context) => TokenTransferCubit(
         appBloc: context.read<AppBloc>(),
-        tokenBalance: widget.tokenBalance,
+        tokenInfo: widget.info,
+        toPlanet: widget.toPlanet,
+        amount: widget.amount,
       )..initialize(),
       child: BlocListener<TokenTransferCubit, TokenTransferState>(
         listener: (context, state) async {
@@ -70,13 +79,63 @@ class _TransferScreenState extends State<TransferScreen> {
         child: BlocBuilder<TokenTransferCubit, TokenTransferState>(
           builder: (context, state) {
             final cubit = context.read<TokenTransferCubit>();
-
+            var currentFee = state.gasFees[state.selectedGasPriority];
             return BaseScaffold(
               onLoading: state.status == ScreenStatus.loading,
-              title: "Send ${widget.tokenBalance.info.symbol}",
+              title: "Send ${state.balance.info.symbol}",
               onBack: () => Navigator.pop(context),
               body: Column(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 52),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        /// 주소
+                        AutoSizeText(
+                          AppUtil.shortenWalletAddress(state.toPlanet.address),
+                          maxLines: 1,
+                          style: fontM(18, color: C.current.mainText),
+                        ),
+                        const SizedBox(height: 12),
+
+                        /// 입력한 양
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: hPadding),
+                                width: double.infinity,
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  "${state.amount.isEmpty ? "0.0" : state.amount} ${widget.info.symbol}",
+                                  maxLines: 1,
+                                  style: fontM(28, color: C.current.mainText),
+                                ),
+                              ),
+                              if (state.amount.isNotEmpty &&
+                                  !state.isValidateAmount)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 12),
+                                  child: Text(
+                                    'You don’t have enough amount to send',
+                                    style: fontR(14, color: C.current.primary),
+                                  ),
+                                ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "0.0 USD",
+                                style: fontR(14, color: C.current.sub01),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(
@@ -84,182 +143,49 @@ class _TransferScreenState extends State<TransferScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Balance display
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: C.current.lightBase,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: C.current.sub01.withValues(alpha: 0.2),
-                                ),
+                            TransferLabel(
+                              title: "From",
+                              value: AppUtil.shortenWalletAddress(
+                                (context.read<AppBloc>().state as AppLoaded)
+                                    .current
+                                    .address,
                               ),
-                              child: Column(
+                            ),
+                            // _label(
+                            //     title: "Amount",
+                            //     value: "${state.amount} ${widget.info.symbol}"),
+                            TransferLabel(
+                              title: "Fee",
+                              body: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "Available Balance",
-                                    style: fontR(14, color: C.current.sub01),
+                                    '${currentFee?.feeToEth} ETH',
+                                    style:
+                                        fontSB(14, color: C.current.mainText),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    "${widget.tokenBalance.balance} ${widget.tokenBalance.info.symbol}",
-                                    style:
-                                        fontSB(24, color: C.current.mainText),
+                                    'Gas: ${currentFee?.gasPrice.toRadixString(10)}',
+                                    style: fontR(12, color: C.current.sub01),
                                   ),
                                 ],
                               ),
                             ),
-
-                            const SizedBox(height: 32),
-
-                            // Recipient address input
-                            Text(
-                              "Recipient Address",
-                              style: fontR(16, color: C.current.mainText),
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: C.current.lightBase,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: C.current.sub01.withValues(alpha: 0.2),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomField(
-                                      controller: _addressController,
-                                      hintText: "0x...",
-                                      onChange: (text) {
-                                        cubit.updateRecipientAddress(text);
-                                      },
-                                    ),
-                                  ),
-                                  BounceButton(
-                                    onTap: () async {
-                                      final data =
-                                          await Clipboard.getData('text/plain');
-                                      if (data?.text != null) {
-                                        _addressController.text = data!.text!;
-                                        cubit.updateRecipientAddress(
-                                            _addressController.text);
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      margin: const EdgeInsets.only(right: 8),
-                                      decoration: BoxDecoration(
-                                        color: C.current.sub01
-                                            .withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Icon(
-                                        Icons.content_paste_rounded,
-                                        color: C.current.mainText,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Amount input
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Amount",
-                                  style: fontR(16, color: C.current.mainText),
-                                ),
-                                BounceButton(
-                                  onTap: () {
-                                    // Set max available amount
-                                    _amountController.text =
-                                        "${widget.tokenBalance.balance}";
-                                    cubit.updateAmount(_amountController.text);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: C.current.primary
-                                          .withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      "MAX",
-                                      style:
-                                          fontSB(12, color: C.current.primary),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: C.current.lightBase,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: C.current.sub01.withValues(alpha: 0.2),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomField(
-                                      controller: _amountController,
-                                      hintText: "0.0",
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d*\.?\d*$')),
-                                      ],
-                                      onChange: (text) {
-                                        cubit.updateAmount(text);
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    margin: const EdgeInsets.only(right: 8),
-                                    child: Text(
-                                      widget.tokenBalance.info.symbol,
-                                      style:
-                                          fontSB(14, color: C.current.mainText),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Gas Priority Selection
-                            Text(
-                              "Gas Fee",
-                              style: fontR(16, color: C.current.mainText),
-                            ),
-                            const SizedBox(height: 12),
 
                             if (state.gasFees.isNotEmpty)
-                              GasPrioritySelector(
-                                gasFees: state.gasFees,
-                                selectedPriority: state.selectedGasPriority,
-                                onPrioritySelected: (priority) {
-                                  cubit.updateGasPriority(priority);
-                                },
-                                onCustomGasSet: (gasPrice, gasLimit) {
-                                  cubit.setCustomGas(gasPrice, gasLimit);
-                                },
+                              Container(
+                                margin: const EdgeInsets.only(top: 12),
+                                child: GasPrioritySelector(
+                                  gasFees: state.gasFees,
+                                  selectedPriority: state.selectedGasPriority,
+                                  onPrioritySelected: (priority) {
+                                    cubit.updateGasPriority(priority);
+                                  },
+                                  onCustomGasSet: (gasPrice, gasLimit) {
+                                    cubit.setCustomGas(gasPrice, gasLimit);
+                                  },
+                                ),
                               ),
 
                             // Show custom gas fee if using custom gas settings
@@ -306,14 +232,10 @@ class _TransferScreenState extends State<TransferScreen> {
                                 ),
                               ),
 
-                            if (!state.isValidateAddress &&
-                                _addressController.text.isNotEmpty)
-                              _buildErrorMessage(
-                                  "Please enter a valid recipient address"),
-
-                            if (!state.isValidateAmount &&
-                                _amountController.text.isNotEmpty)
-                              _buildErrorMessage("Please enter a valid amount"),
+                            if (!state.isValidateAmount)
+                              const CustomErrorCard(
+                                  iconPath: "",
+                                  title: "Please enter a valid amount"),
                           ],
                         ),
                       ),
@@ -328,7 +250,20 @@ class _TransferScreenState extends State<TransferScreen> {
                     child: DefaultButton(
                       title: "Send",
                       onTap: state.isFormValid
-                          ? () => _confirmAndExecuteTransfer(context, cubit)
+                          ? () {
+                              var currentFee = cubit.state
+                                  .gasFees[cubit.state.selectedGasPriority];
+
+                              TransferSuccessScreen.push(
+                                context,
+                                fee: currentFee!,
+                                amount: cubit.state.amount,
+                                tokenInfo: cubit.state.balance.info,
+                                recipient: cubit.state.toPlanet,
+                                transactionId: "sdfsdf",
+                              );
+                              // _confirmAndExecuteTransfer(context, cubit);
+                            }
                           : null,
                     ),
                   ),
@@ -341,44 +276,15 @@ class _TransferScreenState extends State<TransferScreen> {
     );
   }
 
-  Widget _buildErrorMessage(String message) {
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.red.shade300,
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.error_outline,
-            color: Colors.red.shade700,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              message,
-              style: fontR(14, color: Colors.red.shade700, height: 1.3),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _confirmAndExecuteTransfer(
       BuildContext context, TokenTransferCubit cubit) async {
     final confirmed = await DefaultDialog.show(
           context,
           title: "Confirm Transfer",
           description:
-              "Are you sure you want to send ${_amountController.text} ${widget.tokenBalance.info.symbol} to\n${AppUtil.shortenWalletAddress(_addressController.text)}?",
+              "Are you sure you want to send ${cubit.state.toPlanet.address} ${cubit.state.balance.info.symbol} to\n${AppUtil.shortenWalletAddress(
+            cubit.state.toPlanet.address,
+          )}?",
           onSecondAction: () {},
           // cancelText: "Cancel",
           // confirmText: "Confirm",
@@ -386,7 +292,8 @@ class _TransferScreenState extends State<TransferScreen> {
         false;
 
     if (confirmed == true) {
-      final loadingDialog = TransferLoadingDialog.show(context);
+      final loadingDialog = TransferLoadingDialog.show(context,
+          gasPriority: cubit.state.selectedGasPriority);
 
       try {
         final success = await cubit.executeTransfer();
@@ -394,16 +301,25 @@ class _TransferScreenState extends State<TransferScreen> {
         // Hide loading dialog
         Navigator.pop(context);
 
-        if (success) {
-          await TransferSuccessDialog.show(
-            context,
-            amount: _amountController.text,
-            symbol: widget.tokenBalance.info.symbol,
-            recipient: _addressController.text,
-          );
+        /// 최종 확인 화면
+        Navigator.pop(context);
 
-          // Return to previous screen
-          Navigator.pop(context);
+        /// 금액 확인 부분
+        Navigator.pop(context);
+
+        /// 친구 선택 확인 부분
+        Navigator.pop(context);
+
+        if (success) {
+          var currentFee = cubit.state.gasFees[cubit.state.selectedGasPriority];
+          TransferSuccessScreen.push(
+            context,
+            transactionId: "",
+            amount: cubit.state.amount,
+            tokenInfo: cubit.state.balance.info,
+            fee: currentFee!,
+            recipient: cubit.state.toPlanet,
+          );
         } else {
           await DefaultDialog.show(
             context,

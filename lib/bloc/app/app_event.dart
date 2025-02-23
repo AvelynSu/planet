@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:planet/model/token_info.dart';
 
 class AppEvent extends Equatable {
   @override
@@ -14,11 +15,18 @@ class AppInitialize extends AppEvent {
 
 class AppUpdate extends AppEvent {
   final bool updateBalance;
+  final TokenInfo updateBalanceToken;
 
-  AppUpdate({this.updateBalance = false});
+  AppUpdate({
+    this.updateBalance = false,
+    this.updateBalanceToken = TokenInfo.empty,
+  });
 
   @override
-  List<Object?> get props => [updateBalance];
+  List<Object?> get props => [
+        updateBalance,
+        updateBalanceToken,
+      ];
 }
 
 class AppSignOut extends AppEvent {}

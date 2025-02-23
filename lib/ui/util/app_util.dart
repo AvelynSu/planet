@@ -4,6 +4,29 @@ import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 
 class AppUtil {
+  static bool isValidEthereumAddress(String address) {
+    try {
+      if (address.isEmpty) {
+        return false;
+      }
+
+      if (!address.startsWith('0x')) {
+        return false;
+      }
+
+      if (address.length != 42) {
+        return false;
+      }
+
+      final hex = address.substring(2); // 0x 제외
+      final hexRegExp = RegExp(r'^[0-9a-fA-F]+$');
+
+      return hexRegExp.hasMatch(hex);
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// Formats a crypto amount with appropriate decimal places
   static String formatAmount(String amount, {int maxDecimals = 8}) {
     try {

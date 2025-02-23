@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
@@ -6,7 +8,9 @@ import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/enum/screen_status.dart';
 import 'package:planet/model/custom_exception.dart';
+import 'package:planet/model/planet_dto.dart';
 import 'package:planet/model/token_balance.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/util/app_util.dart';
@@ -18,12 +22,31 @@ part 'transfer_state.dart';
 
 class TokenTransferCubit extends Cubit<TokenTransferState> {
   final AppBloc appBloc;
-  final TokenBalance tokenBalance;
+  final TokenInfo tokenInfo;
+  final PlanetDto toPlanet;
+  final String amount;
+
+  late StreamSubscription subscription;
 
   TokenTransferCubit({
     required this.appBloc,
-    required this.tokenBalance,
-  }) : super(const TokenTransferState());
+    required this.tokenInfo,
+    required this.toPlanet,
+    required this.amount,
+  }) : super(const TokenTransferState()) {
+    subscription = appBloc.stream.listen((state) {
+      updateApp();
+    });
+  }
+
+  updateApp() {
+    var appState = appBloc.state as AppLoaded;
+    var balances = appState.balance
+        .where((e) => e.info.symbol == tokenInfo.symbol)
+        .firstOrNull;
+    emit(state.copyWith(
+        balance: balances ?? TokenBalance.empty, status: ScreenStatus.loaded));
+  }
 
   final WalletTransferService _transferService = WalletTransferService();
   final WalletService _walletService = WalletService();
@@ -33,9 +56,15 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
     try {
       final gasFees = await _transferService.estimateGasFeesByPriority();
-
+      var appState = appBloc.state as AppLoaded;
+      var balances = appState.balance
+          .where((e) => e.info.symbol == tokenInfo.symbol)
+          .firstOrNull;
+      appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
       emit(state.copyWith(
-        balance: tokenBalance,
+        toPlanet: toPlanet,
+        amount: amount,
+        balance: balances,
         status: ScreenStatus.loaded,
         gasFees: gasFees,
         selectedGasPriority: GasPriority.medium,
@@ -49,16 +78,6 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
         ),
       ));
     }
-  }
-
-  /// 받는사람 업데이트
-  void updateRecipientAddress(String address) {
-    emit(state.copyWith(recipientAddress: address));
-  }
-
-  /// 받는 양 업데이트
-  void updateAmount(String amount) {
-    emit(state.copyWith(amount: amount));
   }
 
   /// 가스비 업데이트
@@ -114,7 +133,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       if (state.useCustomGas && state.customGasFee != null) {
         // Execute transaction with custom gas settings
         success = await _transferService.sendAndWaitForTransactionWithCustomGas(
-          toAddress: state.recipientAddress,
+          toAddress: state.toPlanet.address,
           amount: amountInWei,
           credentials: credentials,
           gasPrice: state.customGasFee!.gasPrice,
@@ -123,7 +142,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       } else {
         // Execute transaction with predefined gas priority
         success = await _transferService.sendAndWaitForTransaction(
-          toAddress: state.recipientAddress,
+          toAddress: state.toPlanet.address,
           amount: amountInWei,
           credentials: credentials,
           gasPriority: state.selectedGasPriority,
@@ -144,5 +163,11 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       ));
       return false;
     }
+  }
+
+  @override
+  Future<void> close() {
+    subscription.cancel();
+    return super.close();
   }
 }

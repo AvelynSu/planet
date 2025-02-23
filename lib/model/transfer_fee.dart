@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:web3dart/web3dart.dart';
+
 class TransferFee {
   final BigInt gasPrice; // 가스 단위 가격
   final BigInt gasLimit; // 최대 사용 가능한 가스량
@@ -16,4 +18,10 @@ class TransferFee {
 
   // 사용자 표시용 포맷팅
   String get formatted => '${feeInEth.toStringAsFixed(8)} ETH';
+
+  String get feeToEth {
+    final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
+        .getValueInUnit(EtherUnit.ether);
+    return ethValue.toStringAsFixed(8);
+  }
 }

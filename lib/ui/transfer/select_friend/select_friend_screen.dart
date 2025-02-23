@@ -7,6 +7,7 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/util/app_util.dart';
 
@@ -93,8 +94,15 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                               _unregisteredPlanetTile(
                                 PlanetDto(address: state.searchText),
                                 () {
-                                  widget.onSelect(
-                                      PlanetDto(address: state.searchText));
+                                  if (AppUtil.isValidEthereumAddress(
+                                      state.searchText)) {
+                                    widget.onSelect(
+                                        PlanetDto(address: state.searchText));
+                                  } else {
+                                    DefaultDialog.showTimerDialog(context,
+                                        description:
+                                            "Please enter a valid wallet address.");
+                                  }
                                 },
                               ),
                             ],
@@ -200,13 +208,16 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                     )
                   ]),
                   const SizedBox(width: 20),
-                  Text(
-                    planet.address,
-                    style: fontR(16, color: C.current.mainText),
+                  Expanded(
+                    child: Text(
+                      planet.address,
+                      style: fontR(16, color: C.current.mainText),
+                    ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             CustomImage(
               path: "icons/ic_small_arrow.svg",
               width: 16,

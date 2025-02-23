@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/model/transfer_fee.dart';
-import 'package:web3dart/web3dart.dart';
-
-import 'advanced_gas.dart';
 
 class GasPrioritySelector extends StatefulWidget {
   final Map<GasPriority, TransferFee> gasFees;
@@ -69,13 +66,6 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
     }
   }
 
-  String _formatEth(TransferFee fee) {
-    // Convert from Wei to ETH (1 ETH = 10^18 Wei)
-    final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, fee.estimatedFee)
-        .getValueInUnit(EtherUnit.ether);
-    return ethValue.toStringAsFixed(8);
-  }
-
   // 슬라이더 값에 따라 현재 선택된 우선순위 반환
   GasPriority _getCurrentPriority() {
     if (_sliderValue < 0.33) {
@@ -87,64 +77,22 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
     }
   }
 
-  String _getEstimatedTime(GasPriority priority) {
-    switch (priority) {
-      case GasPriority.slow:
-        return '~5 min';
-      case GasPriority.medium:
-        return '~2 min';
-      case GasPriority.fast:
-        return '< 30 sec';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final currentPriority = _getCurrentPriority();
-    final currentFee = widget.gasFees[currentPriority]!;
 
     return Container(
       decoration: BoxDecoration(
-        color: C.current.lightBase,
+        color: C.current.sub02,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: C.current.sub01.withValues(alpha: 0.2),
-        ),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 선택된 우선순위 표시
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _getPriorityLabel(currentPriority),
-                style: fontSB(16, color: C.current.mainText),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${_formatEth(currentFee)} ETH',
-                    style: fontSB(14, color: C.current.mainText),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Gas: ${currentFee.gasPrice.toRadixString(10)}',
-                    style: fontR(12, color: C.current.sub01),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
           // 예상 시간 표시
           Text(
-            'Estimated confirmation time: ${_getEstimatedTime(currentPriority)}',
+            'Estimated confirmation time: ${currentPriority.getEstimatedTime}',
             style: fontR(12, color: C.current.sub01),
           ),
 
@@ -200,7 +148,8 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
                   value: _sliderValue,
                   min: 0.0,
                   max: 1.0,
-                  divisions: 2, // 3개의 위치(slow, medium, fast)
+                  divisions: 2,
+                  // 3개의 위치(slow, medium, fast)
                   onChanged: (value) {
                     setState(() {
                       _sliderValue = value;
@@ -217,36 +166,36 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
             ],
           ),
 
-          const SizedBox(height: 16),
-
-          // Advanced Gas Settings 버튼
-          InkWell(
-            onTap: () {
-              // Show advanced gas settings bottomsheet
-              AdvancedGasSettingsBottomSheet.show(
-                context,
-                gasFees: widget.gasFees,
-                selectedPriority: currentPriority,
-                onPrioritySelected: widget.onPrioritySelected,
-                onCustomGasSet: widget.onCustomGasSet,
-              );
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.settings,
-                  size: 16,
-                  color: C.current.primary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  "Advanced Gas Settings",
-                  style: fontR(14, color: C.current.primary),
-                ),
-              ],
-            ),
-          ),
+          // const SizedBox(height: 16),
+          //
+          // // Advanced Gas Settings 버튼
+          // InkWell(
+          //   onTap: () {
+          //     // Show advanced gas settings bottomsheet
+          //     AdvancedGasSettingsBottomSheet.show(
+          //       context,
+          //       gasFees: widget.gasFees,
+          //       selectedPriority: currentPriority,
+          //       onPrioritySelected: widget.onPrioritySelected,
+          //       onCustomGasSet: widget.onCustomGasSet,
+          //     );
+          //   },
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Icon(
+          //         Icons.settings,
+          //         size: 16,
+          //         color: C.current.primary,
+          //       ),
+          //       const SizedBox(width: 4),
+          //       Text(
+          //         "Advanced Gas Settings",
+          //         style: fontR(14, color: C.current.primary),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

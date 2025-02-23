@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:planet/model/token_balance.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/ui/util/wallet_config.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -39,15 +40,15 @@ class WalletBalanceService {
   }
 
   /// 지정된 ERC-20 토큰의 잔액 조회 (스마트컨트렉트로 만들어진 토큰
-  Future<BigInt> getTokenBalance({
-    required String walletAddress, // 잔액을 조회할 지갑 주소
-    required String tokenAddress, // 토큰 컨트랙트 주소
+  Future<TokenBalance> getTokenBalance({
+    required String address, // 잔액을 조회할 지갑 주소
+    required TokenInfo info, // 토큰 컨트랙트 주소
   }) async {
     try {
       // 1. 컨트랙트 인스턴스 생성
       final contract = DeployedContract(
         ContractAbi.fromJson(erc20Abi, 'ERC20'), // ABI와 컨트랙트 이름
-        EthereumAddress.fromHex(tokenAddress), // 토큰 컨트랙트 주소
+        EthereumAddress.fromHex(info.address), // 토큰 컨트랙트 주소
       );
 
       // 2. balanceOf 함수 레퍼런스 가져오기
@@ -57,11 +58,15 @@ class WalletBalanceService {
       final result = await web3client.call(
         contract: contract,
         function: balanceFunction,
-        params: [EthereumAddress.fromHex(walletAddress)],
+        params: [EthereumAddress.fromHex(address)],
       );
 
-      // 4. 결과 반환 (BigInt 타입)
-      return result.first as BigInt;
+      var rawBalance = result.first as BigInt;
+      // 토큰의 decimals에 따라 변환
+      // 예: USDT는 6자리, 대부분의 토큰은 18자리
+      final actualBalance = rawBalance / BigInt.from(10).pow(info.decimals);
+
+      return TokenBalance.fromInfo(info, address, actualBalance);
     } catch (e) {
       debugPrint('Error getting token balance: $e');
       throw Exception('Failed to get token balance');
@@ -83,15 +88,11 @@ class WalletBalanceService {
       for (var token in TokenData.ethTokens) {
         if (token.symbol != "ETH") {
           final rawBalance = await getTokenBalance(
-            walletAddress: walletAddress,
-            tokenAddress: token.address,
+            address: walletAddress,
+            info: token,
           );
 
-          // 토큰의 decimals에 따라 변환
-          // 예: USDT는 6자리, 대부분의 토큰은 18자리
-          final actualBalance =
-              rawBalance / BigInt.from(10).pow(token.decimals);
-          balances[token.symbol] = actualBalance;
+          balances[token.symbol] = rawBalance.balance;
         }
       }
 
