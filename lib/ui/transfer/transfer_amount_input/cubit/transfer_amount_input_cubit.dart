@@ -26,7 +26,9 @@ class TransferAmountInputCubit extends Cubit<TransferAmountInputState> {
     required this.apiRepository,
     required this.appBloc,
   }) : super(const TransferAmountInputState()) {
-    subscription = appBloc.stream.listen((state) {updateApp();});
+    subscription = appBloc.stream.listen((state) {
+      updateApp();
+    });
   }
 
   updateApp() {
@@ -46,7 +48,7 @@ class TransferAmountInputCubit extends Cubit<TransferAmountInputState> {
 
     emit(state.copyWith(balance: balances));
 
-    appBloc.add(AppUpdate(updateBalance: true));
+    appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
   }
 
   /// 받는 양 업데이트

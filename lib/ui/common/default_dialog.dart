@@ -120,7 +120,7 @@ class _DefaultDialogState extends State<DefaultDialog> {
   void initState() {
     super.initState();
     if (widget.hideButton) {
-      Future.delayed(widget.duration ?? const Duration(milliseconds: 500), () {
+      Future.delayed(widget.duration ?? const Duration(milliseconds: 800), () {
         if (mounted) {
           Navigator.pop(context);
         }
@@ -206,11 +206,14 @@ class _DefaultDialogState extends State<DefaultDialog> {
                             Navigator.pop(context);
                           },
                           title: widget.firstButtonLabel ??
-                              (widget.onSecondAction != null ? "취소" : "확인"),
+                              (widget.onSecondAction != null
+                                  ? "Cancel"
+                                  : "Confirm"),
                           textColor: b5,
                         ),
                       ),
-                      if (widget.onSecondAction != null) SizedBox(width: 8),
+                      if (widget.onSecondAction != null)
+                        const SizedBox(width: 8),
                       if (widget.onSecondAction != null)
                         Expanded(
                           child: _itemButton(
@@ -220,7 +223,7 @@ class _DefaultDialogState extends State<DefaultDialog> {
                               Navigator.pop(context, true);
                               widget.onSecondAction!();
                             },
-                            title: widget.secondButtonLabel ?? "확인",
+                            title: widget.secondButtonLabel ?? "Confirm",
                             textColor: widget.secondButtonColor ?? Colors.white,
                           ),
                         ),

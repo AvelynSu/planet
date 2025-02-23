@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/custom_exception.dart';
@@ -13,6 +14,7 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/transfer/transfer/component/transfer_label.dart';
 import 'package:planet/ui/transfer/transfer/trasnfer_success_screen.dart';
+import 'package:planet/ui/transfer/transfer_profile_component.dart';
 import 'package:planet/ui/util/app_ui.dart';
 import 'package:planet/ui/util/app_util.dart';
 
@@ -78,6 +80,7 @@ class _TransferScreenState extends State<TransferScreen> {
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<TokenTransferCubit, TokenTransferState>(
           builder: (context, state) {
+            var appState = (context.read<AppBloc>().state as AppLoaded);
             final cubit = context.read<TokenTransferCubit>();
             var currentFee = state.gasFees[state.selectedGasPriority];
             return BaseScaffold(
@@ -92,11 +95,18 @@ class _TransferScreenState extends State<TransferScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         /// 주소
-                        AutoSizeText(
-                          AppUtil.shortenWalletAddress(state.toPlanet.address),
-                          maxLines: 1,
-                          style: fontM(18, color: C.current.mainText),
-                        ),
+                        (state.toPlanet.name.isEmpty)
+                            ? AutoSizeText(
+                                AppUtil.shortenWalletAddress(
+                                    state.toPlanet.address),
+                                maxLines: 1,
+                                style: fontM(18, color: C.current.mainText),
+                              )
+                            : TransferProfileComponent(
+                                planet: state.toPlanet,
+                                size: 28,
+                                enableAddress: false,
+                              ),
                         const SizedBox(height: 12),
 
                         /// 입력한 양
@@ -116,7 +126,8 @@ class _TransferScreenState extends State<TransferScreen> {
                                 ),
                               ),
                               if (state.amount.isNotEmpty &&
-                                  !state.isValidateAmount)
+                                  !state.isValidateAmount &&
+                                  state.status != ScreenStatus.loading)
                                 Container(
                                   margin: const EdgeInsets.only(top: 12),
                                   child: Text(
@@ -144,33 +155,23 @@ class _TransferScreenState extends State<TransferScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TransferLabel(
-                              title: "From",
-                              value: AppUtil.shortenWalletAddress(
-                                (context.read<AppBloc>().state as AppLoaded)
-                                    .current
-                                    .address,
-                              ),
-                            ),
-                            // _label(
-                            //     title: "Amount",
-                            //     value: "${state.amount} ${widget.info.symbol}"),
+                                title: "To",
+                                value: appState.current.name,
+                                description: AppUtil.shortenWalletAddress(
+                                    appState.current.address)),
+                            TransferLabel(
+                                title: "From",
+                                value: state.toPlanet.name.isEmpty
+                                    ? AppUtil.shortenWalletAddress(
+                                        appState.current.address)
+                                    : state.toPlanet.name,
+                                description: AppUtil.shortenWalletAddress(
+                                    state.toPlanet.address)),
                             TransferLabel(
                               title: "Fee",
-                              body: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${currentFee?.feeToEth} ETH',
-                                    style:
-                                        fontSB(14, color: C.current.mainText),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Gas: ${currentFee?.gasPrice.toRadixString(10)}',
-                                    style: fontR(12, color: C.current.sub01),
-                                  ),
-                                ],
-                              ),
+                              value: '${currentFee?.feeToEth} ETH',
+                              description:
+                                  'Gas: ${currentFee?.gasPrice.toRadixString(10)}',
                             ),
 
                             if (state.gasFees.isNotEmpty)
@@ -232,7 +233,8 @@ class _TransferScreenState extends State<TransferScreen> {
                                 ),
                               ),
 
-                            if (!state.isValidateAmount)
+                            if (!state.isValidateAmount &&
+                                state.status != ScreenStatus.loading)
                               const CustomErrorCard(
                                   iconPath: "",
                                   title: "Please enter a valid amount"),
@@ -251,18 +253,7 @@ class _TransferScreenState extends State<TransferScreen> {
                       title: "Send",
                       onTap: state.isFormValid
                           ? () {
-                              var currentFee = cubit.state
-                                  .gasFees[cubit.state.selectedGasPriority];
-
-                              TransferSuccessScreen.push(
-                                context,
-                                fee: currentFee!,
-                                amount: cubit.state.amount,
-                                tokenInfo: cubit.state.balance.info,
-                                recipient: cubit.state.toPlanet,
-                                transactionId: "sdfsdf",
-                              );
-                              // _confirmAndExecuteTransfer(context, cubit);
+                              _confirmAndExecuteTransfer(context, cubit);
                             }
                           : null,
                     ),
@@ -278,13 +269,12 @@ class _TransferScreenState extends State<TransferScreen> {
 
   Future<void> _confirmAndExecuteTransfer(
       BuildContext context, TokenTransferCubit cubit) async {
+    var appState = (context.read<AppBloc>().state as AppLoaded);
     final confirmed = await DefaultDialog.show(
           context,
           title: "Confirm Transfer",
           description:
-              "Are you sure you want to send ${cubit.state.toPlanet.address} ${cubit.state.balance.info.symbol} to\n${AppUtil.shortenWalletAddress(
-            cubit.state.toPlanet.address,
-          )}?",
+              "Are you sure you want to send *${appState.current.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
           onSecondAction: () {},
           // cancelText: "Cancel",
           // confirmText: "Confirm",
@@ -303,14 +293,13 @@ class _TransferScreenState extends State<TransferScreen> {
 
         /// 최종 확인 화면
         Navigator.pop(context);
-
-        /// 금액 확인 부분
-        Navigator.pop(context);
-
-        /// 친구 선택 확인 부분
-        Navigator.pop(context);
-
         if (success) {
+          /// 금액 확인 부분
+          Navigator.pop(context);
+
+          /// 친구 선택 확인 부분
+          Navigator.pop(context);
+
           var currentFee = cubit.state.gasFees[cubit.state.selectedGasPriority];
           TransferSuccessScreen.push(
             context,
@@ -320,6 +309,10 @@ class _TransferScreenState extends State<TransferScreen> {
             fee: currentFee!,
             recipient: cubit.state.toPlanet,
           );
+
+          context
+              .read<AppBloc>()
+              .add(AppUpdate(updateBalanceToken: widget.info));
         } else {
           await DefaultDialog.show(
             context,

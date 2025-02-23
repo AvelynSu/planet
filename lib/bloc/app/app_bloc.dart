@@ -70,13 +70,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         updateBalance = await WalletBalanceService()
             .getAllTokenBalances(walletAddress: current.address);
       } else if (event.updateBalanceToken != TokenInfo.empty) {
-        var updateTokenBalance = await WalletBalanceService().getTokenBalance(
-          address: current.address,
-          info: event.updateBalanceToken,
-        );
+        var updateTokenBalance = event.updateBalanceToken.symbol == "ETH"
+            ? await WalletBalanceService().getEthBalance(current.address)
+            : await WalletBalanceService().getTokenBalance(
+                address: current.address,
+                info: event.updateBalanceToken,
+              );
 
         updateBalance = updateBalance.map((e) {
-          if (e.address == updateTokenBalance.address) {
+          if (e.info.address == updateTokenBalance.info.address) {
             return updateTokenBalance;
           } else {
             return e;

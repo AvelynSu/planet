@@ -19,13 +19,14 @@ class WalletTransferService {
     final gasLimit = BigInt.from(21000);
 
     // 각 우선순위별 가스 가격 계산
+
     final gasPrices = {
-      GasPriority.slow: baseGasPrice * BigInt.from(8) ~/ BigInt.from(10),
-      // 80%
-      GasPriority.medium: baseGasPrice,
-      // 100%
-      GasPriority.fast: baseGasPrice * BigInt.from(12) ~/ BigInt.from(10),
-      // 120%
+      GasPriority.slow:
+          baseGasPrice * BigInt.from(10) ~/ BigInt.from(10), // 100%
+      GasPriority.medium:
+          baseGasPrice * BigInt.from(12) ~/ BigInt.from(10), // 120%
+      GasPriority.fast:
+          baseGasPrice * BigInt.from(15) ~/ BigInt.from(10), // 150%
     };
 
     // 각 우선순위별 TransactionFee 생성

@@ -9,6 +9,7 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/transfer/transfer_amount_input/custom_number_keypad.dart';
+import 'package:planet/ui/transfer/transfer_profile_component.dart';
 import 'package:planet/ui/util/app_util.dart';
 
 import '../../../enum/screen_status.dart';
@@ -76,102 +77,107 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
           builder: (context, state) {
             var cubit = context.read<TransferAmountInputCubit>();
             return BaseScaffold(
+              titleWidget: widget.toPlanet.name.isEmpty
+                  ? null
+                  : TransferProfileComponent(
+                      planet: widget.toPlanet,
+                      isSimpleMode: true,
+                    ),
               onBack: () {
                 Navigator.pop(context);
               },
-              title: AppUtil.shortenWalletAddress(widget.toPlanet.address),
-              body: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          /// 사용 가능한 잔액
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 48),
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: hPadding),
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  child: AutoSizeText(
-                                    "${state.balance.balance} ${widget.tokenInfo.symbol}",
-                                    maxLines: 1,
-                                    style: fontM(18, color: C.current.mainText),
-                                  ),
+              title: widget.toPlanet.name.isEmpty
+                  ? AppUtil.shortenWalletAddress(widget.toPlanet.address)
+                  : null,
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        /// 사용 가능한 잔액
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 48),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: hPadding),
+                                width: double.infinity,
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  "${state.balance.balance} ${widget.tokenInfo.symbol}",
+                                  maxLines: 1,
+                                  style: fontM(18, color: C.current.mainText),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
 
-                          /// 입력한 양
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 40),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
+                        /// 입력한 양
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: hPadding),
+                                width: double.infinity,
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  "${state.amount.isEmpty ? "0.0" : state.amount} ${widget.tokenInfo.symbol}",
+                                  maxLines: 1,
+                                  style: fontM(40, color: C.current.mainText),
+                                ),
+                              ),
+                              if (state.amount.isNotEmpty &&
+                                  !state.isValidateAmount)
                                 Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: hPadding),
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  child: AutoSizeText(
-                                    "${state.amount.isEmpty ? "0.0" : state.amount} ${widget.tokenInfo.symbol}",
-                                    maxLines: 1,
-                                    style: fontM(40, color: C.current.mainText),
+                                  margin: const EdgeInsets.only(top: 12),
+                                  child: Text(
+                                    'You don’t have enough amount to send',
+                                    style: fontR(14, color: C.current.primary),
                                   ),
                                 ),
-                                if (state.amount.isNotEmpty &&
-                                    !state.isValidateAmount)
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 12),
-                                    child: Text(
-                                      'You don’t have enough amount to send',
-                                      style:
-                                          fontR(14, color: C.current.primary),
-                                    ),
-                                  ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "0.0 USD",
-                                  style: fontR(14, color: C.current.sub01),
-                                ),
-                              ],
-                            ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "0.0 USD",
+                                style: fontR(14, color: C.current.sub01),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      height: 360,
-                      child: CustomNumberKeyPad(
-                        initialValue: state.amount,
-                        onUpdateValue: (amount) {
-                          cubit.updateAmount(amount);
-                        },
-                      ),
+                  ),
+                  Container(
+                    height: 360,
+                    child: CustomNumberKeyPad(
+                      initialValue: state.amount,
+                      onUpdateValue: (amount) {
+                        cubit.updateAmount(amount);
+                      },
                     ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: hPadding,
-                        right: hPadding,
-                        bottom: AppUi.bottomPadding(context),
-                      ),
-                      child: DefaultButton(
-                        title: "Submit",
-                        onTap: state.isValidateAmount
-                            ? () {
-                                widget.onSelect(state.amount);
-                              }
-                            : null,
-                      ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      left: hPadding,
+                      right: hPadding,
+                      bottom: AppUi.bottomPadding(context),
                     ),
-                  ],
-                ),
+                    child: DefaultButton(
+                      title: "Submit",
+                      onTap: state.isValidateAmount
+                          ? () {
+                              widget.onSelect(state.amount);
+                            }
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             );
           },

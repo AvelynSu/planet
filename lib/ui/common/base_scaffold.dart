@@ -12,6 +12,7 @@ import 'default_dialog.dart';
 
 class BaseScaffold extends StatefulWidget {
   final String? title;
+  final Widget? titleWidget;
   final Color? backgroundColor;
   final bool showAppbarIcon;
   final Function? onBack;
@@ -31,6 +32,7 @@ class BaseScaffold extends StatefulWidget {
     this.backgroundColor,
     this.showAppbarIcon = false,
     this.title,
+    this.titleWidget,
     this.onBack,
     required this.body,
     this.onLoading = false,
@@ -53,7 +55,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   bool get enableBack => widget.onBack != null;
 
-  bool get enableTitle => widget.title != null;
+  bool get enableTitle => widget.title != null || widget.titleWidget != null;
 
   bool get enableSuffix => widget.suffix != null;
 
@@ -222,12 +224,13 @@ class _BaseScaffoldState extends State<BaseScaffold> {
             if (enableTitle)
               Container(
                 alignment: Alignment.center,
-                child: Text(
-                  widget.title!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: fontR(18, color: color),
-                ),
+                child: widget.titleWidget ??
+                    Text(
+                      widget.title!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: fontR(18, color: color),
+                    ),
               ),
             if (widget.appBarContent != null) widget.appBarContent!
           ],

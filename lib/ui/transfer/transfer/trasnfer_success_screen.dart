@@ -8,11 +8,13 @@ import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/util/app_ui.dart';
 
 import '../../../custom_theme.dart';
 import '../../common/custom_image.dart';
 import '../../util/app_util.dart';
+import 'component/transfer_label.dart';
 
 class TransferSuccessScreen extends StatelessWidget {
   final String amount;
@@ -51,8 +53,7 @@ class TransferSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var current = context.read<AppBloc>().state as AppLoaded;
-
+    var appState = (context.read<AppBloc>().state as AppLoaded);
     return BaseScaffold(
       onBack: () {
         Navigator.pop(context);
@@ -71,15 +72,15 @@ class TransferSuccessScreen extends StatelessWidget {
                 children: [
                   /// Success icon
                   Container(
-                    width: 56,
-                    height: 56,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: CustomImage(
                       path: "icons/ic_check.svg",
-                      width: 40,
+                      width: 52,
                       color: Colors.green,
                     ),
                   ),
@@ -90,17 +91,40 @@ class TransferSuccessScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 80),
 
-                  _label(
-                    title: "From",
-                    value:
-                        AppUtil.shortenWalletAddress(current.current.address),
-                  ),
-                  _label(
+                  TransferLabel(
                     title: "To",
-                    value: AppUtil.shortenWalletAddress(recipient.address),
+                    value: appState.current.name,
+                    body: Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      child: PlanetWidget(
+                        data: appState.current.name,
+                        size: 24,
+                      ),
+                    ),
+                    description: AppUtil.shortenWalletAddress(
+                      appState.current.address,
+                    ),
                   ),
+                  TransferLabel(
+                      title: "From",
+                      body: Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        child: recipient.name.isEmpty
+                            ? null
+                            : PlanetWidget(
+                                data: recipient.name,
+                                size: 24,
+                              ),
+                      ),
+                      value: recipient.name.isEmpty
+                          ? AppUtil.shortenWalletAddress(recipient.address)
+                          : recipient.name,
+                      description: recipient.name.isEmpty
+                          ? null
+                          : AppUtil.shortenWalletAddress(recipient.address)),
+
                   _label(
                     title: "Amount",
                     value: "$amount ${tokenInfo.symbol}",
@@ -109,12 +133,12 @@ class TransferSuccessScreen extends StatelessWidget {
                     title: "Fee",
                     value: "${fee.feeToEth} ${tokenInfo.symbol}",
                   ),
+                  // _label(
+                  //   title: "TXhash",
+                  //   value: transactionId,
+                  // ),
                   _label(
-                    title: "TXhash",
-                    value: transactionId,
-                  ),
-                  _label(
-                    title: "TXhash",
+                    title: "Date",
                     value: DateFormat.yMEd().format(DateTime.now()) +
                         DateFormat.Hms().format(DateTime.now()),
                   ),

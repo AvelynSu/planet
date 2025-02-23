@@ -27,12 +27,17 @@ class WalletBalanceService {
       : web3client = Web3Client(WalletConfig().rpcUrl, http.Client());
 
   /// 지갑의 ETH 잔액 조회 (네이티브 토큰)
-  Future<BigInt> getEthBalance(String address) async {
+  Future<TokenBalance> getEthBalance(String address) async {
     try {
       // getBalance는 Wei 단위로 잔액을 반환 (1 ETH = 10^18 Wei)
       final balance =
           await web3client.getBalance(EthereumAddress.fromHex(address));
-      return balance.getInWei;
+      var value = balance.getInWei / BigInt.from(10).pow(18);
+      return TokenBalance(
+          address: address,
+          info:
+              TokenData.ethTokens.where((e) => e.symbol == "ETH").firstOrNull!,
+          balance: value);
     } catch (e) {
       debugPrint('Error getting ETH balance: $e');
       throw Exception('Failed to get ETH balance');
@@ -76,13 +81,12 @@ class WalletBalanceService {
   /// 지갑의 모든 지원 토큰 잔액 조회
   Future<List<TokenBalance>> getAllTokenBalances(
       {required String walletAddress}) async {
-    Map<String, double> balances = {};
-
+    List<TokenBalance> items = [];
     try {
       // 1. ETH 잔액 조회
       final ethBalance = await getEthBalance(walletAddress);
-      // Wei를 ETH로 변환 (18 자리 소수점)
-      balances['ETH'] = ethBalance / BigInt.from(10).pow(18);
+
+      items.add(ethBalance);
 
       // 2. 각 ERC-20 토큰 잔액 조회
       for (var token in TokenData.ethTokens) {
@@ -92,20 +96,8 @@ class WalletBalanceService {
             info: token,
           );
 
-          balances[token.symbol] = rawBalance.balance;
+          items.add(rawBalance);
         }
-      }
-
-      List<TokenBalance> items = [];
-
-      for (var item in TokenData.ethTokens) {
-        items.add(
-          TokenBalance.fromInfo(
-            item,
-            walletAddress,
-            balances[item.symbol] ?? 0,
-          ),
-        );
       }
 
       return items;

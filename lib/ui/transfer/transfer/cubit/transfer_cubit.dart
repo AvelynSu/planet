@@ -52,7 +52,8 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
   final WalletService _walletService = WalletService();
 
   Future<void> initialize() async {
-    emit(state.copyWith(status: ScreenStatus.loading));
+    emit(state.copyWith(
+        status: ScreenStatus.loading, toPlanet: toPlanet, amount: amount));
 
     try {
       final gasFees = await _transferService.estimateGasFeesByPriority();
@@ -151,7 +152,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
       if (success) {
         // Refresh balances
-        appBloc.add(AppUpdate(updateBalance: true));
+        appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
       }
 
       emit(state.copyWith(status: ScreenStatus.success));
