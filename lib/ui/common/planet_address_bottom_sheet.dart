@@ -1,15 +1,22 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_header.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/util/app_ui.dart';
+import 'package:planet/ui/util/data/token_data.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../custom_theme.dart';
+import '../transfer/transfer/transfer_screen.dart';
+import '../transfer/transfer_amount_input/transfer_amount_input_screen.dart';
 import 'copy_component.dart';
 import 'generate_planet.dart';
 
@@ -78,6 +85,8 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    var current = (context.read<AppBloc>().state as AppLoaded).current;
+
     return Stack(children: [
       // 숨겨진 PlanetWidget (이미지 변환용)
       Positioned(
@@ -160,16 +169,45 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
                         child: _button(
                           title: "Copy",
                           isReverse: true,
-                          onTap: () {},
+                          onTap: () async {
+                            await Clipboard.setData(
+                                ClipboardData(text: widget.planet.address));
+                            DefaultDialog.showTimerDialog(context,
+                                description: "Success Copy");
+                          },
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _button(
-                          title: "Send",
-                          onTap: () {},
+                      if (current.address != widget.planet.address)
+                        const SizedBox(width: 12),
+                      if (current.address != widget.planet.address)
+                        Expanded(
+                          child: _button(
+                            title: "Send",
+                            onTap: () {
+                              var info = TokenData.ethTokens
+                                  .where((e) => e.symbol == "ETH")
+                                  .first;
+
+                              /// 물량 입력하기
+                              TransferAmountInputScreen.push(
+                                context,
+                                tokenInfo: info,
+                                toPlanet: widget.planet,
+                                onSelect: (amount) {
+                                  print(amount);
+
+                                  /// 가스비 설정
+                                  TransferScreen.push(
+                                    context,
+                                    info: info,
+                                    amount: amount,
+                                    toPlanet: widget.planet,
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -192,7 +230,6 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
     return BounceButton(
       onTap: () {
         onTap();
-        Navigator.pop(context);
       },
       child: Container(
         height: 54,

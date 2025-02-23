@@ -101,21 +101,3 @@ class WalletHistoryService {
     }
   }
 }
-
-// 사용 예시:
-// void example() async {
-//   final service = WalletHistoryService();
-//   final address = '0x123...';
-//
-//   try {
-//     // 전체 거래 내역 조회
-//     final transactions = await service.getAllTransactions(address);
-//
-//     for (var tx in transactions) {
-//       print('${tx.timestamp} - ${tx.tokenSymbol} '
-//           '${tx.isIncoming ? "받음" : "보냄"} ${tx.amount}');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-// }

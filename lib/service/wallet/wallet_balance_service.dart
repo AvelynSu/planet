@@ -122,28 +122,3 @@ class WalletBalanceService {
     web3client.dispose();
   }
 }
-
-// void example() async {
-//   final service = WalletBalanceService(
-//     rpcUrl: 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba',
-//   );
-//
-//   final walletAddress = '0x123...'; // 사용자 지갑 주소
-//
-//   try {
-//     // 모든 지원 토큰의 잔액 조회
-//     final balances = await service.getAllTokenBalances(
-//       walletAddress: walletAddress,
-//       supportedTokens: SupportedTokens.mainnetTokens,
-//     );
-//
-//     // 결과 출력
-//     balances.forEach((symbol, balance) {
-//       print('$symbol: $balance');
-//     });
-//   } catch (e) {
-//     print('Error: $e');
-//   } finally {
-//     service.dispose(); // 리소스 해제
-//   }
-// }
