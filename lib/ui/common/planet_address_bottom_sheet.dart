@@ -15,8 +15,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../custom_theme.dart';
 import '../../util/app_ui.dart';
 import '../../util/data/token_data.dart';
-import '../transfer/transfer/transfer_screen.dart';
-import '../transfer/transfer_amount_input/transfer_amount_input_screen.dart';
+import '../token/transfer/transfer/transfer_screen.dart';
+import '../token/transfer/transfer_amount_input/transfer_amount_input_screen.dart';
 import 'copy_component.dart';
 import 'generate_planet.dart';
 

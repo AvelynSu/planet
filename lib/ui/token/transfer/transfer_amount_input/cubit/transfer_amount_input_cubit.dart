@@ -8,9 +8,9 @@ import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
 
-import '../../../../enum/screen_status.dart';
-import '../../../../model/custom_exception.dart';
-import '../../../../model/token_balance.dart';
+import '../../../../../enum/screen_status.dart';
+import '../../../../../model/custom_exception.dart';
+import '../../../../../model/token_balance.dart';
 
 part 'transfer_amount_input_state.dart';
 

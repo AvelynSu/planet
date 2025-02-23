@@ -14,9 +14,9 @@ import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 
-import '../../../../bloc/app/app_state.dart';
-import '../../../../service/wallet/walltet_transfer_service.dart';
-import '../../../../util/app_util.dart';
+import '../../../../../bloc/app/app_state.dart';
+import '../../../../../service/wallet/walltet_transfer_service.dart';
+import '../../../../../util/app_util.dart';
 
 part 'transfer_state.dart';
 

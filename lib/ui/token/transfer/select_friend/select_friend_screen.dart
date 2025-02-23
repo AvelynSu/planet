@@ -10,10 +10,10 @@ import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 
-import '../../../enum/screen_status.dart';
-import '../../../util/app_ui.dart';
-import '../../../util/app_util.dart';
-import '../../common/small_round_button.dart';
+import '../../../../enum/screen_status.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/app_util.dart';
+import '../../../common/small_round_button.dart';
 import 'cubit/sample_cubit.dart';
 import 'friend_search_field.dart';
 

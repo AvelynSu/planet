@@ -7,8 +7,8 @@ import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/repository/fb_repository.dart';
 
-import '../../../../enum/screen_status.dart';
-import '../../../../model/custom_exception.dart';
+import '../../../../../enum/screen_status.dart';
+import '../../../../../model/custom_exception.dart';
 
 part 'sample_state.dart';
 

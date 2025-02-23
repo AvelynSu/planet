@@ -8,8 +8,8 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../../../util/app_ui.dart';
-import '../../../common/custom_bottom_sheet_frame.dart';
+import '../../../../../util/app_ui.dart';
+import '../../../../common/custom_bottom_sheet_frame.dart';
 import 'advanced_gas_selector.dart';
 
 class AdvancedGasSettingsBottomSheet extends StatefulWidget {

@@ -10,10 +10,10 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 
-import '../../../custom_theme.dart';
-import '../../../util/app_ui.dart';
-import '../../../util/app_util.dart';
-import '../../common/custom_image.dart';
+import '../../../../custom_theme.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/app_util.dart';
+import '../../../common/custom_image.dart';
 import 'component/transfer_label.dart';
 
 class TransferSuccessScreen extends StatelessWidget {

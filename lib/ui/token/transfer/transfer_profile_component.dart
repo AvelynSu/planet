@@ -3,7 +3,7 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet_dto.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 
-import '../../util/app_util.dart';
+import '../../../util/app_util.dart';
 
 class TransferProfileComponent extends StatelessWidget {
   final PlanetDto planet;

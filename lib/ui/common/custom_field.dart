@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../custom_theme.dart';
-import '../transfer/select_friend/friend_search_field.dart';
+import '../token/transfer/select_friend/friend_search_field.dart';
 import 'custom_image.dart';
 
 class CustomField extends StatefulWidget {

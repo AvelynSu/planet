@@ -12,14 +12,14 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/transfer/transfer/component/transfer_label.dart';
-import 'package:planet/ui/transfer/transfer/trasnfer_success_screen.dart';
-import 'package:planet/ui/transfer/transfer_profile_component.dart';
+import 'package:planet/ui/token/transfer/transfer/trasnfer_success_screen.dart';
 
-import '../../../enum/screen_status.dart';
-import '../../../util/app_ui.dart';
-import '../../../util/app_util.dart';
+import '../../../../enum/screen_status.dart';
+import '../../../../util/app_ui.dart';
+import '../../../../util/app_util.dart';
+import '../transfer_profile_component.dart';
 import 'component/gas_selector.dart';
+import 'component/transfer_label.dart';
 import 'component/transfer_status_modal.dart';
 import 'cubit/transfer_cubit.dart';
 

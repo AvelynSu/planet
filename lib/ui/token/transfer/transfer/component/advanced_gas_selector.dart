@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:web3dart/web3dart.dart';
 
-import '../../../../custom_theme.dart';
-import '../../../../enum/gas_priority.dart';
+import '../../../../../custom_theme.dart';
+import '../../../../../enum/gas_priority.dart';
 
 class AdvancedGasSelector extends StatefulWidget {
   final Function(GasPriority) onUpdateGasPriority;

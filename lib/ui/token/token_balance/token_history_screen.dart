@@ -6,14 +6,14 @@ import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
-import 'package:planet/ui/token_balance/token_history_tile.dart';
-import 'package:planet/ui/transfer/transfer/transfer_screen.dart';
-import 'package:planet/ui/transfer/transfer_amount_input/transfer_amount_input_screen.dart';
+import 'package:planet/ui/token/token_balance/token_history_tile.dart';
 
 import '../../../enum/screen_status.dart';
-import '../../util/app_ui.dart';
-import '../common/skeleton.dart';
+import '../../../util/app_ui.dart';
+import '../../common/skeleton.dart';
 import '../transfer/select_friend/select_friend_screen.dart';
+import '../transfer/transfer/transfer_screen.dart';
+import '../transfer/transfer_amount_input/transfer_amount_input_screen.dart';
 import 'cubit/sample_cubit.dart';
 
 class TokenHistoryScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../../custom_theme.dart';
+import '../../../../../custom_theme.dart';
 
 class TransferLabel extends StatelessWidget {
   final String title;
