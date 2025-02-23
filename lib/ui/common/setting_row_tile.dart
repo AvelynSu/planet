@@ -32,29 +32,30 @@ class SettingRowTile extends StatelessWidget {
         height: 48,
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                title ?? "",
-                style: fontR(16, color: C.current.mainText),
-              ),
+            Text(
+              title ?? "",
+              style: fontR(16, color: C.current.mainText),
             ),
-            Row(
-              children: [
-                if (child != null) child!,
-                Text(
-                  subText ?? "",
-                  style: fontR(14, color: const Color(0xff5C5964)),
-                ),
-                if (showArrow)
-                  Container(
-                    margin: const EdgeInsets.only(left: 12),
-                    child: CustomImage(
-                      path: "icons/ic_small_arrow.svg",
-                      color: C.current.sub01,
-                      width: 20,
-                    ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (child != null) child!,
+                  Text(
+                    subText ?? "",
+                    style: fontR(14, color: const Color(0xff5C5964)),
                   ),
-              ],
+                  if (showArrow)
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: CustomImage(
+                        path: "icons/ic_small_arrow.svg",
+                        color: C.current.sub01,
+                        width: 20,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),

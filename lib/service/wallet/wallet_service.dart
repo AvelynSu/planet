@@ -72,6 +72,27 @@ class WalletService {
     return privateKey;
   }
 
+  Future<String> getPrivateKeyFromMnemonic(
+    String mnemonic,
+    NetworkType type,
+    int idx,
+  ) async {
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
+    }
+
+    final seed = bip39.mnemonicToSeed(mnemonic);
+    final path = "m/44'/60'/0'/0/$idx";
+    final node = bip32.BIP32.fromSeed(seed);
+    final child = node.derivePath(path);
+
+    // private key를 16진수 문자열로 변환
+    final privateKeyHex = bytesToHex(child.privateKey!);
+
+    // 0x 접두사 추가 (선택사항)
+    return "0x$privateKeyHex";
+  }
+
   /// 주소 생성 ----------------------------------------------------------------------
 
   // 이더리움 주소 생성

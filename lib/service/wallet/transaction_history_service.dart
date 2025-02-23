@@ -84,17 +84,21 @@ class WalletHistoryService {
     String address,
     TokenInfo info,
   ) async {
-    if (info.symbol == "ETH") {
-      return await getEthTransactions(address);
+    try {
+      if (info.symbol == "ETH") {
+        return await getEthTransactions(address);
+      }
+
+      final allTokenTxs = await getTokenTransactions(address);
+
+      final filteredTxs = allTokenTxs.where((tx) {
+        return tx.tokenAddress?.toLowerCase() == info.address.toLowerCase();
+      }).toList();
+
+      return filteredTxs;
+    } catch (err) {
+      return [];
     }
-
-    final allTokenTxs = await getTokenTransactions(address);
-
-    final filteredTxs = allTokenTxs.where((tx) {
-      return tx.tokenAddress?.toLowerCase() == info.address.toLowerCase();
-    }).toList();
-
-    return filteredTxs;
   }
 }
 

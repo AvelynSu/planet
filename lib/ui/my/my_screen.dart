@@ -5,11 +5,11 @@ import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
-import 'package:planet/ui/change_nickname/change_nickname_screen.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
+import 'package:planet/ui/my/planet_setting/planet_setting/sample_screen.dart';
 import 'package:planet/ui/util/app_constant.dart';
 import 'package:planet/ui/util/bold_generator.dart';
 
@@ -80,8 +80,7 @@ class _MyScreenState extends State<MyScreen> {
                       Expanded(
                         child: _verticalTile(
                           onTap: () {
-                            ChangeNicknameScreen.push(context,
-                                planetDto: appState.current);
+                            PlanetSettingScreen.push(context);
                           },
                           title: appState.current.name,
                           body: PlanetWidget(
@@ -163,10 +162,13 @@ class _MyScreenState extends State<MyScreen> {
                           var result = await DefaultDialog.show(
                             context,
                             description:
-                                "니모닉을 백업 하셨나요?\n니모닉 문자열을 잊어버리면 다시 로그인할 수 없습니다.",
+                                "Have you backed up your mnemonic phrase?\nIf you lose your mnemonic phrase, you won't be able to log in again.",
+                            onSecondAction: () {},
                           );
-                          context.read<AppBloc>().add(AppSignOut());
-                          setThemeTheme(ThemeMode.dark);
+                          if (result ?? false) {
+                            context.read<AppBloc>().add(AppSignOut());
+                            setThemeTheme(ThemeMode.dark);
+                          }
                         },
                         title: "Sign Out",
                       ),
