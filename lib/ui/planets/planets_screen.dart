@@ -13,7 +13,7 @@ import '../../util/app_ui.dart';
 import '../../util/bold_generator.dart';
 import '../common/copy_component.dart';
 import '../common/planet_address_bottom_sheet.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/planets_cubit.dart';
 
 class PlanetsScreen extends StatefulWidget {
   const PlanetsScreen({super.key});

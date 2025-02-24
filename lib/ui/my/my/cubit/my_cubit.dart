@@ -9,7 +9,7 @@ import 'package:planet/model/planet_dto.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
 
-part 'sample_state.dart';
+part 'my_state.dart';
 
 class MyCubit extends Cubit<MyState> {
   final AppBloc appBloc;

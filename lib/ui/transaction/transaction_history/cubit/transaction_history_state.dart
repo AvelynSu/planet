@@ -1,6 +1,6 @@
-part of 'sample_cubit.dart';
+part of 'transaction_history_cubit.dart';
 
-class TokenBalanceState extends Equatable {
+class TransactionHistoryState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
@@ -8,7 +8,7 @@ class TokenBalanceState extends Equatable {
   final TokenBalance balance;
   final List<TransactionHistory> items;
 
-  const TokenBalanceState({
+  const TransactionHistoryState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
     this.planet = Planet.empty,
@@ -16,14 +16,14 @@ class TokenBalanceState extends Equatable {
     this.items = const [],
   });
 
-  TokenBalanceState copyWith({
+  TransactionHistoryState copyWith({
     ScreenStatus? status,
     CustomException? exception,
     Planet? planet,
     TokenBalance? balance,
     List<TransactionHistory>? items,
   }) {
-    return TokenBalanceState(
+    return TransactionHistoryState(
       status: status ?? this.status,
       exception: exception ?? this.exception,
       planet: planet ?? this.planet,

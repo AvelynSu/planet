@@ -12,7 +12,7 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/token/transfer/transfer/trasnfer_success_screen.dart';
+import 'package:planet/ui/transaction/transfer/transfer/trasnfer_success_screen.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';

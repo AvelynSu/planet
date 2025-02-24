@@ -6,7 +6,7 @@ import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
-import 'package:planet/ui/token/token_balance/token_history_tile.dart';
+import 'package:planet/ui/transaction/transaction_history/token_history_tile.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
@@ -14,12 +14,12 @@ import '../../common/skeleton.dart';
 import '../transfer/select_friend/select_friend_screen.dart';
 import '../transfer/transfer/transfer_screen.dart';
 import '../transfer/transfer_amount_input/transfer_amount_input_screen.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/transaction_history_cubit.dart';
 
-class TokenHistoryScreen extends StatefulWidget {
+class TransactionHistoryScreen extends StatefulWidget {
   final TokenBalance info;
 
-  const TokenHistoryScreen({
+  const TransactionHistoryScreen({
     super.key,
     required this.info,
   });
@@ -28,29 +28,30 @@ class TokenHistoryScreen extends StatefulWidget {
     BuildContext context, {
     required TokenBalance info,
   }) {
-    AppUi.push(context, TokenHistoryScreen(info: info));
+    AppUi.push(context, TransactionHistoryScreen(info: info));
   }
 
   @override
-  State<TokenHistoryScreen> createState() => _TokenHistoryScreenState();
+  State<TransactionHistoryScreen> createState() =>
+      _TransactionHistoryScreenState();
 }
 
-class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
+class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => TokenBalanceCubit(
+      create: (BuildContext context) => TransactionBalanceCubit(
         appBloc: context.read<AppBloc>(),
         initialValue: widget.info,
       )..initialize(),
-      child: BlocListener<TokenBalanceCubit, TokenBalanceState>(
+      child: BlocListener<TransactionBalanceCubit, TransactionHistoryState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.fail) {}
 
           if (state.status == ScreenStatus.success) {}
         },
         listenWhen: (pre, cur) => pre.status != cur.status,
-        child: BlocBuilder<TokenBalanceCubit, TokenBalanceState>(
+        child: BlocBuilder<TransactionBalanceCubit, TransactionHistoryState>(
           builder: (context, state) {
             return BaseScaffold(
               onBack: () {
@@ -61,7 +62,7 @@ class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
                 height: double.infinity,
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    context.read<TokenBalanceCubit>().initialize();
+                    context.read<TransactionBalanceCubit>().initialize();
                   },
                   color: C.current.mainText,
                   backgroundColor: Colors.transparent,
@@ -145,7 +146,8 @@ class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
                           if (state.status == ScreenStatus.loading &&
                               state.items.isEmpty)
                             ...List.generate(5, (e) => Skeleton.historyTile),
-                          ...state.items.map((e) => TokenHistoryTile(item: e)),
+                          ...state.items
+                              .map((e) => TransactionHistoryTile(item: e)),
                           if (state.items.isEmpty &&
                               state.status == ScreenStatus.loaded)
                             Container(

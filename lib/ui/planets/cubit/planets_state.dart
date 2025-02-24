@@ -1,4 +1,4 @@
-part of 'sample_cubit.dart';
+part of 'planets_cubit.dart';
 
 class PlanetsState extends Equatable {
   final ScreenStatus status;

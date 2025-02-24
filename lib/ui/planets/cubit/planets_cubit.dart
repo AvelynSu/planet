@@ -8,7 +8,7 @@ import 'package:planet/repository/fb_repository.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
 
-part 'sample_state.dart';
+part 'planets_state.dart';
 
 List<Planet> _planets = [];
 

@@ -34,11 +34,11 @@ class AppUnInitialized extends AppState {
 }
 
 class AppLoaded extends AppState {
-  ///
+  /// 지갑 전체 목록을 보여주기 위함 (유저가 수시로 확인할 수 있는 내용)
   // 내 플래닛 전체
   final List<Planet> myPlanets;
 
-  ///
+  /// 앱에서 메인으로 보여주는 지갑
   // 현재 앱에서 다루는 플래닛 (1개를 메인으로 보여줌)
   final Planet currentPlanet;
 

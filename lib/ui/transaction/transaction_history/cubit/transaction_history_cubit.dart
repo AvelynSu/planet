@@ -13,18 +13,18 @@ import 'package:planet/service/wallet/transaction_history_service.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
 
-part 'sample_state.dart';
+part 'transaction_history_state.dart';
 
-class TokenBalanceCubit extends Cubit<TokenBalanceState> {
+class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
   final AppBloc appBloc;
   final TokenBalance initialValue;
 
   StreamSubscription? appSubscription;
 
-  TokenBalanceCubit({
+  TransactionBalanceCubit({
     required this.appBloc,
     required this.initialValue,
-  }) : super(const TokenBalanceState()) {
+  }) : super(const TransactionHistoryState()) {
     appSubscription = appBloc.stream.listen((state) => updatePlanet());
   }
 

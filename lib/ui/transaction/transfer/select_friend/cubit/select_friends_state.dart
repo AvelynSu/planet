@@ -1,4 +1,4 @@
-part of 'sample_cubit.dart';
+part of 'select_friends_cubit.dart';
 
 class SelectFriendsState extends Equatable {
   final ScreenStatus status;

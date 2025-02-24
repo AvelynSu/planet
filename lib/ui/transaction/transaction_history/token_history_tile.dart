@@ -5,19 +5,19 @@ import 'package:planet/ui/common/custom_image.dart';
 
 import '../../../util/bold_generator.dart';
 
-class TokenHistoryTile extends StatefulWidget {
+class TransactionHistoryTile extends StatefulWidget {
   final TransactionHistory item;
 
-  const TokenHistoryTile({
+  const TransactionHistoryTile({
     super.key,
     required this.item,
   });
 
   @override
-  State<TokenHistoryTile> createState() => _TokenHistoryTileState();
+  State<TransactionHistoryTile> createState() => _TransactionHistoryTileState();
 }
 
-class _TokenHistoryTileState extends State<TokenHistoryTile> {
+class _TransactionHistoryTileState extends State<TransactionHistoryTile> {
   @override
   Widget build(BuildContext context) {
     return Container(

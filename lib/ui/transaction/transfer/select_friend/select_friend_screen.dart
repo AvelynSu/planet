@@ -14,7 +14,7 @@ import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
 import '../../../../util/app_util.dart';
 import '../../../common/small_round_button.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/select_friends_cubit.dart';
 import 'friend_search_field.dart';
 
 class SelectFriendScreen extends StatefulWidget {

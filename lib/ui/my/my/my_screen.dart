@@ -16,7 +16,7 @@ import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../../../util/bold_generator.dart';
 import '../../common/setting_row_tile.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/my_cubit.dart';
 
 class MyScreen extends StatefulWidget {
   const MyScreen({super.key});

@@ -4,7 +4,7 @@ import 'package:planet/ui/home/home_screen.dart';
 import '../../enum/menu_type.dart';
 import '../common/base_scaffold.dart';
 import '../my/my/my_screen.dart';
-import '../planets/sample_screen.dart';
+import '../planets/planets_screen.dart';
 import 'bottom_bar.dart';
 
 class AppView extends StatefulWidget {

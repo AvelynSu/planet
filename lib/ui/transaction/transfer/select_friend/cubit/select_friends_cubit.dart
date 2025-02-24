@@ -10,7 +10,7 @@ import 'package:planet/repository/fb_repository.dart';
 import '../../../../../enum/screen_status.dart';
 import '../../../../../model/custom_exception.dart';
 
-part 'sample_state.dart';
+part 'select_friends_state.dart';
 
 class SelectFriendsCubit extends Cubit<SelectFriendsState> {
   final ApiRepository apiRepository;

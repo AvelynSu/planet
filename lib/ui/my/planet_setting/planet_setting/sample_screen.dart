@@ -16,7 +16,7 @@ import '../../../../util/app_ui.dart';
 import '../../../../util/app_util.dart';
 import '../../change_nickname/change_nickname_screen.dart';
 import 'backup_privacte_key_screen.dart';
-import 'cubit/sample_cubit.dart';
+import 'cubit/planet_setting_cubit.dart';
 
 class PlanetSettingScreen extends StatefulWidget {
   const PlanetSettingScreen({super.key});
