@@ -26,7 +26,7 @@ import 'cubit/transfer_cubit.dart';
 class TransferScreen extends StatefulWidget {
   final TokenInfo info;
   final String amount;
-  final PlanetDto toPlanet;
+  final Planet toPlanet;
 
   const TransferScreen({
     super.key,
@@ -39,7 +39,7 @@ class TransferScreen extends StatefulWidget {
     BuildContext context, {
     required TokenInfo info,
     required String amount,
-    required PlanetDto toPlanet,
+    required Planet toPlanet,
   }) {
     AppUi.push(context,
         TransferScreen(info: info, amount: amount, toPlanet: toPlanet));
@@ -156,14 +156,14 @@ class _TransferScreenState extends State<TransferScreen> {
                           children: [
                             TransferLabel(
                                 title: "To",
-                                value: appState.current.name,
+                                value: appState.currentPlanet.name,
                                 description: AppUtil.shortenWalletAddress(
-                                    appState.current.address)),
+                                    appState.currentPlanet.address)),
                             TransferLabel(
                                 title: "From",
                                 value: state.toPlanet.name.isEmpty
                                     ? AppUtil.shortenWalletAddress(
-                                        appState.current.address)
+                                        appState.currentPlanet.address)
                                     : state.toPlanet.name,
                                 description: AppUtil.shortenWalletAddress(
                                     state.toPlanet.address)),
@@ -274,7 +274,7 @@ class _TransferScreenState extends State<TransferScreen> {
           context,
           title: "Confirm Transfer",
           description:
-              "Are you sure you want to send *${appState.current.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
+              "Are you sure you want to send *${appState.currentPlanet.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
           onSecondAction: () {},
           // cancelText: "Cancel",
           // confirmText: "Confirm",

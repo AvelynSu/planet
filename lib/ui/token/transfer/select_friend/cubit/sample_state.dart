@@ -4,7 +4,7 @@ class SelectFriendsState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
-  final List<PlanetDto> planets;
+  final List<Planet> planets;
 
   final String searchText;
 
@@ -15,7 +15,7 @@ class SelectFriendsState extends Equatable {
     this.searchText = "",
   });
 
-  List<PlanetDto> get filtered {
+  List<Planet> get filtered {
     if (searchText.isEmpty) {
       return planets;
     }
@@ -28,7 +28,7 @@ class SelectFriendsState extends Equatable {
   SelectFriendsState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    List<PlanetDto>? planets,
+    List<Planet>? planets,
     String? searchText,
   }) {
     return SelectFriendsState(

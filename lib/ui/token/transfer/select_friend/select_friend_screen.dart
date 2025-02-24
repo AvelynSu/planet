@@ -18,16 +18,16 @@ import 'cubit/sample_cubit.dart';
 import 'friend_search_field.dart';
 
 class SelectFriendScreen extends StatefulWidget {
-  final Function(PlanetDto) onSelect;
+  final Function(Planet) onSelect;
 
   const SelectFriendScreen({
     super.key,
     required this.onSelect,
   });
 
-  static Future<PlanetDto?> push(
+  static Future<Planet?> push(
     BuildContext context, {
-    required Function(PlanetDto) onSelect,
+    required Function(Planet) onSelect,
   }) async {
     return await AppUi.push(context, SelectFriendScreen(onSelect: onSelect));
   }
@@ -92,12 +92,12 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                             children: [
                               _listGroupTitle("Address"),
                               _unregisteredPlanetTile(
-                                PlanetDto(address: state.searchText),
+                                Planet(address: state.searchText),
                                 () {
                                   if (AppUtil.isValidEthereumAddress(
                                       state.searchText)) {
                                     widget.onSelect(
-                                        PlanetDto(address: state.searchText));
+                                        Planet(address: state.searchText));
                                   } else {
                                     DefaultDialog.showTimerDialog(context,
                                         description:
@@ -178,7 +178,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
     );
   }
 
-  _unregisteredPlanetTile(PlanetDto planet, Function onTap) {
+  _unregisteredPlanetTile(Planet planet, Function onTap) {
     return BounceButton(
       onTap: () {
         onTap();
@@ -229,7 +229,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
   }
 
   _planetTile(
-    PlanetDto planet,
+    Planet planet,
     Function onTap,
   ) {
     return BounceButton(

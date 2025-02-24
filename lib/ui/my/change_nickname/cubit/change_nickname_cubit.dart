@@ -15,7 +15,7 @@ part 'change_nickname_state.dart';
 
 class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
   final AppBloc appBloc;
-  final PlanetDto planet;
+  final Planet planet;
   final ApiRepository apiRepository;
 
   ChangeNicknameCubit({

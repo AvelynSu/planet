@@ -48,9 +48,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             .getAllTokenBalances(walletAddress: current.address);
 
         yield AppLoaded(
-          planets: planets,
-          balance: updateBalance,
-          current: current,
+          myPlanets: planets,
+          currentTokens: updateBalance,
+          currentPlanet: current,
         );
       }
     }
@@ -65,7 +65,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       var current =
           planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
 
-      List<TokenBalance> updateBalance = (state as AppLoaded).balance;
+      List<TokenBalance> updateBalance = (state as AppLoaded).currentTokens;
       if (event.updateBalance) {
         updateBalance = await WalletBalanceService()
             .getAllTokenBalances(walletAddress: current.address);
@@ -87,9 +87,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
 
       yield AppLoaded(
-        planets: planets,
-        balance: updateBalance,
-        current: current,
+        myPlanets: planets,
+        currentTokens: updateBalance,
+        currentPlanet: current,
       );
     } catch (err) {
       print(err);

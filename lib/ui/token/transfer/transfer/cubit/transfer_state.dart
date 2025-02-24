@@ -6,7 +6,7 @@ class TokenTransferState extends Equatable {
 
   final TokenBalance balance;
 
-  final PlanetDto toPlanet;
+  final Planet toPlanet;
   final String amount;
 
   final bool useCustomGas;
@@ -17,7 +17,7 @@ class TokenTransferState extends Equatable {
   const TokenTransferState({
     this.status = ScreenStatus.loading,
     this.balance = TokenBalance.empty,
-    this.toPlanet = PlanetDto.empty,
+    this.toPlanet = Planet.empty,
     this.amount = '',
     this.gasFees = const {},
     this.selectedGasPriority = GasPriority.medium,
@@ -47,7 +47,7 @@ class TokenTransferState extends Equatable {
     ScreenStatus? status,
     CustomException? exception,
     TokenBalance? balance,
-    PlanetDto? toPlanet,
+    Planet? toPlanet,
     String? amount,
     Map<GasPriority, TransferFee>? gasFees,
     GasPriority? selectedGasPriority,

@@ -34,35 +34,42 @@ class AppUnInitialized extends AppState {
 }
 
 class AppLoaded extends AppState {
-  final List<PlanetDto> planets;
-  final PlanetDto current;
-  final List<TokenBalance> balance; // current
+  ///
+  // 내 플래닛 전체
+  final List<Planet> myPlanets;
+
+  ///
+  // 현재 앱에서 다루는 플래닛 (1개를 메인으로 보여줌)
+  final Planet currentPlanet;
+
+  // currentPlanet 하위의 토큰들 자산
+  final List<TokenBalance> currentTokens;
 
   const AppLoaded({
-    this.planets = const [],
-    this.current = PlanetDto.empty,
-    this.balance = const [],
+    this.myPlanets = const [],
+    this.currentPlanet = Planet.empty,
+    this.currentTokens = const [],
   });
 
   static const empty = AppLoaded();
 
   AppLoaded copyWith({
-    List<PlanetDto>? planets,
-    PlanetDto? current,
+    List<Planet>? planets,
+    Planet? current,
     List<TokenBalance>? balance,
   }) {
     return AppLoaded(
-      planets: planets ?? this.planets,
-      current: current ?? this.current,
-      balance: balance ?? this.balance,
+      myPlanets: planets ?? this.myPlanets,
+      currentPlanet: current ?? this.currentPlanet,
+      currentTokens: balance ?? this.currentTokens,
     );
   }
 
   @override
   List<Object?> get props => [
-        planets,
-        current,
-        balance,
+        myPlanets,
+        currentPlanet,
+        currentTokens,
       ];
 }
 

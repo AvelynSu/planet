@@ -4,14 +4,14 @@ class TokenBalanceState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
-  final PlanetDto planet;
+  final Planet planet;
   final TokenBalance balance;
   final List<TransactionHistory> items;
 
   const TokenBalanceState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.planet = PlanetDto.empty,
+    this.planet = Planet.empty,
     this.balance = TokenBalance.empty,
     this.items = const [],
   });
@@ -19,7 +19,7 @@ class TokenBalanceState extends Equatable {
   TokenBalanceState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    PlanetDto? planet,
+    Planet? planet,
     TokenBalance? balance,
     List<TransactionHistory>? items,
   }) {

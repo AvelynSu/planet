@@ -21,7 +21,7 @@ class TransferSuccessScreen extends StatelessWidget {
   final String transactionId;
   final TokenInfo tokenInfo;
   final TransferFee fee;
-  final PlanetDto recipient;
+  final Planet recipient;
 
   const TransferSuccessScreen({
     super.key,
@@ -38,7 +38,7 @@ class TransferSuccessScreen extends StatelessWidget {
     required TransferFee fee,
     required String amount,
     required TokenInfo tokenInfo,
-    required PlanetDto recipient,
+    required Planet recipient,
   }) async {
     return await AppUi.push(
         context,
@@ -95,16 +95,16 @@ class TransferSuccessScreen extends StatelessWidget {
 
                   TransferLabel(
                     title: "To",
-                    value: appState.current.name,
+                    value: appState.currentPlanet.name,
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
                       child: PlanetWidget(
-                        data: appState.current.name,
+                        data: appState.currentPlanet.name,
                         size: 24,
                       ),
                     ),
                     description: AppUtil.shortenWalletAddress(
-                      appState.current.address,
+                      appState.currentPlanet.address,
                     ),
                   ),
                   TransferLabel(

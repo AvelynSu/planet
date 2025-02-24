@@ -10,7 +10,7 @@ import '../../../../model/custom_exception.dart';
 
 part 'sample_state.dart';
 
-List<PlanetDto> _planets = [];
+List<Planet> _planets = [];
 
 class PlanetsCubit extends Cubit<PlanetsState> {
   final ApiRepository apiRepository;
@@ -28,7 +28,7 @@ class PlanetsCubit extends Cubit<PlanetsState> {
     emit(state.copyWith(planets: planets, planet: planets.first));
   }
 
-  onPageUpdate(PlanetDto planet) {
+  onPageUpdate(Planet planet) {
     emit(state.copyWith(planet: planet));
   }
 

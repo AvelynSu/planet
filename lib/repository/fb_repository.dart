@@ -13,11 +13,11 @@ class ApiRepository {
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
   /// 행성 전부 불러오기
-  Future<List<PlanetDto>> getAllPlanetForTest() async {
+  Future<List<Planet>> getAllPlanetForTest() async {
     var res = await _planetCol.get();
 
     var result =
-        res.docs.map((e) => PlanetDto.fromJson(e.data(), id: e.id)).toList();
+        res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
 
     return result;
   }
@@ -34,7 +34,7 @@ class ApiRepository {
   }
 
   /// 행성 저장하기
-  Future<PlanetDto> addPlanet(PlanetDto planet) async {
+  Future<Planet> addPlanet(Planet planet) async {
     var json = planet.toJson();
     json["mnemonic"] = "";
     var res = await _planetCol.add(planet.toJson());
@@ -45,7 +45,7 @@ class ApiRepository {
   }
 
   /// 이름 변경
-  Future<PlanetDto> updatePlanet(PlanetDto planet, String name) async {
+  Future<Planet> updatePlanet(Planet planet, String name) async {
     await _planetNameDoc.update({
       "items": FieldValue.arrayRemove([planet.name])
     });
@@ -63,21 +63,20 @@ class ApiRepository {
   }
 
   /// 주소로 행성 불러오기.
-  Future<PlanetDto> getPlanetByAddress(String address,
-      {String? mnemonic}) async {
+  Future<Planet> getPlanetByAddress(String address, {String? mnemonic}) async {
     var res = await _planetCol.where("address", isEqualTo: address).get();
 
     return res.docs.isEmpty
-        ? PlanetDto.empty
-        : PlanetDto.fromJson(
+        ? Planet.empty
+        : Planet.fromJson(
             res.docs.first.data(),
             id: res.docs.first.id,
           ).copyWith(mnemonic: mnemonic);
   }
 
   /// 로컬에 있는 플래닛 정보로 FB에서 불러오기
-  Future<List<PlanetDto>> getPlanetByLocalInfo(List<PlanetDto> local) async {
-    List<Future<PlanetDto>> planetTask = [];
+  Future<List<Planet>> getPlanetByLocalInfo(List<Planet> local) async {
+    List<Future<Planet>> planetTask = [];
     for (var item in local) {
       var planet = getPlanetByAddress(item.address, mnemonic: item.mnemonic);
       planetTask.add(planet);

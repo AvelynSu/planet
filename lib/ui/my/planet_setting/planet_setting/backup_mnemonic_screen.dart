@@ -10,14 +10,14 @@ import '../../../../custom_theme.dart';
 import '../../../../util/app_ui.dart';
 
 class BackupMnemonicScreen extends StatelessWidget {
-  final PlanetDto planet;
+  final Planet planet;
 
   const BackupMnemonicScreen({
     super.key,
     required this.planet,
   });
 
-  static push(BuildContext context, {required PlanetDto planet}) {
+  static push(BuildContext context, {required Planet planet}) {
     AppUi.push(
       context,
       BackupMnemonicScreen(planet: planet),

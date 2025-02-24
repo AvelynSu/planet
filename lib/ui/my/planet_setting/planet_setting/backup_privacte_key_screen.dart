@@ -11,14 +11,14 @@ import '../../../../custom_theme.dart';
 import '../../../../util/app_ui.dart';
 
 class BackupPrivateKeyScreen extends StatefulWidget {
-  final PlanetDto planet;
+  final Planet planet;
 
   BackupPrivateKeyScreen({
     super.key,
     required this.planet,
   });
 
-  static push(BuildContext context, {required PlanetDto planet}) {
+  static push(BuildContext context, {required Planet planet}) {
     AppUi.push(
       context,
       BackupPrivateKeyScreen(planet: planet),

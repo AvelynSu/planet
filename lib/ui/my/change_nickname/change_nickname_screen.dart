@@ -19,7 +19,7 @@ import '../../../util/app_ui.dart';
 import 'cubit/change_nickname_cubit.dart';
 
 class ChangeNicknameScreen extends StatefulWidget {
-  final PlanetDto planet;
+  final Planet planet;
 
   const ChangeNicknameScreen({
     super.key,
@@ -28,9 +28,9 @@ class ChangeNicknameScreen extends StatefulWidget {
 
   static push(
     BuildContext context, {
-    required PlanetDto planetDto,
+    required Planet planet,
   }) {
-    AppUi.push(context, ChangeNicknameScreen(planet: planetDto));
+    AppUi.push(context, ChangeNicknameScreen(planet: planet));
   }
 
   @override

@@ -32,12 +32,12 @@ class TokenBalanceCubit extends Cubit<TokenBalanceState> {
 
   updatePlanet() async {
     var appState = appBloc.state as AppLoaded;
-    var balance = appState.balance
+    var balance = appState.currentTokens
         .where((e) => e.info.symbol == initialValue.info.symbol)
         .first;
     emit(state.copyWith(
       status: ScreenStatus.loaded,
-      planet: appState.current,
+      planet: appState.currentPlanet,
       balance: balance,
     ));
 
@@ -52,7 +52,7 @@ class TokenBalanceCubit extends Cubit<TokenBalanceState> {
       if (state.status != ScreenStatus.loading) {
         var appState = appBloc.state as AppLoaded;
         emit(state.copyWith(status: ScreenStatus.loading, items: []));
-        var planet = appState.current;
+        var planet = appState.currentPlanet;
         var history = await service.getSpecificTokenTransactions(
           initialValue.address,
           initialValue.info,

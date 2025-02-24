@@ -4,20 +4,20 @@ class ChangeNicknameState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
-  final PlanetDto planet;
+  final Planet planet;
   final String nickname;
 
   const ChangeNicknameState({
     this.status = ScreenStatus.initial,
     this.nickname = "",
-    this.planet = PlanetDto.empty,
+    this.planet = Planet.empty,
     this.exception = CustomException.empty,
   });
 
   ChangeNicknameState copyWith({
     ScreenStatus? status,
     String? nickname,
-    PlanetDto? planet,
+    Planet? planet,
     CustomException? exception,
   }) {
     return ChangeNicknameState(

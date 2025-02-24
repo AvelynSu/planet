@@ -6,12 +6,12 @@ class HomeState extends Equatable {
 
   final List<TokenBalance> balances;
 
-  final PlanetDto planet;
+  final Planet planet;
 
   const HomeState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.planet = PlanetDto.empty,
+    this.planet = Planet.empty,
     this.balances = const [],
   });
 
@@ -22,7 +22,7 @@ class HomeState extends Equatable {
   HomeState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    PlanetDto? planet,
+    Planet? planet,
     List<TokenBalance>? balances,
   }) {
     return HomeState(

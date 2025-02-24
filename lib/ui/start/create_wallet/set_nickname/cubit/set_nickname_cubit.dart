@@ -19,12 +19,12 @@ part 'set_nickname_state.dart';
 
 class SetNicknameCubit extends Cubit<SetNicknameState> {
   final AppBloc appBloc;
-  final PlanetDto planetDto;
+  final Planet planet;
   final ApiRepository apiRepository;
 
   SetNicknameCubit({
     required this.appBloc,
-    required this.planetDto,
+    required this.planet,
     required this.apiRepository,
   }) : super(const SetNicknameState());
 
@@ -60,17 +60,17 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
     var enablePlanet = await apiRepository.enablePlanetName(state.nickname);
     if (enablePlanet) {
       var address = await WalletService()
-          .generateHDAddress(NetworkType.ethereum, planetDto.mnemonic, 0);
-      var planet = planetDto.copyWith(
+          .generateHDAddress(NetworkType.ethereum, planet.mnemonic, 0);
+      var _planet = planet.copyWith(
         networkType: NetworkType.ethereum,
         address: address,
-        mnemonic: planetDto.mnemonic,
+        mnemonic: planet.mnemonic,
         name: state.nickname,
         createdAt: DateTime.now(),
         isCurrent: true,
       );
-      await apiRepository.addPlanet(planet);
-      await LocalStorageService.saveMnemonics([planet]);
+      await apiRepository.addPlanet(_planet);
+      await LocalStorageService.saveMnemonics([_planet]);
       appBloc.add(AppInitialize());
       emit(state.copyWith(status: ScreenStatus.success));
     } else {

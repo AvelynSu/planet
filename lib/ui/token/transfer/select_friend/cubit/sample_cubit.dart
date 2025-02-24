@@ -25,8 +25,9 @@ class SelectFriendsCubit extends Cubit<SelectFriendsState> {
     var appState = appBloc.state as AppLoaded;
     var planets = await apiRepository.getAllPlanetForTest();
 
-    planets =
-        planets.where((e) => e.address != appState.current.address).toList();
+    planets = planets
+        .where((e) => e.address != appState.currentPlanet.address)
+        .toList();
 
     emit(state.copyWith(planets: planets));
   }

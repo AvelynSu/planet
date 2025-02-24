@@ -96,7 +96,7 @@ class _CreateWalletConfirmMnemonicPageState
           Navigator.pop(context);
           SetNicknameScreen.push(
             context,
-            planetDto: PlanetDto(
+            planet: Planet(
               mnemonic: cubit.state.mnemonic,
             ),
           );

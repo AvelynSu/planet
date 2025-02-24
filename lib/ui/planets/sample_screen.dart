@@ -98,7 +98,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
     );
   }
 
-  _card(PlanetDto e) {
+  _card(Planet e) {
     return BounceButton(
       onTap: () {
         PlanetAddressBottomSheet.show(context, planet: e);

@@ -33,15 +33,15 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
     emit(state.copyWith(mnemonic: value));
   }
 
-  Future<PlanetDto> getAddress() async {
+  Future<Planet> getAddress() async {
     try {
       emit(state.copyWith(status: ScreenStatus.loading));
       var address = await _walletService.generateHDAddress(
           NetworkType.ethereum, state.mnemonic, 0);
 
       var planet = await apiRepository.getPlanetByAddress(address);
-      if (planet == PlanetDto.empty) {
-        planet = PlanetDto(
+      if (planet == Planet.empty) {
+        planet = Planet(
           networkType: NetworkType.ethereum,
           address: address,
           mnemonic: state.mnemonic,
@@ -57,7 +57,7 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
     } on CustomException catch (err) {
       emit(state.copyWith(status: ScreenStatus.fail, exception: err));
     }
-    return PlanetDto.empty;
+    return Planet.empty;
   }
 
   /// 네트워크 타입 선택

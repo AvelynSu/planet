@@ -6,7 +6,7 @@ import 'package:planet/model/planet_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  static Future<void> saveMnemonics(List<PlanetDto> mnemonics) async {
+  static Future<void> saveMnemonics(List<Planet> mnemonics) async {
     const storage = FlutterSecureStorage();
 
     final existingData = await storage.read(key: 'planets');
@@ -29,14 +29,14 @@ class LocalStorageService {
     await storage.write(key: 'planets', value: encodedJson);
   }
 
-  static Future<List<PlanetDto>> getLocalPlanets() async {
+  static Future<List<Planet>> getLocalPlanets() async {
     const storage = FlutterSecureStorage();
     final encodedJson = await storage.read(key: 'planets');
 
     if (encodedJson == null) return [];
 
     final jsonList = jsonDecode(encodedJson) as List;
-    return jsonList.map((json) => PlanetDto.fromJson(json)).toList();
+    return jsonList.map((json) => Planet.fromJson(json)).toList();
   }
 
   static Future<void> clearMnemonics() async {

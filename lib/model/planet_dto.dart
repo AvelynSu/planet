@@ -3,7 +3,7 @@ import 'package:planet/util/fb_formatter.dart';
 
 import '../enum/network_type.dart';
 
-class PlanetDto extends Equatable {
+class Planet extends Equatable {
   final String id;
   final String name;
   final NetworkType? networkType;
@@ -12,7 +12,7 @@ class PlanetDto extends Equatable {
   final DateTime? createdAt;
   final bool isCurrent;
 
-  const PlanetDto({
+  const Planet({
     this.id = "",
     this.name = "",
     this.networkType,
@@ -22,10 +22,10 @@ class PlanetDto extends Equatable {
     this.isCurrent = false,
   });
 
-  static const empty = PlanetDto();
+  static const empty = Planet();
 
-  factory PlanetDto.fromJson(Map<String, dynamic> json, {String id = ""}) {
-    return PlanetDto(
+  factory Planet.fromJson(Map<String, dynamic> json, {String id = ""}) {
+    return Planet(
       id: id,
       networkType: NetworkType.fromJson(json["networkType"]),
       name: json['name'] ?? '',
@@ -47,7 +47,7 @@ class PlanetDto extends Equatable {
     };
   }
 
-  PlanetDto copyWith({
+  Planet copyWith({
     String? id,
     String? address,
     NetworkType? networkType,
@@ -56,7 +56,7 @@ class PlanetDto extends Equatable {
     DateTime? createdAt,
     bool? isCurrent,
   }) {
-    return PlanetDto(
+    return Planet(
       id: id ?? this.id,
       networkType: networkType ?? this.networkType,
       address: address ?? this.address,

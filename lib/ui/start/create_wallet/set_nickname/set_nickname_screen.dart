@@ -19,18 +19,18 @@ import '../../../../util/app_ui.dart';
 import 'cubit/set_nickname_cubit.dart';
 
 class SetNicknameScreen extends StatefulWidget {
-  final PlanetDto planetDto;
+  final Planet planet;
 
   const SetNicknameScreen({
     super.key,
-    required this.planetDto,
+    required this.planet,
   });
 
   static push(
     BuildContext context, {
-    required PlanetDto planetDto,
+    required Planet planet,
   }) {
-    AppUi.push(context, SetNicknameScreen(planetDto: planetDto),
+    AppUi.push(context, SetNicknameScreen(planet: planet),
         enablePushAnimation: false, enablePopAnimation: false);
   }
 
@@ -54,7 +54,7 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
       create: (BuildContext context) => SetNicknameCubit(
         appBloc: context.read<AppBloc>(),
         apiRepository: context.read<ApiRepository>(),
-        planetDto: widget.planetDto,
+        planet: widget.planet,
       )..initialize(),
       child: BlocListener<SetNicknameCubit, SetNicknameState>(
         listener: (context, state) async {

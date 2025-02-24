@@ -21,7 +21,7 @@ import 'copy_component.dart';
 import 'generate_planet.dart';
 
 class PlanetAddressBottomSheet extends StatefulWidget {
-  final PlanetDto planet;
+  final Planet planet;
 
   const PlanetAddressBottomSheet({
     super.key,
@@ -30,7 +30,7 @@ class PlanetAddressBottomSheet extends StatefulWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required PlanetDto planet,
+    required Planet planet,
   }) async {
     return await showModalBottomSheet(
       context: context,
@@ -85,7 +85,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    var current = (context.read<AppBloc>().state as AppLoaded).current;
+    var current = (context.read<AppBloc>().state as AppLoaded).currentPlanet;
 
     return Stack(children: [
       // 숨겨진 PlanetWidget (이미지 변환용)

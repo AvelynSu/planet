@@ -58,33 +58,33 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
                         GestureDetector(
                           onTap: () {
                             ChangeNicknameScreen.push(context,
-                                planetDto: state.planetDto);
+                                planet: state.planet);
                           },
-                          child: _name(state.planetDto),
+                          child: _name(state.planet),
                         ),
 
                         ///
                         SettingRowTile(
                           onTap: () {
                             PlanetAddressBottomSheet.show(context,
-                                planet: state.planetDto);
+                                planet: state.planet);
                           },
                           title: "Address",
                           subText: AppUtil.shortenWalletAddress(
-                              state.planetDto.address),
+                              state.planet.address),
                           showArrow: false,
                         ),
                         SettingRowTile(
                           onTap: () {
                             BackupMnemonicScreen.push(context,
-                                planet: state.planetDto);
+                                planet: state.planet);
                           },
                           title: "Backup Mnemonic Phrase",
                         ),
                         SettingRowTile(
                           onTap: () {
                             BackupPrivateKeyScreen.push(context,
-                                planet: state.planetDto);
+                                planet: state.planet);
                           },
                           title: "Backup Private Key",
                         ),
@@ -100,7 +100,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
     );
   }
 
-  _name(PlanetDto planet) {
+  _name(Planet planet) {
     return Container(
       color: Colors.transparent,
       margin: const EdgeInsets.symmetric(vertical: 50),

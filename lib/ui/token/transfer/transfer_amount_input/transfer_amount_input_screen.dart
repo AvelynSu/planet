@@ -18,7 +18,7 @@ import 'custom_number_keypad.dart';
 
 class TransferAmountInputScreen extends StatefulWidget {
   final TokenInfo tokenInfo;
-  final PlanetDto toPlanet;
+  final Planet toPlanet;
   final Function(String) onSelect;
 
   const TransferAmountInputScreen({
@@ -31,7 +31,7 @@ class TransferAmountInputScreen extends StatefulWidget {
   static Future<String?> push(
     BuildContext context, {
     required TokenInfo tokenInfo,
-    required PlanetDto toPlanet,
+    required Planet toPlanet,
     required Function(String) onSelect,
   }) async {
     return await AppUi.push(

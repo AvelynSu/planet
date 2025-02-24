@@ -3,13 +3,13 @@ import 'package:planet/model/planet_dto.dart';
 class TestHdWallet {
   static String mnemonic = "";
   static int ethIdx = 0;
-  static List<PlanetDto> ethAddress = [];
+  static List<Planet> ethAddress = [];
 
   static int btcIdx = 0;
-  static List<PlanetDto> btcAddress = [];
+  static List<Planet> btcAddress = [];
 
   static int solIdx = 0;
-  static List<PlanetDto> solAddress = [];
+  static List<Planet> solAddress = [];
 
   static initialize() {
     mnemonic = "";

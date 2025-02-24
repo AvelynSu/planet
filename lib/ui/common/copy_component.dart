@@ -8,7 +8,7 @@ import 'package:planet/ui/common/custom_image.dart';
 import '../../util/app_util.dart';
 
 class CopyComponent extends StatefulWidget {
-  final PlanetDto planet;
+  final Planet planet;
   final Function? onSuccess;
 
   const CopyComponent({

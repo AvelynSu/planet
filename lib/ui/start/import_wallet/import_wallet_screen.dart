@@ -225,11 +225,11 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                           onTap: _isValidInput
                               ? () async {
                                   var planet = await cubit.getAddress();
-                                  if (planet != PlanetDto.empty) {
+                                  if (planet != Planet.empty) {
                                     if (planet.name.isEmpty) {
                                       Navigator.pop(context);
                                       SetNicknameScreen.push(context,
-                                          planetDto: planet);
+                                          planet: planet);
                                     } else {
                                       Navigator.pop(context);
                                     }

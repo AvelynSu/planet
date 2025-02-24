@@ -23,7 +23,7 @@ part 'transfer_state.dart';
 class TokenTransferCubit extends Cubit<TokenTransferState> {
   final AppBloc appBloc;
   final TokenInfo tokenInfo;
-  final PlanetDto toPlanet;
+  final Planet toPlanet;
   final String amount;
 
   late StreamSubscription subscription;
@@ -41,7 +41,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
   updateApp() {
     var appState = appBloc.state as AppLoaded;
-    var balances = appState.balance
+    var balances = appState.currentTokens
         .where((e) => e.info.symbol == tokenInfo.symbol)
         .firstOrNull;
     emit(state.copyWith(
@@ -58,7 +58,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
     try {
       final gasFees = await _transferService.estimateGasFeesByPriority();
       var appState = appBloc.state as AppLoaded;
-      var balances = appState.balance
+      var balances = appState.currentTokens
           .where((e) => e.info.symbol == tokenInfo.symbol)
           .firstOrNull;
       appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
@@ -120,7 +120,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       final appState = appBloc.state as AppLoaded;
 
       // Get wallet credentials
-      final mnemonic = appState.current.mnemonic;
+      final mnemonic = appState.currentPlanet.mnemonic;
       final credentials = await _walletService.getCredentialsFromMnemonic(
           mnemonic, NetworkType.ethereum, 0);
 

@@ -2,23 +2,23 @@ part of 'sample_cubit.dart';
 
 class PlanetsState extends Equatable {
   final ScreenStatus status;
-  final List<PlanetDto> planets;
+  final List<Planet> planets;
 
-  final PlanetDto planet;
+  final Planet planet;
   final CustomException exception;
 
   const PlanetsState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.planet = PlanetDto.empty,
+    this.planet = Planet.empty,
     this.planets = const [],
   });
 
   PlanetsState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    PlanetDto? planet,
-    List<PlanetDto>? planets,
+    Planet? planet,
+    List<Planet>? planets,
   }) {
     return PlanetsState(
       status: status ?? this.status,

@@ -6,7 +6,7 @@ import 'package:planet/ui/common/generate_planet.dart';
 import '../../../util/app_util.dart';
 
 class TransferProfileComponent extends StatelessWidget {
-  final PlanetDto planet;
+  final Planet planet;
   final double size;
   final bool isSimpleMode;
   final bool enableAddress;

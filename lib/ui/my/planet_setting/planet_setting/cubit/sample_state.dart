@@ -4,23 +4,23 @@ class PlanetSettingState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
-  final PlanetDto planetDto;
+  final Planet planet;
 
   const PlanetSettingState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.planetDto = PlanetDto.empty,
+    this.planet = Planet.empty,
   });
 
   PlanetSettingState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    PlanetDto? planetDto,
+    Planet? planet,
   }) {
     return PlanetSettingState(
       status: status ?? this.status,
       exception: exception ?? this.exception,
-      planetDto: planetDto ?? this.planetDto,
+      planet: planet ?? this.planet,
     );
   }
 
@@ -28,6 +28,6 @@ class PlanetSettingState extends Equatable {
   List<Object?> get props => [
         status,
         exception,
-        planetDto,
+        planet,
       ];
 }

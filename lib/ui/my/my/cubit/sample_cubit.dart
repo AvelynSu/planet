@@ -24,13 +24,13 @@ class MyCubit extends Cubit<MyState> {
 
   update(AppState appState) {
     if (appState is AppLoaded) {
-      emit(state.copyWith(planetDto: appState.current));
+      emit(state.copyWith(planet: appState.currentPlanet));
     }
   }
 
   initialize() async {
     var appState = (appBloc.state as AppLoaded);
-    emit(state.copyWith(planetDto: appState.current));
+    emit(state.copyWith(planet: appState.currentPlanet));
   }
 
   @override

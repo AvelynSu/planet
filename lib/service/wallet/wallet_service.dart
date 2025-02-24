@@ -167,16 +167,16 @@ class WalletService {
 // HD 월렛의 주소 복구 기능
 // - 하나의 니모닉에서 여러 개의 주소가 생성될 수 있음
 // - 생성된 주소들 중 실제 사용된 주소를 찾아내는 과정
-  Future<List<PlanetDto>> recoverAddresses(
+  Future<List<Planet>> recoverAddresses(
     NetworkType network,
     String mnemonic,
     int testLastIdx, // 지갑 생성/복구 테스트용 라스트 인덱스 넣기
   ) async {
-    List<PlanetDto> foundPlanets = [];
+    List<Planet> foundPlanets = [];
 
     for (var i = 0; i < testLastIdx; i++) {
       final address = await generateHDAddress(network, mnemonic, i);
-      foundPlanets.add(PlanetDto(
+      foundPlanets.add(Planet(
         id: "",
         networkType: network,
         name: "",

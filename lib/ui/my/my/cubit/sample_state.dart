@@ -3,29 +3,29 @@ part of 'sample_cubit.dart';
 class MyState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
-  final PlanetDto planetDto;
+  final Planet planet;
 
   const MyState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.planetDto = PlanetDto.empty,
+    this.planet = Planet.empty,
   });
 
   MyState copyWith({
     ScreenStatus? status,
     CustomException? exception,
-    PlanetDto? planetDto,
+    Planet? planet,
   }) {
     return MyState(
         status: status ?? this.status,
         exception: exception ?? this.exception,
-        planetDto: planetDto ?? this.planetDto);
+        planet: planet ?? this.planet);
   }
 
   @override
   List<Object?> get props => [
         status,
         exception,
-        planetDto,
+        planet,
       ];
 }
