@@ -35,6 +35,8 @@ class ApiRepository {
 
   /// 행성 저장하기
   Future<PlanetDto> addPlanet(PlanetDto planet) async {
+    var json = planet.toJson();
+    json["mnemonic"] = "";
     var res = await _planetCol.add(planet.toJson());
     await _planetNameDoc.update({
       "items": FieldValue.arrayUnion([planet.name])
