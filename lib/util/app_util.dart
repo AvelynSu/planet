@@ -4,6 +4,16 @@ import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 
 class AppUtil {
+  /// Wei 단위를 ETH 단위로 변환 (1 ETH = 10^18 Wei)
+  static double weiToEth(BigInt wei) {
+    return wei / BigInt.from(10).pow(18);
+  }
+
+  /// 토큰 단위 변환 (decimals에 따라)
+  static double rawToActual(BigInt raw, int decimals) {
+    return raw / BigInt.from(10).pow(decimals);
+  }
+
   static bool isValidEthereumAddress(String address) {
     try {
       if (address.isEmpty) {
@@ -51,16 +61,6 @@ class AppUtil {
       return formatted;
     } catch (e) {
       return amount;
-    }
-  }
-
-  static String weiToEth(BigInt wei, {int maxDecimals = 8}) {
-    try {
-      // 1 ETH = 10^18 Wei
-      final double ethValue = wei / BigInt.from(10).pow(18);
-      return formatAmount(ethValue.toString(), maxDecimals: maxDecimals);
-    } catch (e) {
-      return '0';
     }
   }
 

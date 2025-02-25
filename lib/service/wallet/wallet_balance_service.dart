@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
+import 'package:planet/util/app_util.dart';
+import 'package:planet/util/data/token_abi.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../util/data/token_data.dart';
@@ -11,110 +13,70 @@ import '../../util/wallet_config.dart';
 class WalletBalanceService {
   final Web3Client web3client;
 
-  // ERC-20 표준 인터페이스의 ABI (Application Binary Interface)
-  // balanceOf 함수만 포함된 최소 버전
-  final String erc20Abi = '''[
-    {
-      "constant": true,
-      "inputs": [{"name": "_owner", "type": "address"}],
-      "name": "balanceOf",
-      "outputs": [{"name": "balance", "type": "uint256"}],
-      "type": "function"
-    }
-  ]''';
-
   WalletBalanceService()
       : web3client = Web3Client(WalletConfig().rpcUrl, http.Client());
 
-  /// 지갑의 ETH 잔액 조회 (네이티브 토큰)
-  Future<TokenBalance> getEthBalance(String address) async {
-    try {
-      // getBalance는 Wei 단위로 잔액을 반환 (1 ETH = 10^18 Wei)
-      final balance =
-          await web3client.getBalance(EthereumAddress.fromHex(address));
-      var value = balance.getInWei / BigInt.from(10).pow(18);
-      return TokenBalance(
-          address: address,
-          info:
-              TokenData.ethTokens.where((e) => e.symbol == "ETH").firstOrNull!,
-          balance: value);
-    } catch (e) {
-      debugPrint('Error getting ETH balance: $e');
-      throw Exception('Failed to get ETH balance');
-    }
+  _hexToAddress(String address) {
+    return EthereumAddress.fromHex(address);
   }
 
-  /// 지정된 ERC-20 토큰의 잔액 조회 (스마트컨트렉트로 만들어진 토큰
+  /// 특정 토큰 1개의 잔액 조회
   Future<TokenBalance> getTokenBalance({
     required String address, // 잔액을 조회할 지갑 주소
-    required TokenInfo info, // 토큰 컨트랙트 주소
+    required TokenInfo info, // 토큰 정보
   }) async {
     try {
-      // 1. 컨트랙트 인스턴스 생성
-      final contract = DeployedContract(
-        ContractAbi.fromJson(erc20Abi, 'ERC20'), // ABI와 컨트랙트 이름
-        EthereumAddress.fromHex(info.address), // 토큰 컨트랙트 주소
-      );
+      // ETH(네이티브 토큰)인 경우
+      if (info.symbol == "ETH") {
+        final balance = await web3client.getBalance(_hexToAddress(address));
+        var value = AppUtil.weiToEth(balance.getInWei);
+        return TokenBalance(address: address, info: info, balance: value);
+      }
+      // ERC-20 토큰인 경우
+      else {
+        // 1. 컨트랙트 인스턴스 생성
+        final contract = DeployedContract(
+          ContractAbi.fromJson(TokenAbi.ERC20, 'ERC20'), // ABI와 컨트랙트 이름
+          _hexToAddress(info.address), // 토큰 컨트랙트 주소
+        );
 
-      // 2. balanceOf 함수 레퍼런스 가져오기
-      final balanceFunction = contract.function('balanceOf');
+        // 2. balanceOf 함수 레퍼런스 가져오기
+        final balanceFunction = contract.function('balanceOf');
 
-      // 3. balanceOf 함수 호출
-      final result = await web3client.call(
-        contract: contract,
-        function: balanceFunction,
-        params: [EthereumAddress.fromHex(address)],
-      );
+        // 3. balanceOf 함수 호출
+        final result = await web3client.call(
+          contract: contract,
+          function: balanceFunction,
+          params: [_hexToAddress(address)],
+        );
 
-      var rawBalance = result.first as BigInt;
-      // 토큰의 decimals에 따라 변환
-      // 예: USDT는 6자리, 대부분의 토큰은 18자리
-      final actualBalance = rawBalance / BigInt.from(10).pow(info.decimals);
+        var rawBalance = result.first as BigInt;
+        // 토큰의 decimals에 따라 변환
+        final actualBalance = AppUtil.rawToActual(rawBalance, info.decimals);
 
-      return TokenBalance.fromInfo(info, address, actualBalance);
+        return TokenBalance.fromInfo(info, address, actualBalance);
+      }
     } catch (e) {
-      debugPrint('Error getting token balance: $e');
-      throw Exception('Failed to get token balance');
+      debugPrint('Error getting ${info.symbol} balance: $e');
+      throw Exception('Failed to get ${info.symbol} balance');
     }
   }
 
   /// 지갑의 모든 지원 토큰 잔액 조회
   Future<List<TokenBalance>> getAllTokenBalances(
       {required String walletAddress}) async {
-    List<TokenBalance> items = [];
     try {
-      // 1. ETH 잔액 조회
-      final ethBalance = await getEthBalance(walletAddress);
+      // 모든 토큰에 대한 Future 생성
+      final futures = TokenData.ethTokens
+          .map((token) => getTokenBalance(address: walletAddress, info: token));
 
-      items.add(ethBalance);
-
-      // 2. 각 ERC-20 토큰 잔액 조회
-      for (var token in TokenData.ethTokens) {
-        if (token.symbol != "ETH") {
-          final rawBalance = await getTokenBalance(
-            address: walletAddress,
-            info: token,
-          );
-
-          items.add(rawBalance);
-        }
-      }
-
-      return items;
+      // 병렬로 실행
+      final balances = await Future.wait(futures);
+      return balances;
     } catch (e) {
       debugPrint('Error getting all balances: $e');
       throw Exception('Failed to get all balances');
     }
-  }
-
-  /// Wei 단위를 ETH 단위로 변환 (1 ETH = 10^18 Wei)
-  double weiToEth(BigInt wei) {
-    return wei / BigInt.from(10).pow(18);
-  }
-
-  /// 토큰 단위 변환 (decimals에 따라)
-  double rawToActual(BigInt raw, int decimals) {
-    return raw / BigInt.from(10).pow(decimals);
   }
 
   /// 서비스 종료 시 리소스 해제

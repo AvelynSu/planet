@@ -12,24 +12,18 @@ class AppState extends Equatable {
 // 홈화면 진입 전 : 로그인 타입 선택 전, 로그인 이후
 class AppUnInitialized extends AppState {
   final bool requiredSign;
-  final bool requiredFirstPlanetNickname;
 
   const AppUnInitialized({
     this.requiredSign = false,
-    this.requiredFirstPlanetNickname = false,
   }) : super();
 
   static AppUnInitialized get sign => const AppUnInitialized(
         requiredSign: true,
       );
 
-  static AppUnInitialized get planetName =>
-      const AppUnInitialized(requiredFirstPlanetNickname: true);
-
   @override
   List<Object?> get props => [
         requiredSign,
-        requiredFirstPlanetNickname,
       ];
 }
 

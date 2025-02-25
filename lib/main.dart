@@ -94,7 +94,7 @@ class _AppScreenState extends State<AppScreen> {
           } else if (state is AppUnInitialized) {
             if (state.requiredSign) {
               screen = const StartScreen();
-            } else if (state.requiredFirstPlanetNickname) {}
+            }
           } else if (state is AppLoaded) {
             screen = AppView();
           }

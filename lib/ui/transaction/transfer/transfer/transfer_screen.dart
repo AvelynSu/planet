@@ -72,7 +72,9 @@ class _TransferScreenState extends State<TransferScreen> {
               Navigator.pop(context);
               DefaultDialog.show(context, description: state.exception?.errMsg);
             } else {
-              DefaultDialog.show(context, description: state.exception?.errMsg);
+              DefaultDialog.show(context,
+                  title: "Transcation Failed",
+                  description: state.exception?.errMsg);
             }
           }
           if (state.status == ScreenStatus.success) {}
@@ -313,14 +315,6 @@ class _TransferScreenState extends State<TransferScreen> {
           context
               .read<AppBloc>()
               .add(AppUpdate(updateBalanceToken: widget.info));
-        } else {
-          await DefaultDialog.show(
-            context,
-            title: "Transfer Failed",
-            description:
-                "Your transaction failed to complete. Please try again.",
-            // confirmText: "OK",
-          );
         }
       } catch (e) {
         // Hide loading dialog

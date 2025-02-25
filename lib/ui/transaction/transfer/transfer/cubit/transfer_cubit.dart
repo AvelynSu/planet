@@ -143,11 +143,12 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       } else {
         // Execute transaction with predefined gas priority
         success = await _transferService.sendAndWaitForTransaction(
-          toAddress: state.toPlanet.address,
-          amount: amountInWei,
-          credentials: credentials,
-          gasPriority: state.selectedGasPriority,
-        );
+              toAddress: state.toPlanet.address,
+              amount: amountInWei,
+              credentials: credentials,
+              gasPriority: state.selectedGasPriority,
+            ) ??
+            false;
       }
 
       if (success) {
@@ -157,10 +158,10 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
       emit(state.copyWith(status: ScreenStatus.success));
       return success;
-    } catch (e) {
+    } on CustomException catch (e) {
       emit(state.copyWith(
         status: ScreenStatus.fail,
-        exception: CustomException(errMsg: e.toString()),
+        exception: e,
       ));
       return false;
     }
