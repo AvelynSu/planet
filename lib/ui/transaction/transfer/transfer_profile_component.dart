@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 
 import '../../../util/app_util.dart';
@@ -28,7 +28,7 @@ class TransferProfileComponent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          PlanetWidget(
+          PlanetComonent(
             data: planet.name,
             size: 28,
           ),
@@ -48,7 +48,7 @@ class TransferProfileComponent extends StatelessWidget {
         if (enablePlanet)
           Container(
             margin: EdgeInsets.only(right: 12 * (size / 40)),
-            child: PlanetWidget(
+            child: PlanetComonent(
               data: planet.name,
               size: size,
             ),

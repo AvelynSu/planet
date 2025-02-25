@@ -14,7 +14,7 @@ import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../enum/network_type.dart';
-import '../../model/planet_dto.dart';
+import '../../model/planet.dart';
 import '../../util/wallet_config.dart';
 
 // 지갑을 만들고, 복구할때 사용하는 서비스

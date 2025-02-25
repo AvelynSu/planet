@@ -83,7 +83,7 @@ class _MyScreenState extends State<MyScreen> {
                             PlanetSettingScreen.push(context);
                           },
                           title: appState.currentPlanet.name,
-                          body: PlanetWidget(
+                          body: PlanetComonent(
                             data: appState.currentPlanet.name,
                             size: 36,
                           ),

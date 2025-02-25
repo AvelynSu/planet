@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 
 import '../cubit/create_wallet_cubit.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/bounce_button.dart';
@@ -192,7 +192,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
               child: Row(
                 children: [
                   Stack(alignment: Alignment.center, children: [
-                    PlanetWidget(
+                    PlanetComonent(
                       data: "planetWallet",
                       size: 40,
                     ),
@@ -244,7 +244,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
             Expanded(
               child: Row(
                 children: [
-                  PlanetWidget(
+                  PlanetComonent(
                     data: planet.name,
                     size: 40,
                   ),

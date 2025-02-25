@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 
 class AppState extends Equatable {

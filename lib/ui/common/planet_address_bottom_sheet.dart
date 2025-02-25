@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_header.dart';
 import 'package:planet/ui/common/default_dialog.dart';
@@ -102,7 +102,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(100),
             ),
-            child: PlanetWidget(
+            child: PlanetComonent(
               data: widget.planet.name,
               size: 60, // 원하는 크기
             ),

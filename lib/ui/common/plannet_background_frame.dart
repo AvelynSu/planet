@@ -50,7 +50,7 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
                               return FadeTransition(
                                   opacity: animation, child: child);
                             },
-                            child: PlanetWidget(
+                            child: PlanetComonent(
                               key: ValueKey(widget.data), // 변경될 때 애니메이션 적용
                               data: widget.data ?? "",
                               size: 172,

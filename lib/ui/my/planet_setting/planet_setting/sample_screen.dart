@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_image.dart';
@@ -132,7 +132,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
               ],
             ),
           ),
-          PlanetWidget(
+          PlanetComonent(
             data: planet.name,
             size: 40,
           ),

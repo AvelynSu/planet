@@ -12,6 +12,8 @@ class Planet extends Equatable {
   final DateTime? createdAt;
   final bool isCurrent;
 
+  final int pathIdx;
+
   const Planet({
     this.id = "",
     this.name = "",
@@ -20,6 +22,7 @@ class Planet extends Equatable {
     this.mnemonic = "",
     this.createdAt,
     this.isCurrent = false,
+    this.pathIdx = 0,
   });
 
   static const empty = Planet();
@@ -32,6 +35,7 @@ class Planet extends Equatable {
       address: json["address"] ?? "",
       createdAt: FBFormatter.fromJsonDate(json["createdAt"]),
       mnemonic: json["mnemonic"] ?? "",
+      pathIdx: json["pathIdx"] ?? 0,
     );
   }
 
@@ -44,6 +48,7 @@ class Planet extends Equatable {
       'address': address,
       'createdAt': FBFormatter.toJsonDate(createdAt),
       'isCurrent': isCurrent,
+      'pathIdx': pathIdx,
     };
   }
 
@@ -55,6 +60,7 @@ class Planet extends Equatable {
     String? mnemonic,
     DateTime? createdAt,
     bool? isCurrent,
+    int? pathIdx,
   }) {
     return Planet(
       id: id ?? this.id,
@@ -64,6 +70,7 @@ class Planet extends Equatable {
       mnemonic: mnemonic ?? this.mnemonic,
       createdAt: createdAt ?? this.createdAt,
       isCurrent: isCurrent ?? this.isCurrent,
+      pathIdx: pathIdx ?? this.pathIdx,
     );
   }
 
@@ -76,5 +83,6 @@ class Planet extends Equatable {
         mnemonic,
         createdAt,
         isCurrent,
+        pathIdx,
       ];
 }

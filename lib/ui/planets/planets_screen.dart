@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
@@ -122,7 +122,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PlanetWidget(data: e.name, size: 180),
+            PlanetComonent(data: e.name, size: 180),
             Container(
               padding: const EdgeInsets.only(top: 20, bottom: 8),
               child: Text(

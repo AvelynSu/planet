@@ -1,4 +1,4 @@
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 
 class TestHdWallet {
   static String mnemonic = "";

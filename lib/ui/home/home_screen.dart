@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Stack(alignment: Alignment.center, children: [
                               Container(
                                 margin: const EdgeInsets.all(20),
-                                child: PlanetWidget(
+                                child: PlanetComonent(
                                   data: state.data,
                                   size: 160,
                                 ),

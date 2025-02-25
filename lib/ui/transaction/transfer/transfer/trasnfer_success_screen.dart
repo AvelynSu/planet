@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -98,7 +98,7 @@ class TransferSuccessScreen extends StatelessWidget {
                     value: appState.currentPlanet.name,
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
-                      child: PlanetWidget(
+                      child: PlanetComonent(
                         data: appState.currentPlanet.name,
                         size: 24,
                       ),
@@ -113,7 +113,7 @@ class TransferSuccessScreen extends StatelessWidget {
                         margin: const EdgeInsets.only(right: 12),
                         child: recipient.name.isEmpty
                             ? null
-                            : PlanetWidget(
+                            : PlanetComonent(
                                 data: recipient.name,
                                 size: 24,
                               ),

@@ -8,7 +8,7 @@ import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/enum/screen_status.dart';
 import 'package:planet/model/custom_exception.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';

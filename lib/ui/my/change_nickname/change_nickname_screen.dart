@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet_dto.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/bounce_button.dart';
@@ -136,7 +136,7 @@ class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
                                 ),
                               const SizedBox(height: 100),
                               Container(
-                                child: PlanetWidget(
+                                child: PlanetComonent(
                                   data: state.nickname,
                                   size: 200,
                                 ),
