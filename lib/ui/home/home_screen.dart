@@ -1,14 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
+import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
 import 'package:planet/ui/home/home_tile.dart';
+import 'package:planet/ui/home/planets_top_shjeet.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../util/app_ui.dart';
@@ -64,21 +69,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: AppUi.statusBarHeight(context),
                         ),
-                        Container(height: 40),
+
+                        /// 앱바
+                        BounceButton(
+                          onTap: () {
+                            PlanetsTopSheet.show(context);
+                          },
+                          child: _appBar(state),
+                        ),
 
                         /// 플래닛 이름
                         Column(
                           children: [
-                            Stack(alignment: Alignment.center, children: [
-                              Container(
-                                margin: const EdgeInsets.all(20),
-                                child: PlanetComonent(
-                                  data: state.data,
-                                  size: 160,
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.all(20),
+                                  child: PlanetComonent(
+                                    data: state.data,
+                                    size: 160,
+                                  ),
                                 ),
-                              ),
-                              Lottie.asset("assets/sparkle.json", width: 200),
-                            ]),
+                                Lottie.asset("assets/sparkle.json", width: 200),
+                              ],
+                            ),
                             Container(
                               padding:
                                   const EdgeInsets.only(top: 20, bottom: 8),
@@ -123,6 +138,49 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  _planetRow(Planet planet) {
+    return Row(
+      children: [
+        PlanetComonent(
+          data: planet.name,
+          size: 20,
+        ),
+        Text(
+          planet.name,
+          style: fontR(16, color: C.current.mainText),
+        ),
+      ],
+    );
+  }
+
+  _appBar(HomeState state) {
+    return Container(
+      color: Colors.transparent,
+      height: 52,
+      padding: EdgeInsets.symmetric(horizontal: hPadding),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomImage(
+            path: "icons/ic_planet.svg",
+            color: C.current.sub01,
+            width: 32,
+          ),
+          Text(
+            state.planet.networkType?.title ?? "",
+            style: fontR(18, color: C.current.onBackground),
+          ),
+          CustomImage(
+            width: 26,
+            rotate: pi / 2,
+            path: "icons/ic_small_arrow.svg",
+            color: C.current.sub01,
+          )
+        ],
       ),
     );
   }

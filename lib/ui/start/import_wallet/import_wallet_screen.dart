@@ -12,7 +12,7 @@ import 'package:planet/ui/common/small_round_button.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
-import '../create_wallet/set_nickname/set_nickname_screen.dart';
+import '../set_nickname/set_nickname_screen.dart';
 import 'cubit/import_wallet_cubit.dart';
 
 class ImportWalletScreen extends StatefulWidget {

@@ -6,8 +6,8 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 
+import '../../set_nickname/set_nickname_screen.dart';
 import '../cubit/create_wallet_cubit.dart';
-import '../set_nickname/set_nickname_screen.dart';
 
 class CreateWalletConfirmMnemonicPage extends StatefulWidget {
   const CreateWalletConfirmMnemonicPage({super.key});

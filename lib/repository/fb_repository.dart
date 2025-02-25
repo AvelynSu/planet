@@ -12,6 +12,22 @@ class ApiRepository {
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
+  /// 부모 주소의 하위 행성들 불러오기
+  // parentPlanet : network 에 맞는 인덱스가 0인 행성
+  Future<List<Planet>> getChildPlanets(Planet? parentPlanet) async {
+    if (parentPlanet == null) {
+      return [];
+    }
+    var res = await _planetCol
+        .where("parentsAddress", isEqualTo: parentPlanet.address)
+        .where("networkType", isEqualTo: parentPlanet.networkType?.name)
+        .get();
+    var result =
+        res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
+
+    return result.isEmpty ? [parentPlanet] : [parentPlanet, ...result];
+  }
+
   /// 행성 전부 불러오기
   Future<List<Planet>> getAllPlanetForTest() async {
     var res = await _planetCol.get();
@@ -75,13 +91,16 @@ class ApiRepository {
 
   /// 로컬에 있는 플래닛 정보로 FB에서 불러오기
   Future<List<Planet>> getPlanetByLocalInfo(List<Planet> local) async {
-    List<Future<Planet>> planetTask = [];
-    for (var item in local) {
-      var planet = getPlanetByAddress(item.address, mnemonic: item.mnemonic);
-      planetTask.add(planet);
-    }
+    List<Future<Planet>> planetFutures = local.map((item) async {
+      var planet =
+          await getPlanetByAddress(item.address, mnemonic: item.mnemonic);
+      return planet.copyWith(
+        isCurrent: item.isCurrent,
+      );
+    }).toList();
 
-    var planets = await Future.wait(planetTask);
+    List<Planet> planets = await Future.wait(planetFutures);
+
     return planets;
   }
 

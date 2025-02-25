@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -63,6 +64,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Stream<AppState> mapAppUpdateToState(AppUpdate event) async* {
     try {
       var walletService = WalletBalanceService();
+
+      if (event.isCurrentPlanet != Planet.empty) {
+        await LocalStorageService.saveMnemonics([],
+            isCurrentAddress: event.isCurrentPlanet.address);
+      }
 
       // 로컬에서 플래닛 가져오기
       var localPlanets = await LocalStorageService.getLocalPlanets();

@@ -6,23 +6,36 @@ import 'package:planet/model/planet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  static Future<void> saveMnemonics(List<Planet> mnemonics) async {
+  static Future<void> saveMnemonics(List<Planet> mnemonics,
+      {String? isCurrentAddress}) async {
     const storage = FlutterSecureStorage();
 
     final existingData = await storage.read(key: 'planets');
     List<dynamic> storedList =
         existingData != null ? jsonDecode(existingData) : [];
 
-    List newMnemonics = mnemonics.map((m) => m.toJson(isLocal: true)).toList();
-
-    for (var newItem in newMnemonics) {
+    // 새로 받은 Planet 객체들을 처리
+    for (var planet in mnemonics) {
+      final json = planet.toJson(isLocal: true);
       final existingIndex =
-          storedList.indexWhere((item) => item['id'] == newItem['id']);
+          storedList.indexWhere((item) => item['address'] == planet.address);
+
       if (existingIndex != -1) {
-        storedList[existingIndex] = newItem;
+        // 이미 있는 주소면 덮어쓰기
+        storedList[existingIndex] = json;
       } else {
-        storedList.add(newItem);
+        // 없는 주소면 추가
+        storedList.add(json);
       }
+    }
+
+    // isCurrentAddress에 값이 있으면 해당 주소의 객체만 isCurrent가 true, 나머지는 false로 설정
+    if (isCurrentAddress != null) {
+      storedList = storedList.map((item) {
+        Map<String, dynamic> planetMap = Map<String, dynamic>.from(item);
+        planetMap['isCurrent'] = planetMap['address'] == isCurrentAddress;
+        return planetMap;
+      }).toList();
     }
 
     final encodedJson = jsonEncode(storedList);

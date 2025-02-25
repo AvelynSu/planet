@@ -38,6 +38,7 @@ class Planet extends Equatable {
       createdAt: FBFormatter.fromJsonDate(json["createdAt"]),
       mnemonic: json["mnemonic"] ?? "",
       pathIdx: json["pathIdx"] ?? 0,
+      isCurrent: json["isCurrent"] ?? false,
       parentsAddress: json["parentsAddress"] ?? json["address"] ?? "",
     );
   }
@@ -56,16 +57,16 @@ class Planet extends Equatable {
     };
   }
 
-  Planet copyWith({
-    String? id,
-    String? address,
-    NetworkType? networkType,
-    String? name,
-    String? mnemonic,
-    DateTime? createdAt,
-    bool? isCurrent,
-    int? pathIdx,
-  }) {
+  Planet copyWith(
+      {String? id,
+      String? address,
+      NetworkType? networkType,
+      String? name,
+      String? mnemonic,
+      DateTime? createdAt,
+      bool? isCurrent,
+      int? pathIdx,
+      parentsAddress}) {
     return Planet(
       id: id ?? this.id,
       networkType: networkType ?? this.networkType,
@@ -75,6 +76,7 @@ class Planet extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       isCurrent: isCurrent ?? this.isCurrent,
       pathIdx: pathIdx ?? this.pathIdx,
+      parentsAddress: parentsAddress ?? this.parentsAddress,
     );
   }
 
@@ -88,5 +90,6 @@ class Planet extends Equatable {
         createdAt,
         isCurrent,
         pathIdx,
+        parentsAddress,
       ];
 }

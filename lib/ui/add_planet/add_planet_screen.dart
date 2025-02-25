@@ -4,59 +4,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
-import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
-import 'package:planet/ui/common/base_scaffold.dart';
-import 'package:planet/ui/common/bounce_button.dart';
-import 'package:planet/ui/common/custom_image.dart';
-import 'package:planet/ui/common/generate_planet.dart';
-import 'package:planet/ui/common/line_text_field.dart';
-import 'package:planet/ui/common/plannet_background_frame.dart';
 
-import '../../../../enum/screen_status.dart';
-import '../../../../util/app_ui.dart';
-import 'cubit/set_nickname_cubit.dart';
+import '../../../enum/screen_status.dart';
+import '../../custom_theme.dart';
+import '../../enum/network_type.dart';
+import '../../util/app_ui.dart';
+import '../common/base_scaffold.dart';
+import '../common/generate_planet.dart';
+import '../common/line_text_field.dart';
+import '../common/plannet_background_frame.dart';
+import '../common/set_nickname_button.dart';
+import 'cubit/add_planet_cubit.dart';
 
-class SetNicknameScreen extends StatefulWidget {
-  final Planet planet;
+class AddPlanetScreen extends StatefulWidget {
+  final NetworkType networkType;
 
-  const SetNicknameScreen({
+  const AddPlanetScreen({
     super.key,
-    required this.planet,
+    required this.networkType,
   });
 
   static push(
     BuildContext context, {
-    required Planet planet,
+    required NetworkType networkType,
   }) {
-    AppUi.push(context, SetNicknameScreen(planet: planet),
-        enablePushAnimation: false, enablePopAnimation: false);
+    AppUi.push(
+        context,
+        AddPlanetScreen(
+          networkType: networkType,
+        ));
   }
 
   @override
-  State<SetNicknameScreen> createState() => _SetNicknameScreenState();
+  State<AddPlanetScreen> createState() => _AddPlanetScreenState();
 }
 
-class _SetNicknameScreenState extends State<SetNicknameScreen> {
+class _AddPlanetScreenState extends State<AddPlanetScreen> {
   TextEditingController? _controller;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   bool showGuidMsg = true;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => SetNicknameCubit(
+      create: (BuildContext context) => AddPlanetCubit(
         appBloc: context.read<AppBloc>(),
+        networkType: widget.networkType,
         apiRepository: context.read<ApiRepository>(),
-        planet: widget.planet,
       )..initialize(),
-      child: BlocListener<SetNicknameCubit, SetNicknameState>(
+      child: BlocListener<AddPlanetCubit, AddPlanetState>(
         listener: (context, state) async {
           if (state.status == ScreenStatus.loaded) {
             if (_controller == null) {
@@ -73,9 +70,9 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
           }
         },
         listenWhen: (pre, cur) => pre.status != cur.status,
-        child: BlocBuilder<SetNicknameCubit, SetNicknameState>(
+        child: BlocBuilder<AddPlanetCubit, AddPlanetState>(
           builder: (context, state) {
-            var cubit = context.read<SetNicknameCubit>();
+            var cubit = context.read<AddPlanetCubit>();
             return BaseScaffold(
               onLoading: state.status == ScreenStatus.loading,
               body: PlanetBackgroundFrame(
@@ -151,7 +148,7 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  _button(
+                                  SetNicknameButton(
                                     onTap: () {
                                       RegExp regex = RegExp(r'\d+$');
                                       String baseText = state.nickname;
@@ -170,7 +167,7 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
                                     iconPath: "icons/ic_refresh.svg",
                                   ),
                                   const SizedBox(width: 30),
-                                  _button(
+                                  SetNicknameButton(
                                     onTap: () {
                                       cubit.onCreatePlanet();
                                     },
@@ -187,30 +184,6 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-
-  _button({
-    required Function onTap,
-    required String iconPath,
-  }) {
-    return BounceButton(
-      onTap: () {
-        onTap();
-      },
-      child: Container(
-        width: 76,
-        height: 76,
-        decoration: BoxDecoration(
-          color: const Color(0xff111117),
-          border: Border.all(color: const Color(0xff1E1E28)),
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: CustomImage(
-          path: iconPath,
-          width: 40,
         ),
       ),
     );

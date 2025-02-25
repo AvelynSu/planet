@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
+import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -13,7 +13,7 @@ import 'package:planet/service/wallet/wallet_service.dart';
 
 import '../../../../../enum/screen_status.dart';
 import '../../../../../model/custom_exception.dart';
-import '../../../../../util/data/planet_name_data.dart';
+import '../../../../util/app_util.dart';
 
 part 'set_nickname_state.dart';
 
@@ -30,22 +30,11 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
 
   initialize() async {
     // 전체 닉네임 불러오기
-    var allNickName = await apiRepository.getAllNickName();
-
-    // 플래닛 랜덤 네임 설정
-    var planet =
-        Data.planetNames[Random().nextInt(Data.planetNames.length - 1)];
-    planet = planet.replaceAll(" ", "").toLowerCase();
-    var idx = Random().nextInt(10000);
-
-    // fb에 없는 이름 나올때까지 생성
-    while (!allNickName.contains("$planet$idx")) {
-      idx = Random().nextInt(10000);
-      break;
-    }
+    var alreadyNickname = await apiRepository.getAllNickName();
+    var randomNickname = AppUtil.getRandomNickname(alreadyNickname);
 
     emit(state.copyWith(
-      nickname: "$planet$idx",
+      nickname: randomNickname,
       status: ScreenStatus.loaded,
     ));
   }
@@ -66,8 +55,10 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
     if (enablePlanetName) {
       var walletService = WalletService();
       // 이더리움 하위의 0 지갑 만들기
+
       var address = await walletService.generateHDAddress(
           NetworkType.ethereum, planet.mnemonic, 0);
+
       var _planet = planet.copyWith(
           networkType: NetworkType.ethereum,
           address: address,
@@ -83,8 +74,12 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
       // 로컬에 저장
       await LocalStorageService.saveMnemonics([_planet]);
 
-      /// todo : 여기에 다른 지갑 0~20 찾아야함 or parnets planet 으로
-      /// (0~20보다 plarents planet 이 나아보임) 왜냐면 우리는 꼭 닉네임 설정해줘야 쓸 수 있기 때문에
+      // 부모 하위꺼 가져오기
+      var parents = (appBloc.state as AppLoaded).myPlanets;
+      var ethParents = parents.where((e) => e.pathIdx == 0).firstOrNull;
+
+      var childs = await apiRepository.getChildPlanets(ethParents);
+      await LocalStorageService.saveMnemonics([...childs, _planet]);
 
       appBloc.add(AppInitialize());
       emit(state.copyWith(status: ScreenStatus.success));

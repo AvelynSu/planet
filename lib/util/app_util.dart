@@ -1,9 +1,27 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 
+import 'data/planet_name_data.dart';
+
 class AppUtil {
+  static String getRandomNickname(List<String> alreadyNickname) {
+    var planet =
+        Data.planetNames[Random().nextInt(Data.planetNames.length - 1)];
+    planet = planet.replaceAll(" ", "").toLowerCase();
+    var idx = Random().nextInt(10000);
+
+    // fb에 없는 이름 나올때까지 생성
+    while (!alreadyNickname.contains("$planet$idx")) {
+      idx = Random().nextInt(10000);
+      break;
+    }
+
+    return "$planet$idx";
+  }
+
   /// Wei 단위를 ETH 단위로 변환 (1 ETH = 10^18 Wei)
   static double weiToEth(BigInt wei) {
     return wei / BigInt.from(10).pow(18);

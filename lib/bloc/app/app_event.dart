@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
 
 class AppEvent extends Equatable {
@@ -16,16 +17,19 @@ class AppInitialize extends AppEvent {
 class AppUpdate extends AppEvent {
   final bool updateBalance;
   final TokenInfo updateBalanceToken;
+  final Planet isCurrentPlanet;
 
   AppUpdate({
     this.updateBalance = false,
     this.updateBalanceToken = TokenInfo.empty,
+    this.isCurrentPlanet = Planet.empty,
   });
 
   @override
   List<Object?> get props => [
         updateBalance,
         updateBalanceToken,
+        isCurrentPlanet,
       ];
 }
 

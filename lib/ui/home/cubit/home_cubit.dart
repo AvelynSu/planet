@@ -44,6 +44,10 @@ class HomeCubit extends Cubit<HomeState> {
     // );
   }
 
+  addPlanet() async {
+    // 니모닉 path 로 지갑 하나 생성
+  }
+
   onUpdate() async {
     if (state.status != ScreenStatus.loading) {
       emit(state.copyWith(status: ScreenStatus.loading, balances: []));
