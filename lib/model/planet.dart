@@ -12,6 +12,7 @@ class Planet extends Equatable {
   final DateTime? createdAt;
   final bool isCurrent;
 
+  final String parentsAddress; // idx 0 의 주소
   final int pathIdx;
 
   const Planet({
@@ -23,6 +24,7 @@ class Planet extends Equatable {
     this.createdAt,
     this.isCurrent = false,
     this.pathIdx = 0,
+    this.parentsAddress = "",
   });
 
   static const empty = Planet();
@@ -36,6 +38,7 @@ class Planet extends Equatable {
       createdAt: FBFormatter.fromJsonDate(json["createdAt"]),
       mnemonic: json["mnemonic"] ?? "",
       pathIdx: json["pathIdx"] ?? 0,
+      parentsAddress: json["parentsAddress"] ?? json["address"] ?? "",
     );
   }
 
@@ -49,6 +52,7 @@ class Planet extends Equatable {
       'createdAt': FBFormatter.toJsonDate(createdAt),
       'isCurrent': isCurrent,
       'pathIdx': pathIdx,
+      'parentsAddress': parentsAddress,
     };
   }
 
