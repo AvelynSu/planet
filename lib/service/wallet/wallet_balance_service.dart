@@ -195,13 +195,7 @@ class BitcoinBalanceService implements BlockchainBalanceService {
   }) async {
     try {
       // BTC만 가져오는 방식으로 간소화
-      final TokenInfo btcInfo = TokenInfo(
-        name: "Bitcoin",
-        symbol: "BTC",
-        address: "", // 네이티브 토큰은 주소가 필요 없음
-        decimals: 8,
-        logoUrl: "icons/ic_bitcoin.png",
-      );
+      final TokenInfo btcInfo = TokenData.bitToken;
 
       final btcBalance = await getTokenBalance(
         address: walletAddress,

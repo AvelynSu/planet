@@ -1,13 +1,25 @@
+import 'package:planet/enum/network_type.dart';
+
 import '../../../model/token_info.dart';
 
 class TokenData {
+  static const TokenInfo bitToken = TokenInfo(
+    name: "Bitcoin",
+    symbol: "BTC",
+    address: "",
+    // 네이티브 토큰은 주소가 필요 없음
+    decimals: 8,
+    logoUrl: "icons/ic_bitcoin.png",
+    networkType: NetworkType.bitcoin,
+  );
+
   // 메인넷 토큰 리스트 (ETH)
   static const List<TokenInfo> ethTokens = [
     TokenInfo(
       symbol: 'ETH',
       name: 'Ethereum',
-      address:
-          '0x0000000000000000000000000000000000000000', // ETH는 네이티브 토큰이라 주소가 0 주소
+      address: '0x0000000000000000000000000000000000000000',
+      // ETH는 네이티브 토큰이라 주소가 0 주소
       decimals: 18,
       logoUrl: "icons/ic_ethereum.png",
     ),
