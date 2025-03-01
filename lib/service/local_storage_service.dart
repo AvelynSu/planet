@@ -6,6 +6,7 @@ import 'package:planet/model/planet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
+  // 넣는값만 추가하거나 수정하기
   static Future<void> saveMnemonics(List<Planet> mnemonics,
       {String? isCurrentAddress}) async {
     const storage = FlutterSecureStorage();

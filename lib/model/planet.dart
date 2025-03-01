@@ -11,6 +11,7 @@ class Planet extends Equatable {
   final String mnemonic;
   final DateTime? createdAt;
   final bool isCurrent;
+  final bool isDeleted;
 
   final String parentsAddress; // idx 0 의 주소
   final int pathIdx;
@@ -25,6 +26,7 @@ class Planet extends Equatable {
     this.isCurrent = false,
     this.pathIdx = 0,
     this.parentsAddress = "",
+    this.isDeleted = false,
   });
 
   static const empty = Planet();
@@ -40,6 +42,7 @@ class Planet extends Equatable {
       pathIdx: json["pathIdx"] ?? 0,
       isCurrent: json["isCurrent"] ?? false,
       parentsAddress: json["parentsAddress"] ?? json["address"] ?? "",
+      isDeleted: json["isDeleted"] ?? false,
     );
   }
 
@@ -54,19 +57,22 @@ class Planet extends Equatable {
       'isCurrent': isCurrent,
       'pathIdx': pathIdx,
       'parentsAddress': parentsAddress,
+      'isDeleted': isDeleted ?? false,
     };
   }
 
-  Planet copyWith(
-      {String? id,
-      String? address,
-      NetworkType? networkType,
-      String? name,
-      String? mnemonic,
-      DateTime? createdAt,
-      bool? isCurrent,
-      int? pathIdx,
-      parentsAddress}) {
+  Planet copyWith({
+    String? id,
+    String? address,
+    NetworkType? networkType,
+    String? name,
+    String? mnemonic,
+    DateTime? createdAt,
+    bool? isCurrent,
+    int? pathIdx,
+    String? parentsAddress,
+    bool? isDeleted,
+  }) {
     return Planet(
       id: id ?? this.id,
       networkType: networkType ?? this.networkType,
@@ -77,6 +83,7 @@ class Planet extends Equatable {
       isCurrent: isCurrent ?? this.isCurrent,
       pathIdx: pathIdx ?? this.pathIdx,
       parentsAddress: parentsAddress ?? this.parentsAddress,
+      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 
@@ -91,5 +98,6 @@ class Planet extends Equatable {
         isCurrent,
         pathIdx,
         parentsAddress,
+        isDeleted,
       ];
 }

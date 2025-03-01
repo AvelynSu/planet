@@ -13,6 +13,7 @@ import 'package:planet/util/app_ui.dart';
 
 import '../../custom_theme.dart';
 import '../../enum/network_type.dart';
+import '../../service/local_storage_service.dart';
 import '../add_planet/add_planet_screen.dart';
 import '../common/custom_image.dart';
 import '../common/default_dialog.dart';
@@ -77,8 +78,10 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
           ...planets.map(
             (e) => BounceButton(
               child: _item(e),
-              onTap: () {
-                context.read<AppBloc>().add(AppUpdate(isCurrentPlanet: e));
+              onTap: () async {
+                await LocalStorageService.saveMnemonics([],
+                    isCurrentAddress: e.address);
+                context.read<AppBloc>().add(AppUpdate());
                 Navigator.pop(context);
               },
             ),
@@ -92,7 +95,7 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
   _item(Planet planet) {
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

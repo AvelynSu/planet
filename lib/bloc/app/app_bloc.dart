@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -65,11 +64,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       var walletService = WalletBalanceService();
 
-      if (event.isCurrentPlanet != Planet.empty) {
-        await LocalStorageService.saveMnemonics([],
-            isCurrentAddress: event.isCurrentPlanet.address);
-      }
-
       // 로컬에서 플래닛 가져오기
       var localPlanets = await LocalStorageService.getLocalPlanets();
 
@@ -77,21 +71,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
 
       // 현재 앱에서 메인으로 다루는 플래닛
-      var current =
+      var currentPlanet =
           planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
 
-      /// 메인 플래닛의 토큰 Balance 들
+      // 메인 플래닛의 토큰 Balance 들
       List<TokenBalance> updateBalance = (state as AppLoaded).currentTokens;
 
-      /// 밸런스 업데이트 필요한 경우
+      // 밸런스 업데이트 필요한 경우
       if (event.updateBalance) {
         // 모든 밸런스 업데이트
         updateBalance = await walletService.getAllTokenBalances(
-            walletAddress: current.address);
+            walletAddress: currentPlanet.address);
       } else if (event.updateBalanceToken != TokenInfo.empty) {
         // 특정 한개 밸런스만 업데이트
         var updateTokenBalance = await walletService.getTokenBalance(
-            address: current.address, info: event.updateBalanceToken);
+            address: currentPlanet.address, info: event.updateBalanceToken);
 
         // 기존 밸런스에서 한개만 업데이트 하기
         updateBalance = updateBalance
@@ -104,7 +98,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield AppLoaded(
         myPlanets: planets,
         currentTokens: updateBalance,
-        currentPlanet: current,
+        currentPlanet: currentPlanet,
       );
     } catch (_) {}
   }
