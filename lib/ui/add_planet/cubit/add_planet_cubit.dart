@@ -82,6 +82,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
         pathIdx: idx,
       );
 
+      // 이번에 니모닉 몇 번째꺼 해야 하는지
       if (childs.isNotEmpty) {
         for (var item in childs) {
           if (item.pathIdx >= idx) {

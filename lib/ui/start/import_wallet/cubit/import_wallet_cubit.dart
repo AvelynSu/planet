@@ -53,10 +53,15 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
       } else {
         // 등록된 행성이면 로컬에 저장하고 앱 시작
         planet = planet.copyWith(mnemonic: state.mnemonic);
-        await LocalStorageService.saveMnemonics([planet]);
 
         /// todo : 여기에 다른 지갑 0~20 찾아야함 or parnets planet 으로
         /// (0~20보다 plarents planet 이 나아보임) 왜냐면 우리는 꼭 닉네임 설정해줘야 쓸 수 있기 때문에
+
+        List<Planet> childs = await apiRepository.getChildPlanets(planet);
+        childs =
+            childs.map((e) => e.copyWith(mnemonic: state.mnemonic)).toList();
+
+        await LocalStorageService.saveMnemonics(childs);
 
         appBloc.add(AppInitialize());
         emit(state.copyWith(status: ScreenStatus.success));

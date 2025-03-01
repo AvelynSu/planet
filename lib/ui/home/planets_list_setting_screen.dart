@@ -12,24 +12,24 @@ import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-import 'package:planet/ui/home/planets_list_setting_screen.dart';
+import 'package:planet/util/app_ui.dart';
 
 import '../../custom_theme.dart';
 import '../common/custom_image.dart';
-import '../common/top_sheet.dart';
 
-class PlanetsTopSheet extends StatefulWidget {
-  const PlanetsTopSheet({super.key});
+class PlanetListSettingScreen extends StatefulWidget {
+  const PlanetListSettingScreen({super.key});
 
-  static show(BuildContext context) {
-    showTopSheet(context, PlanetsTopSheet());
+  static push(BuildContext context) {
+    AppUi.push(context, PlanetListSettingScreen());
   }
 
   @override
-  State<PlanetsTopSheet> createState() => _PlanetsTopSheetState();
+  State<PlanetListSettingScreen> createState() =>
+      _PlanetListSettingScreenState();
 }
 
-class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
+class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
   List<Planet> planets = [];
   late StreamSubscription subscription;
 
@@ -80,10 +80,6 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
               title: "Add New Planet",
             ),
             CustomImage(
-              onTap: () {
-                Navigator.pop(context);
-                PlanetListSettingScreen.push(context);
-              },
               path: "icons/ic_setting.svg",
               width: 32,
               color: C.current.sub01,
