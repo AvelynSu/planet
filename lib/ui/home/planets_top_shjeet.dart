@@ -54,7 +54,7 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
             onTap: () async {
               await LocalStorageService.saveMnemonics([],
                   isCurrentAddress: e.address);
-              context.read<AppBloc>().add(AppUpdate());
+              context.read<AppBloc>().add(AppUpdate(updateBalance: true));
               Navigator.pop(context);
             },
           ),

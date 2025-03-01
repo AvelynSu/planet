@@ -81,7 +81,7 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
               onTap: () async {
                 await LocalStorageService.saveMnemonics([],
                     isCurrentAddress: e.address);
-                context.read<AppBloc>().add(AppUpdate());
+                context.read<AppBloc>().add(AppUpdate(updateBalance: true));
                 Navigator.pop(context);
               },
             ),
