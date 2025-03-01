@@ -52,18 +52,20 @@ class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
           builder: (context, state) {
             var cubit = context.read<ChangeNicknameCubit>();
 
-            return PlanetNicknameFrame(
-              title: "Change Planet Name",
-              status: state.status,
-              exception: state.exception,
-              nickname: state.nickname,
-              onUpdateValue: (value) {
-                cubit.updateValue(value);
-              },
-              onComplete: () {
-                cubit.onUpdateName();
-              },
-            );
+            return state.status != ScreenStatus.initial
+                ? PlanetNicknameFrame(
+                    title: "Change Planet Name",
+                    status: state.status,
+                    exception: state.exception,
+                    nickname: state.nickname,
+                    onUpdateValue: (value) {
+                      cubit.updateValue(value);
+                    },
+                    onComplete: () {
+                      cubit.onUpdateName();
+                    },
+                  )
+                : Container();
           },
         ),
       ),

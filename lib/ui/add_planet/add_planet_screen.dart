@@ -53,17 +53,19 @@ class _AddPlanetScreenState extends State<AddPlanetScreen> {
         child: BlocBuilder<AddPlanetCubit, AddPlanetState>(
           builder: (context, state) {
             var cubit = context.read<AddPlanetCubit>();
-            return PlanetNicknameFrame(
-              status: state.status,
-              exception: state.exception,
-              nickname: state.nickname,
-              onUpdateValue: (value) {
-                cubit.updateValue(value);
-              },
-              onComplete: () {
-                cubit.onCreatePlanet();
-              },
-            );
+            return state.status != ScreenStatus.initial
+                ? PlanetNicknameFrame(
+                    status: state.status,
+                    exception: state.exception,
+                    nickname: state.nickname,
+                    onUpdateValue: (value) {
+                      cubit.updateValue(value);
+                    },
+                    onComplete: () {
+                      cubit.onCreatePlanet();
+                    },
+                  )
+                : Container();
           },
         ),
       ),

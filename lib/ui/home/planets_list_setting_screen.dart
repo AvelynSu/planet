@@ -5,23 +5,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
-import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
-import 'package:planet/ui/add_planet/add_planet_screen.dart';
+import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/bounce_button.dart';
-import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
-import 'package:planet/ui/common/small_round_button.dart';
 import 'package:planet/util/app_ui.dart';
 
 import '../../custom_theme.dart';
+import '../../enum/network_type.dart';
+import '../add_planet/add_planet_screen.dart';
 import '../common/custom_image.dart';
+import '../common/default_dialog.dart';
 
 class PlanetListSettingScreen extends StatefulWidget {
   const PlanetListSettingScreen({super.key});
 
   static push(BuildContext context) {
-    AppUi.push(context, PlanetListSettingScreen());
+    AppUi.push(
+      context,
+      PlanetListSettingScreen(),
+      rootNavigator: true,
+    );
   }
 
   @override
@@ -45,49 +49,43 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...planets.map(
-          (e) => BounceButton(
-            child: _item(e),
-            onTap: () {
-              context.read<AppBloc>().add(AppUpdate(isCurrentPlanet: e));
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(width: 32),
-            SmallRoundButton(
+    return BaseScaffold(
+      onBack: () {
+        Navigator.pop(context);
+      },
+      suffix: CustomImage(
+        width: 32,
+        color: Colors.white,
+        path: "icons/ic_plus.svg",
+        onTap: () {
+          // todo : 최대 20개.=
+
+          var planet = planets
+              .where((e) => e.networkType == NetworkType.ethereum)
+              .length;
+
+          if (planet < 10) {
+            AddPlanetScreen.push(context, networkType: NetworkType.ethereum);
+          } else {
+            DefaultDialog.showTimerDialog(context,
+                description: "네트워크별 최대 10개 생성할 수 있습니다.");
+          }
+        },
+      ),
+      body: Column(
+        children: [
+          ...planets.map(
+            (e) => BounceButton(
+              child: _item(e),
               onTap: () {
-                // todo : 최대 20개.=
-
-                var planet = planets
-                    .where((e) => e.networkType == NetworkType.ethereum)
-                    .length;
-
-                if (planet < 10) {
-                  AddPlanetScreen.push(context,
-                      networkType: NetworkType.ethereum);
-                } else {
-                  DefaultDialog.showTimerDialog(context,
-                      description: "네트워크별 최대 10개 생성할 수 있습니다.");
-                }
+                context.read<AppBloc>().add(AppUpdate(isCurrentPlanet: e));
+                Navigator.pop(context);
               },
-              iconPath: "icons/ic_planet.svg",
-              title: "Add New Planet",
             ),
-            CustomImage(
-              path: "icons/ic_setting.svg",
-              width: 32,
-              color: C.current.sub01,
-            )
-          ],
-        ),
-        const SizedBox(height: 12),
-      ],
+          ),
+          const SizedBox(height: 12),
+        ],
+      ),
     );
   }
 

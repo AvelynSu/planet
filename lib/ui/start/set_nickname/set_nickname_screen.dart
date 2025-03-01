@@ -21,8 +21,7 @@ class SetNicknameScreen extends StatefulWidget {
     BuildContext context, {
     required Planet planet,
   }) {
-    AppUi.push(context, SetNicknameScreen(planet: planet),
-        enablePushAnimation: false, enablePopAnimation: false);
+    AppUi.push(context, SetNicknameScreen(planet: planet));
   }
 
   @override
@@ -51,17 +50,19 @@ class _SetNicknameScreenState extends State<SetNicknameScreen> {
           builder: (context, state) {
             var cubit = context.read<SetNicknameCubit>();
 
-            return PlanetNicknameFrame(
-              status: state.status,
-              exception: state.exception,
-              nickname: state.nickname,
-              onUpdateValue: (value) {
-                cubit.updateValue(value);
-              },
-              onComplete: () {
-                cubit.onCreatePlanet();
-              },
-            );
+            return state.status != ScreenStatus.initial
+                ? PlanetNicknameFrame(
+                    status: state.status,
+                    exception: state.exception,
+                    nickname: state.nickname,
+                    onUpdateValue: (value) {
+                      cubit.updateValue(value);
+                    },
+                    onComplete: () {
+                      cubit.onCreatePlanet();
+                    },
+                  )
+                : Container();
           },
         ),
       ),
