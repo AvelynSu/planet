@@ -22,12 +22,10 @@ List<Planet> _planets = [];
 class AddPlanetCubit extends Cubit<AddPlanetState> {
   final AppBloc appBloc;
   final ApiRepository apiRepository;
-  final NetworkType networkType;
 
   AddPlanetCubit({
     required this.appBloc,
     required this.apiRepository,
-    required this.networkType,
   }) : super(const AddPlanetState());
 
   initialize() async {
@@ -45,7 +43,9 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
     emit(state.copyWith(nickname: text, status: ScreenStatus.loaded));
   }
 
-  onCreatePlanet() async {
+  onCreatePlanet(
+    NetworkType networkType,
+  ) async {
     // 닉네임 빈값이면 생성 x
     if (state.nickname.isEmpty) {
       return;
@@ -65,13 +65,16 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
           .where((e) => e.networkType == networkType)
           .toList();
 
-      // todo : 비트코인같은거 처음 할때는 인덱스 없어서 그 경우에 대비해야함
-
+      // fb에서 불러온것 중에 부모 행성 찾기
       var parent = planets.where((e) => e.pathIdx == 0).firstOrNull;
 
-      List<Planet> childs =
-          parent != null ? await apiRepository.getChildPlanets(parent) : [];
+      // 부모가 있는 경우 child 가져오기 (인덱스 계산해주기 위함) : 만약 부모가 없으면 무조건 0을 만듦 (비트코인 같은거)
+      List<Planet> childs = parent != null
+          ? await apiRepository.getChildPlanets(parent.address, networkType)
+          : [];
       var idx = 0;
+
+      // 새로운 child 만들기 위한 dto
       var planet = Planet(
         networkType: networkType,
         mnemonic: currentPlanet.mnemonic,
@@ -91,11 +94,15 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
         }
       }
 
-      // 이더리움 하위의 지갑 만들기
+      // 하위의 지갑 만들기
       var address = await walletService.generateHDAddress(
           networkType, currentPlanet.mnemonic, idx);
 
-      planet = planet.copyWith(address: address, pathIdx: idx);
+      planet = planet.copyWith(
+        address: address,
+        pathIdx: idx,
+        parentsAddress: planet.parentsAddress.isEmpty ? address : null,
+      );
 
       // 플래닛 fb에 저장
       await apiRepository.addPlanet(planet);

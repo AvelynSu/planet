@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/util/app_constant.dart';
 
@@ -14,18 +15,16 @@ class ApiRepository {
 
   /// 부모 주소의 하위 행성들 불러오기
   // parentPlanet : network 에 맞는 인덱스가 0인 행성
-  Future<List<Planet>> getChildPlanets(Planet? parentPlanet) async {
-    if (parentPlanet == null) {
-      return [];
-    }
+  Future<List<Planet>> getChildPlanets(
+      String? parentPlanetAddress, NetworkType networkType) async {
     var res = await _planetCol
-        .where("parentsAddress", isEqualTo: parentPlanet.address)
-        .where("networkType", isEqualTo: parentPlanet.networkType?.name)
+        .where("parentsAddress", isEqualTo: parentPlanetAddress)
+        .where("networkType", isEqualTo: networkType.name)
         .get();
     var result =
         res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
 
-    return result.isEmpty ? [parentPlanet] : [parentPlanet, ...result];
+    return result;
   }
 
   /// 행성 전부 불러오기

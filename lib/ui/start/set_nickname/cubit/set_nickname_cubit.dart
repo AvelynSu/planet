@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
-import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -73,13 +72,6 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
 
       // 로컬에 저장
       await LocalStorageService.saveMnemonics([_planet]);
-
-      // 부모 하위꺼 가져오기
-      var parents = (appBloc.state as AppLoaded).myPlanets;
-      var ethParents = parents.where((e) => e.pathIdx == 0).firstOrNull;
-
-      var childs = await apiRepository.getChildPlanets(ethParents);
-      await LocalStorageService.saveMnemonics([...childs, _planet]);
 
       appBloc.add(AppInitialize());
       emit(state.copyWith(status: ScreenStatus.success));

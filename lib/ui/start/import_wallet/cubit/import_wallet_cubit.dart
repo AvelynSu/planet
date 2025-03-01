@@ -42,32 +42,40 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
           NetworkType.ethereum, state.mnemonic, 0);
 
       // fb에서 등록된 지갑인지 가져오기
-      var planet = await apiRepository.getPlanetByAddress(address);
-      if (planet == Planet.empty) {
+      var ethPlanet = await apiRepository.getPlanetByAddress(address);
+      if (ethPlanet == Planet.empty) {
         // 등록된 지갑이 아니면 빈 Planet 생성
-        planet = Planet(
+        ethPlanet = Planet(
           networkType: NetworkType.ethereum,
           address: address,
           mnemonic: state.mnemonic,
         );
       } else {
         // 등록된 행성이면 로컬에 저장하고 앱 시작
-        planet = planet.copyWith(mnemonic: state.mnemonic);
+        ethPlanet = ethPlanet.copyWith(mnemonic: state.mnemonic);
 
         /// todo : 여기에 다른 지갑 0~20 찾아야함 or parnets planet 으로
         /// (0~20보다 plarents planet 이 나아보임) 왜냐면 우리는 꼭 닉네임 설정해줘야 쓸 수 있기 때문에
 
-        List<Planet> childs = await apiRepository.getChildPlanets(planet);
-        childs =
-            childs.map((e) => e.copyWith(mnemonic: state.mnemonic)).toList();
+        List<Planet> ethChilds = await apiRepository.getChildPlanets(
+            ethPlanet.address, NetworkType.ethereum);
+        ethChilds =
+            ethChilds.map((e) => e.copyWith(mnemonic: state.mnemonic)).toList();
 
-        await LocalStorageService.saveMnemonics(childs);
+        var bitAddress = await WalletService()
+            .generateHDAddress(NetworkType.bitcoin, state.mnemonic, 0);
+        List<Planet> bitChilds = await apiRepository.getChildPlanets(
+            bitAddress, NetworkType.bitcoin);
+        bitChilds =
+            bitChilds.map((e) => e.copyWith(mnemonic: state.mnemonic)).toList();
+
+        await LocalStorageService.saveMnemonics(ethChilds + bitChilds);
 
         appBloc.add(AppInitialize());
         emit(state.copyWith(status: ScreenStatus.success));
       }
 
-      return planet;
+      return ethPlanet;
     } on CustomException catch (err) {
       emit(state.copyWith(status: ScreenStatus.fail, exception: err));
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/repository/fb_repository.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/planet_nickname_frame.dart';
 
 import '../../../enum/screen_status.dart';
@@ -33,12 +34,29 @@ class AddPlanetScreen extends StatefulWidget {
 }
 
 class _AddPlanetScreenState extends State<AddPlanetScreen> {
+  late NetworkType networkType;
+
+  @override
+  void initState() {
+    super.initState();
+    networkType = widget.networkType;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      DefaultDialog.show(
+        context,
+        description: "비트코인으로 만들겠스빈까? ",
+        onSecondAction: () {
+          networkType = NetworkType.bitcoin;
+          setState(() {});
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => AddPlanetCubit(
         appBloc: context.read<AppBloc>(),
-        networkType: widget.networkType,
         apiRepository: context.read<ApiRepository>(),
       )..initialize(),
       child: BlocListener<AddPlanetCubit, AddPlanetState>(
@@ -62,7 +80,7 @@ class _AddPlanetScreenState extends State<AddPlanetScreen> {
                       cubit.updateValue(value);
                     },
                     onComplete: () {
-                      cubit.onCreatePlanet();
+                      cubit.onCreatePlanet(networkType);
                     },
                   )
                 : Container();
