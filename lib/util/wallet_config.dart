@@ -6,7 +6,7 @@ class WalletConfig {
   final String rpcUrl;
   final int chainId; // 1: mainnet, 5: goerli testnet
   final String etherscanApiKey;
-
+  final String bitcoinApiUrl;
   static final WalletConfig _instance = WalletConfig._internal();
 
   factory WalletConfig() => _instance;
@@ -16,6 +16,7 @@ class WalletConfig {
             ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
             : "",
         chainId = _env == _Environment.prod ? 1 : 5,
+        bitcoinApiUrl = "https://api.blockcypher.com/v1/btc/main",
         etherscanApiKey = _env == _Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
             : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF";

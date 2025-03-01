@@ -48,7 +48,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
       // 현재 메인 플래닛의 토큰 밸런스들
       var updateBalance = await walletService.getAllTokenBalances(
-          walletAddress: current.address);
+          walletAddress: current.address, networkType: current.networkType!);
       await Future.delayed(const Duration(seconds: 2));
       yield AppLoaded(
         myPlanets: planets,
@@ -81,11 +81,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       if (event.updateBalance) {
         // 모든 밸런스 업데이트
         updateBalance = await walletService.getAllTokenBalances(
-            walletAddress: currentPlanet.address);
+            walletAddress: currentPlanet.address,
+            networkType: currentPlanet.networkType!);
       } else if (event.updateBalanceToken != TokenInfo.empty) {
         // 특정 한개 밸런스만 업데이트
         var updateTokenBalance = await walletService.getTokenBalance(
-            address: currentPlanet.address, info: event.updateBalanceToken);
+          address: currentPlanet.address,
+          info: event.updateBalanceToken,
+          networkType: currentPlanet.networkType!,
+        );
 
         // 기존 밸런스에서 한개만 업데이트 하기
         updateBalance = updateBalance
