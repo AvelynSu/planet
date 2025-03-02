@@ -4,16 +4,20 @@ import '../../custom_theme.dart';
 
 class MnemonicPharseComponent extends StatelessWidget {
   final String mnemonic;
+  final double? fontSize;
+  final double? padding;
 
   const MnemonicPharseComponent({
     super.key,
     required this.mnemonic,
+    this.padding,
+    this.fontSize,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: padding ?? 20),
       child: GridView.builder(
         padding: const EdgeInsets.all(0),
         physics: const NeverScrollableScrollPhysics(),
@@ -29,6 +33,7 @@ class MnemonicPharseComponent extends StatelessWidget {
           var items = mnemonic.split(" ");
           var item = items.length > i ? items[i] : "";
           return Container(
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: C.current.lightBase,
               borderRadius: BorderRadius.circular(8),
@@ -44,12 +49,10 @@ class MnemonicPharseComponent extends StatelessWidget {
                 ),
               ],
             ),
-            child: Center(
-              child: Text(
-                "${i + 1}. $item",
-                style: fontM(14, color: C.current.mainText),
-                overflow: TextOverflow.ellipsis,
-              ),
+            child: Text(
+              "${i + 1}. $item",
+              style: fontM(fontSize ?? 14, color: C.current.mainText),
+              overflow: TextOverflow.ellipsis,
             ),
           );
         },

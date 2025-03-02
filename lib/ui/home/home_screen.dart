@@ -6,7 +6,6 @@ import 'package:lottie/lottie.dart';
 import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
-import 'package:planet/ui/add_planet/planets_top_sheet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/custom_image.dart';
@@ -17,6 +16,7 @@ import 'package:planet/ui/home/home_tile.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../util/app_ui.dart';
+import '../add_planet/planets_top_sheet.dart';
 import '../common/planet_address_bottom_sheet.dart';
 import '../transaction/transaction_history/token_history_screen.dart';
 import 'cubit/home_cubit.dart';
@@ -60,79 +60,92 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.transparent,
                 displacement: 40,
                 strokeWidth: 3,
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: AppUi.statusBarHeight(context),
-                        ),
+                child: Stack(
+                  children: [
+                    Container(
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                  height: 52 + AppUi.statusBarHeight(context)),
 
-                        /// 앱바
-                        BounceButton(
-                          onTap: () {
-                            PlanetsTopSheet.show(context);
-                          },
-                          child: _appBar(state),
-                        ),
-
-                        /// 플래닛 이름
-                        Column(
-                          children: [
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.all(20),
-                                  child: PlanetComonent(
-                                    data: state.data,
-                                    size: 160,
+                              /// 플래닛 이름
+                              Column(
+                                children: [
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.all(20),
+                                        child: PlanetComonent(
+                                          data: state.data,
+                                          size: 160,
+                                        ),
+                                      ),
+                                      Lottie.asset("assets/sparkle.json",
+                                          width: 200),
+                                    ],
                                   ),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 16, bottom: 8),
+                                    child: Text(
+                                      state.planet.name,
+                                      style: fontR(
+                                        24,
+                                        color: C.current.mainText,
+                                      ),
+                                    ),
+                                  ),
+                                  CopyComponent(
+                                    planet: state.planet,
+                                    onSuccess: () {
+                                      PlanetAddressBottomSheet.show(context,
+                                          planet: state.planet);
+                                    },
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 28),
+                              if (state.status == ScreenStatus.loading)
+                                Column(
+                                  children: [
+                                    ...List.generate(
+                                        5, (e) => Skeleton.homeTile),
+                                  ],
                                 ),
-                                Lottie.asset("assets/sparkle.json", width: 200),
-                              ],
-                            ),
-                            Container(
-                              padding:
-                                  const EdgeInsets.only(top: 20, bottom: 8),
-                              child: Text(
-                                state.planet.name,
-                                style: fontR(
-                                  24,
-                                  color: C.current.mainText,
+                              ...state.balances.map(
+                                (e) => BounceButton(
+                                  onTap: () {
+                                    TransactionHistoryScreen.push(context,
+                                        info: e);
+                                  },
+                                  child: HomeTile(item: e),
                                 ),
                               ),
-                            ),
-                            CopyComponent(
-                              planet: state.planet,
-                              onSuccess: () {
-                                PlanetAddressBottomSheet.show(context,
-                                    planet: state.planet);
-                              },
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 28),
-                        if (state.status == ScreenStatus.loading)
-                          Column(
-                            children: [
-                              ...List.generate(5, (e) => Skeleton.homeTile),
                             ],
                           ),
-                        ...state.balances.map(
-                          (e) => BounceButton(
-                            onTap: () {
-                              TransactionHistoryScreen.push(context, info: e);
-                            },
-                            child: HomeTile(item: e),
-                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    /// 앱바
+                    Container(
+                      margin:
+                          EdgeInsets.only(top: AppUi.statusBarHeight(context)),
+                      child: BounceButton(
+                        onTap: () {
+                          PlanetsTopSheet.show(context);
+                        },
+                        child: _appBar(state),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

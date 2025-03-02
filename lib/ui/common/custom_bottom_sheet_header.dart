@@ -34,13 +34,23 @@ class _CustomBottomSheetHeaderState extends State<CustomBottomSheetHeader> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 16),
-          Container(
-            height: 4,
-            width: 35,
-            decoration: BoxDecoration(
-              color: widget.barColor ?? Color(0xffCCCCCC),
-              borderRadius: BorderRadius.circular(100),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.transparent,
+              width: double.infinity,
+              padding: const EdgeInsets.only(top: 16),
+              child: Container(
+                height: 4,
+                width: 35,
+                decoration: BoxDecoration(
+                  color: widget.barColor ?? const Color(0xffCCCCCC),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
             ),
           ),
           Expanded(

@@ -6,6 +6,7 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
+import 'package:planet/ui/common/skeleton.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../custom_theme.dart';
@@ -45,7 +46,9 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
             return PlanetBackgroundFrame(
               scale: 3.2,
               topPadding: 60,
-              data: state.planet.name.isEmpty ? null : state.planet.name,
+              data: state.planet.name.isEmpty
+                  ? "shift.function"
+                  : state.planet.name,
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -63,30 +66,32 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
                     ),
                   ),
                   Expanded(
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        onPageChanged: (i, _) {
-                          context
-                              .read<PlanetsCubit>()
-                              .onPageUpdate(state.planets[i]);
-                        },
-                        enlargeCenterPage: true,
-                        viewportFraction: 0.7,
-                        height: MediaQuery.of(context).size.height,
-                      ),
-                      items: state.planets.map(
-                        (e) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                alignment: Alignment.center,
-                                child: _card(e),
-                              );
-                            },
-                          );
-                        },
-                      ).toList(),
-                    ),
+                    child: state.planet.name.isEmpty
+                        ? _isLoading()
+                        : CarouselSlider(
+                            options: CarouselOptions(
+                              onPageChanged: (i, _) {
+                                context
+                                    .read<PlanetsCubit>()
+                                    .onPageUpdate(state.planets[i]);
+                              },
+                              enlargeCenterPage: true,
+                              viewportFraction: 0.7,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                            items: state.planets.map(
+                              (e) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      child: _card(e),
+                                    );
+                                  },
+                                );
+                              },
+                            ).toList(),
+                          ),
                   ),
                   const SizedBox(height: 30),
                 ],
@@ -100,6 +105,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
 
   _card(Planet e) {
     return BounceButton(
+      hasHaptic: true,
       onTap: () {
         PlanetAddressBottomSheet.show(context, planet: e);
       },
@@ -111,11 +117,11 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: C.color(C.current.sub01.withValues(alpha: 0.3),
+            color: C.color(C.current.sub01.withValues(alpha: 0.2),
                 C.current.onBackground.withValues(alpha: 0.15)),
           ),
           color: C.color(
-            C.current.background.withValues(alpha: 0.2),
+            C.current.background.withValues(alpha: 0.3),
             C.current.onBackground.withValues(alpha: 0.1),
           ),
         ),
@@ -139,6 +145,40 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  _isLoading() {
+    return CarouselSlider(
+      options: CarouselOptions(
+        enlargeCenterPage: true,
+        viewportFraction: 0.7,
+        height: MediaQuery.of(context).size.height,
+      ),
+      items: List.generate(
+        5,
+        (e) {
+          return Builder(
+            builder: (BuildContext context) {
+              return Container(
+                alignment: Alignment.center,
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  height: 360,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(),
+                  child: const Skeleton(
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ).toList(),
     );
   }
 }

@@ -62,6 +62,7 @@ class _BottomBarState extends State<BottomBar> {
     bool isSelected = widget.selectedType == type;
 
     return BounceButton(
+      hasHaptic: true,
       onTap: () {
         widget.onTap(type);
       },

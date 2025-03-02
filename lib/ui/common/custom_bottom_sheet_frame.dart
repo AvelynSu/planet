@@ -8,6 +8,7 @@ class CustomBottomSheetFrame extends StatefulWidget {
   final Color? backgroundColor;
   final Color? barColor;
   final Color? titleColor;
+  final double? topPadding;
 
   const CustomBottomSheetFrame({
     super.key,
@@ -16,6 +17,7 @@ class CustomBottomSheetFrame extends StatefulWidget {
     this.backgroundColor,
     this.barColor,
     this.titleColor,
+    this.topPadding,
   });
 
   @override
@@ -43,8 +45,9 @@ class _CustomBottomSheetFrameState extends State<CustomBottomSheetFrame> {
               CustomBottomSheetHeader(
                 title: widget.title,
                 titleColor: widget.titleColor,
+                barColor: widget.barColor,
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: widget.topPadding ?? 40),
               widget.child,
             ],
           )

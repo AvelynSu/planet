@@ -58,46 +58,62 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
       suffix: CustomImage(
         width: 32,
         color: Colors.white,
-        path: "icons/ic_plus.svg",
+        path: "icons/ic_add_planet.svg",
         onTap: () {
           AddPlanetScreen.push(context, networkType: NetworkType.ethereum);
         },
       ),
-      body: Column(
-        children: [
-          ...planets.map(
-            (e) => GestureDetector(
-              child: _item(
-                e,
-                onChangeStatus: () async {
-                  var result = await DefaultDialog.show(
-                    context,
-                    description: "Would you like to hide the planet?",
-                    onSecondAction: () {},
-                  );
-
-                  if (result ?? false) {
-                    await context
-                        .read<ApiRepository>()
-                        .hidePlanet(e, !e.isDeleted);
-                    context.read<AppBloc>().add(AppUpdate());
-                  }
-                },
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: hPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              child: Text(
+                'My Planets',
+                style: fontR(14, color: C.current.sub01),
               ),
-              onTap: () async {
-                await LocalStorageService.saveMnemonics([],
-                    isCurrentAddress: e.address);
-                context.read<AppBloc>().add(AppUpdate(updateBalance: true));
-                Navigator.pop(context);
-              },
             ),
-          ),
-          // const SizedBox(height: 12),
-          // Text(
-          //   '삭제됨',
-          //   style: fontR(14, color: C.current.sub01),
-          // ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ...planets.map(
+                      (e) => GestureDetector(
+                        child: _item(
+                          e,
+                          onChangeStatus: () async {
+                            var result = await DefaultDialog.show(
+                              context,
+                              description: "Would you like to hide the planet?",
+                              onSecondAction: () {},
+                            );
+
+                            if (result ?? false) {
+                              await context
+                                  .read<ApiRepository>()
+                                  .hidePlanet(e, !e.isDeleted);
+                              context.read<AppBloc>().add(AppUpdate());
+                            }
+                          },
+                        ),
+                        onTap: () async {
+                          await LocalStorageService.saveMnemonics([],
+                              isCurrentAddress: e.address);
+                          context
+                              .read<AppBloc>()
+                              .add(AppUpdate(updateBalance: true));
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -109,7 +125,7 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
     var current = (context.read<AppBloc>().state as AppLoaded).current;
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: hPadding),
+      padding: EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

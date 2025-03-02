@@ -12,7 +12,7 @@ class BounceButton extends StatefulWidget {
     required this.child,
     required this.onTap,
     this.scale = 0.03,
-    this.hasHaptic = true,
+    this.hasHaptic = false,
   });
 
   @override
@@ -57,8 +57,6 @@ class _BounceButtonState extends State<BounceButton>
       onTapUp: (_) async {
         widget.onTap();
         _controller.reverse();
-
-        // await Future.delayed(const Duration(milliseconds: 100));
       },
       child: Transform.scale(
         scale: _scale,

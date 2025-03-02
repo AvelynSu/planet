@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../custom_theme.dart';
 import '../../util/bold_generator.dart';
+import '../transaction/transfer/select_friend/friend_search_field.dart';
 import 'custom_image.dart';
 
 class LinedField extends StatefulWidget {
@@ -144,6 +145,7 @@ class _LinedFieldState extends State<LinedField> {
                     controller: _controller,
                     style: widget.style?.copyWith(height: 1.3) ??
                         fontR(16, color: primary, height: 1.3),
+                    selectionControls: CustomColorSelectionHandle(primary),
                     cursorColor: primary,
                     onChanged: (text) {
                       this.text = text;

@@ -16,6 +16,7 @@ import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../../../util/bold_generator.dart';
 import '../../common/setting_row_tile.dart';
+import '../logout_bottom_sheet.dart';
 import 'cubit/my_cubit.dart';
 
 class MyScreen extends StatefulWidget {
@@ -117,7 +118,9 @@ class _MyScreenState extends State<MyScreen> {
                       //   subText: "USD",
                       // ),
                       SettingRowTile(
-                        onTap: () {},
+                        onTap: () {
+                          setThemeTheme();
+                        },
                         showArrow: false,
                         title: "Theme Setting",
                         child: Row(
@@ -131,19 +134,15 @@ class _MyScreenState extends State<MyScreen> {
                               Color borderColor = e == ThemeMode.dark
                                   ? const Color(0xff5C5964)
                                   : Colors.transparent;
-                              return BounceButton(
-                                onTap: () {
-                                  setThemeTheme(e);
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  width: 25,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    border: Border.all(
-                                      color: isSelected ? primary : borderColor,
-                                    ),
+                              return Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                width: 25,
+                                height: 25,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(
+                                    color: isSelected ? primary : borderColor,
                                   ),
                                 ),
                               );
@@ -159,15 +158,10 @@ class _MyScreenState extends State<MyScreen> {
                       ),
                       SettingRowTile(
                         onTap: () async {
-                          var result = await DefaultDialog.show(
-                            context,
-                            description:
-                                "Have you backed up your mnemonic phrase?\nIf you lose your mnemonic phrase, you won't be able to log in again.",
-                            onSecondAction: () {},
-                          );
+                          var result = await LogoutBottomSheet.show(context);
                           if (result ?? false) {
                             context.read<AppBloc>().add(AppSignOut());
-                            setThemeTheme(ThemeMode.dark);
+                            setThemeTheme(mode: ThemeMode.dark);
                           }
                         },
                         title: "Sign Out",
@@ -183,11 +177,12 @@ class _MyScreenState extends State<MyScreen> {
     );
   }
 
-  setThemeTheme(ThemeMode mode) async {
+  setThemeTheme({ThemeMode? mode}) async {
+    var updateMode = mode ?? (isDark ? ThemeMode.light : ThemeMode.dark);
     await SharedPrefsUtil.setBool(
-        AppConstant.spThemeMode, mode == ThemeMode.dark);
-    isDark = mode == ThemeMode.dark;
-    CustomThemeMode.change(mode);
+        AppConstant.spThemeMode, updateMode == ThemeMode.dark);
+    isDark = updateMode == ThemeMode.dark;
+    CustomThemeMode.change(updateMode);
     setState(() {});
   }
 

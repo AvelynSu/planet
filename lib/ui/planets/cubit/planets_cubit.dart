@@ -22,6 +22,8 @@ class PlanetsCubit extends Cubit<PlanetsState> {
   initialize() async {
     if (_planets.isNotEmpty) {
       emit(state.copyWith(planet: _planets.first, planets: _planets));
+    } else {
+      await Future.delayed(const Duration(milliseconds: 300));
     }
     var planets = await apiRepository.getAllPlanetForTest();
     _planets = planets;
