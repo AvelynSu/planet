@@ -78,7 +78,7 @@ class _SelectNetworkModalState extends State<SelectNetworkModal> {
               _tile(
                 networkType: NetworkType.bitcoin,
                 iconPath: "icons/ic_bitcoin.png",
-                title: "ETHEREUM",
+                title: "BITCOIN",
               ),
               const SizedBox(height: 24),
               DefaultButton(

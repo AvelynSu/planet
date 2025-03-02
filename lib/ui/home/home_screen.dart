@@ -13,7 +13,7 @@ import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
 import 'package:planet/ui/home/home_tile.dart';
-import 'package:planet/ui/home/planets_top_shjeet.dart';
+import 'package:planet/ui/home/planets_top_sheet.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../util/app_ui.dart';

@@ -22,7 +22,7 @@ class PlanetsTopSheet extends StatefulWidget {
   const PlanetsTopSheet({super.key});
 
   static show(BuildContext context) {
-    showTopSheet(context, PlanetsTopSheet());
+    showTopSheet(context, const PlanetsTopSheet());
   }
 
   @override
@@ -92,7 +92,10 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
   _item(Planet planet) {
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 8,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -25,7 +25,7 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(),
@@ -65,11 +65,11 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
                           gradient: LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
-                            stops: [(CustomThemeMode.isLight ? 0.35 : 0.3), 1],
+                            stops: [(CustomThemeMode.isLight ? 0.3 : 0.3), 1],
                             colors: [
                               C.current.background,
                               C.current.background.withValues(
-                                  alpha: CustomThemeMode.isLight ? 0.82 : 0.7),
+                                  alpha: CustomThemeMode.isLight ? 0.7 : 0.7),
                             ],
                           ),
                         ),

@@ -100,7 +100,8 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                       const SizedBox(height: 150),
                       Text(
                         'My Planet is',
-                        style: fontB(28, color: Colors.white, isIalic: true),
+                        style:
+                            fontB(28, color: C.current.mainText, isIalic: true),
                       ),
                       const SizedBox(height: 12),
                       LinedField(

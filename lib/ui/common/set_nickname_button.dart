@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
+import '../../custom_theme.dart';
 import 'bounce_button.dart';
 import 'custom_image.dart';
 
@@ -23,13 +24,14 @@ class SetNicknameButton extends StatelessWidget {
         width: 76,
         height: 76,
         decoration: BoxDecoration(
-          color: const Color(0xff111117),
-          border: Border.all(color: const Color(0xff1E1E28)),
+          color: C.current.sub02,
+          border: Border.all(color: C.current.lightBase),
           borderRadius: BorderRadius.circular(100),
         ),
         child: CustomImage(
           path: iconPath,
           width: 40,
+          color: C.color(Color(0xffBCBDD5), Colors.white),
         ),
       ),
     );

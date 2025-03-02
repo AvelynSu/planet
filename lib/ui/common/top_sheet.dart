@@ -144,7 +144,7 @@ class _DraggableTopSheetState extends State<DraggableTopSheet>
                       left: 12,
                       right: 12),
                   decoration: BoxDecoration(
-                    color: C.current.lightBase,
+                    color: C.current.sub02,
                     borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(28),
                     ),
