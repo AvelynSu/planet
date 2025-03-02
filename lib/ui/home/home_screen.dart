@@ -66,6 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: double.infinity,
                       child: SingleChildScrollView(
                         child: Container(
+                          constraints: BoxConstraints(
+                              minHeight: MediaQuery.of(context).size.height),
                           width: double.infinity,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
