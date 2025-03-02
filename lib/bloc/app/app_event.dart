@@ -18,16 +18,19 @@ class AppInitialize extends AppEvent {
 class AppUpdate extends AppEvent {
   final bool updateBalance;
   final TokenInfo updateBalanceToken;
+  final bool updatePlanets;
 
   AppUpdate({
     this.updateBalance = false,
     this.updateBalanceToken = TokenInfo.empty,
+    this.updatePlanets = true,
   });
 
   @override
   List<Object?> get props => [
         updateBalance,
         updateBalanceToken,
+        updatePlanets,
       ];
 }
 

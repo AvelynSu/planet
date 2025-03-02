@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
-import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -48,7 +47,8 @@ class TransferAmountInputCubit extends Cubit<TransferAmountInputState> {
 
     emit(state.copyWith(balance: balances));
 
-    appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
+    // 여기 들어오는 순간 amount 바뀌었을수도 있어서 한번 업데이트 해줌
+    // appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
   }
 
   /// 받는 양 업데이트

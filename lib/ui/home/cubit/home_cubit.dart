@@ -20,12 +20,12 @@ class HomeCubit extends Cubit<HomeState> {
     required this.appBloc,
   }) : super(const HomeState()) {
     _subscription =
-        appBloc.stream.listen((state) => updateApp(state as AppLoaded));
+        appBloc.stream.listen((state) => _update(state as AppLoaded));
   }
 
   late StreamSubscription _subscription;
 
-  updateApp(AppLoaded appState) {
+  _update(AppLoaded appState) {
     emit(state.copyWith(
         balances: appState.balances,
         planet: appState.current,
@@ -34,18 +34,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   initialize() async {
     emit(state.copyWith(status: ScreenStatus.loading));
-    updateApp(appBloc.state as AppLoaded);
+    _update(appBloc.state as AppLoaded);
 
+    // 홈화면 눌러서 돌아올때마다 업데이트해줘야 하므로
     appBloc.add(AppUpdate(updateBalance: true));
-
-    // WalletBalanceService service = WalletBalanceService();
-    // var balances = await service.getAllTokenBalances(
-    //   walletAddress: current.address,
-    // );
-  }
-
-  addPlanet() async {
-    // 니모닉 path 로 지갑 하나 생성
   }
 
   onUpdate() async {

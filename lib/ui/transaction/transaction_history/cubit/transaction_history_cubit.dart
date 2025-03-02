@@ -25,12 +25,12 @@ class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
     required this.appBloc,
     required this.initialValue,
   }) : super(const TransactionHistoryState()) {
-    appSubscription = appBloc.stream.listen((state) => updatePlanet());
+    appSubscription = appBloc.stream.listen((state) => _update());
   }
 
   final service = WalletHistoryService();
 
-  updatePlanet() async {
+  _update() async {
     var appState = appBloc.state as AppLoaded;
     var balance = appState.balances
         .where((e) => e.info.symbol == initialValue.info.symbol)
@@ -40,14 +40,9 @@ class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
       planet: appState.current,
       balance: balance,
     ));
-
-    if (balance.balance != state.balance.balance) {
-      await Future.delayed(Duration(seconds: 5));
-      initialize(requiredAppUpdate: false);
-    }
   }
 
-  initialize({bool requiredAppUpdate = true}) async {
+  initialize() async {
     try {
       if (state.status != ScreenStatus.loading) {
         var appState = appBloc.state as AppLoaded;
@@ -60,10 +55,8 @@ class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
         emit(state.copyWith(
             planet: planet, balance: initialValue, items: history));
 
-        if (requiredAppUpdate) {
-          await Future.delayed(Duration(milliseconds: 50));
-          appBloc.add(AppUpdate(updateBalance: true));
-        }
+        await Future.delayed(const Duration(milliseconds: 50));
+        appBloc.add(AppUpdate(updateBalanceToken: initialValue.info));
       }
     } catch (err) {
       emit(state.copyWith(status: ScreenStatus.loaded, items: []));

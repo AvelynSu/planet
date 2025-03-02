@@ -64,7 +64,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Stream<AppState> mapAppUpdateToState(AppUpdate event) async* {
     try {
       // 로컬에서 플래닛 가져오기
-      var planets = await _getPlanetDto();
+      var planets = event.updatePlanets
+          ? await _getPlanetDto()
+          : (state as AppLoaded).planets;
 
       // 현재 앱에서 메인으로 다루는 플래닛
       var current = _getCurrentPlanet(planets);
