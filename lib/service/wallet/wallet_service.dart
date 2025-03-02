@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:base58check/base58check.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
 import 'package:solana/solana.dart';
@@ -95,26 +95,24 @@ class WalletService {
 
   // 비트코인 주소 생성
   Future<String> _generateBitcoinAddress(Uint8List seed, String path) async {
-    // 2-1. seed로부터 HD 노드 생성 (seed -> master)
+    // HD 지갑에서 키 유도
     final node = bip32.BIP32.fromSeed(seed);
-    // 2-2. 경로에 따른 자식 키 생성 (master -> child)
     final child = node.derivePath(path);
 
-    // 3. 개인키 -> 공개키 (child.publicKey가 공개키)
-    // 4. 공개키 -> 지갑 주소
-    // 4-1. 공개키 해시 생성 (RIPEMD160(SHA256(공개키)))
-    final publicKeyHash = _hash160(child.publicKey);
+    // 환경에 따라 네트워크 선택
+    final network =
+        WalletConfig.env == Environment.prod ? btc.bitcoin : btc.testnet;
 
-    // 4-2. Base58Check 인코딩으로 최종 주소 생성
-    // 환경 설정에 따라 버전 바이트 결정
-    final isMainnet = WalletConfig.env == Environment.prod;
-    final version = isMainnet ? 0x00 : 0x6F; // mainnet: 0x00, testnet: 0x6F
+    // 주소 생성
+    final address = btc
+        .P2PKH(
+          data: btc.PaymentData(pubkey: child.publicKey),
+          network: network,
+        )
+        .data
+        .address;
 
-    final payload = Base58CheckPayload(version, publicKeyHash);
-    final codec = Base58CheckCodec.bitcoin();
-    final address = codec.encode(payload);
-
-    return address;
+    return address ?? "";
   }
 
   // RIPEMD160(SHA256(input)) 해시 생성

@@ -48,6 +48,8 @@ dependencies:
   video_player: ^2.9.2
   shimmer: ^3.0.0
   carousel_slider: ^5.0.0
+  flutter_bitcoin: ^1.0.1
+
 
 
 
