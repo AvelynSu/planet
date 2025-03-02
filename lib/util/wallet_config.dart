@@ -14,7 +14,7 @@ enum Environment {
 }
 
 class WalletConfig {
-  static Environment env = Environment.dev; // 개발 환경으로 변경
+  static Environment env = Environment.prod; // 개발 환경으로 변경
 
   final String rpcUrl;
   final int chainId; // 1: mainnet, 5: goerli testnet

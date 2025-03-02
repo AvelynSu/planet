@@ -111,7 +111,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       await LocalStorageService.saveMnemonics([planet],
           isCurrentAddress: planet.address);
 
-      appBloc.add(AppUpdate());
+      appBloc.add(AppUpdate(updateBalance: true));
       emit(state.copyWith(status: ScreenStatus.success));
     } else {
       emit(
