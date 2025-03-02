@@ -184,6 +184,14 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
                           child: _button(
                             title: "Send",
                             onTap: () {
+                              if (current.networkType !=
+                                  widget.planet.networkType) {
+                                DefaultDialog.show(context,
+                                    description:
+                                        "You are currently on the ${current.networkType?.title} planet. *Please switch to the ${widget.planet.networkType?.title} planet* and try again.");
+                                return;
+                              }
+
                               var info = TokenData.ethTokens
                                   .where((e) => e.symbol == "ETH")
                                   .first;
