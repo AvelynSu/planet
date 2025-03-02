@@ -103,19 +103,19 @@ class _MyScreenState extends State<MyScreen> {
                   const SizedBox(height: 60),
                   Column(
                     children: [
-                      SettingRowTile(
-                        onTap: () {
-                          DefaultDialog.showComingSoon(context);
-                        },
-                        title: "Announcements",
-                      ),
-                      SettingRowTile(onTap: () {}, title: "FAQ"),
-                      SettingRowTile(
-                        onTap: () {},
-                        showArrow: false,
-                        title: "Currency",
-                        subText: "USD",
-                      ),
+                      // SettingRowTile(
+                      //   onTap: () {
+                      //     DefaultDialog.showComingSoon(context);
+                      //   },
+                      //   title: "Announcements",
+                      // ),
+                      // SettingRowTile(onTap: () {}, title: "FAQ"),
+                      // SettingRowTile(
+                      //   onTap: () {},
+                      //   showArrow: false,
+                      //   title: "Currency",
+                      //   subText: "USD",
+                      // ),
                       SettingRowTile(
                         onTap: () {},
                         showArrow: false,

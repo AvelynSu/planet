@@ -6,6 +6,8 @@ import 'package:planet/ui/common/default_button.dart';
 
 import '../../custom_theme.dart';
 
+// todo : 네트워크별 최대 10개 생성 가능
+
 class SelectNetworkModal extends StatefulWidget {
   final NetworkType networkType;
   final Function(NetworkType) onSuccess;

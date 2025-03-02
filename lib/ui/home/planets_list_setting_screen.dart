@@ -6,8 +6,9 @@ import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet.dart';
+import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
-import 'package:planet/ui/common/bounce_button.dart';
+import 'package:planet/ui/common/custom_toggle.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/util/app_ui.dart';
 
@@ -59,25 +60,30 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
         color: Colors.white,
         path: "icons/ic_plus.svg",
         onTap: () {
-          // todo : 최대 20개.=
-
-          var planet = planets
-              .where((e) => e.networkType == NetworkType.ethereum)
-              .length;
-
-          if (planet < 10) {
-            AddPlanetScreen.push(context, networkType: NetworkType.ethereum);
-          } else {
-            DefaultDialog.showTimerDialog(context,
-                description: "네트워크별 최대 10개 생성할 수 있습니다.");
-          }
+          AddPlanetScreen.push(context, networkType: NetworkType.ethereum);
         },
       ),
       body: Column(
         children: [
           ...planets.map(
-            (e) => BounceButton(
-              child: _item(e),
+            (e) => GestureDetector(
+              child: _item(
+                e,
+                onChangeStatus: () async {
+                  var result = await DefaultDialog.show(
+                    context,
+                    description: "Would you like to hide the planet?",
+                    onSecondAction: () {},
+                  );
+
+                  if (result ?? false) {
+                    await context
+                        .read<ApiRepository>()
+                        .hidePlanet(e, !e.isDeleted);
+                    context.read<AppBloc>().add(AppUpdate());
+                  }
+                },
+              ),
               onTap: () async {
                 await LocalStorageService.saveMnemonics([],
                     isCurrentAddress: e.address);
@@ -86,13 +92,21 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
               },
             ),
           ),
-          const SizedBox(height: 12),
+          // const SizedBox(height: 12),
+          // Text(
+          //   '삭제됨',
+          //   style: fontR(14, color: C.current.sub01),
+          // ),
         ],
       ),
     );
   }
 
-  _item(Planet planet) {
+  _item(
+    Planet planet, {
+    required Function onChangeStatus,
+  }) {
+    var current = (context.read<AppBloc>().state as AppLoaded).current;
     return Container(
       color: Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -110,19 +124,26 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
                 planet.name,
                 style: fontR(16, color: C.current.mainText),
               ),
+              const SizedBox(width: 8),
+              Text(
+                planet.networkType?.symbol ?? "",
+                style: fontR(14, color: C.current.sub01),
+              ),
             ],
           ),
           Row(
             children: [
-              Text(
-                planet.networkType?.title ?? "",
-                style: fontR(14, color: C.current.sub01),
-              ),
-              CustomImage(
-                width: 20,
-                path: "icons/ic_small_arrow.svg",
-                color: C.current.sub01,
-              )
+              (current.address != planet.address)
+                  ? GestureDetector(
+                      onTap: () {
+                        onChangeStatus();
+                      },
+                      child: CustomToggle(value: !planet.isDeleted),
+                    )
+                  : Text(
+                      'Current',
+                      style: fontM(14, color: C.current.sub01),
+                    ),
             ],
           ),
         ],

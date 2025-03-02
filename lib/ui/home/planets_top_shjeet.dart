@@ -9,7 +9,6 @@ import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/add_planet/add_planet_screen.dart';
 import 'package:planet/ui/common/bounce_button.dart';
-import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/small_round_button.dart';
 import 'package:planet/ui/home/planets_list_setting_screen.dart';
@@ -48,8 +47,11 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...planets.map(
-          (e) => BounceButton(
+        ...planets.map((e) {
+          if (e.isDeleted) {
+            return Container();
+          }
+          return BounceButton(
             child: _item(e),
             onTap: () async {
               await LocalStorageService.saveMnemonics([],
@@ -57,27 +59,16 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
               context.read<AppBloc>().add(AppUpdate(updateBalance: true));
               Navigator.pop(context);
             },
-          ),
-        ),
+          );
+        }),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(width: 32),
             SmallRoundButton(
               onTap: () {
-                // todo : 최대 20개.=
-
-                var planet = planets
-                    .where((e) => e.networkType == NetworkType.ethereum)
-                    .length;
-
-                if (planet < 10) {
-                  AddPlanetScreen.push(context,
-                      networkType: NetworkType.ethereum);
-                } else {
-                  DefaultDialog.showTimerDialog(context,
-                      description: "네트워크별 최대 10개 생성할 수 있습니다.");
-                }
+                AddPlanetScreen.push(context,
+                    networkType: NetworkType.ethereum);
               },
               iconPath: "icons/ic_planet.svg",
               title: "Add New Planet",

@@ -110,6 +110,10 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                 child: DefaultButton(
                                   title: "Transfer",
                                   onTap: () {
+                                    if (state.status != ScreenStatus.loaded) {
+                                      return;
+                                    }
+
                                     /// 친구 고르기
                                     SelectFriendScreen.push(
                                       context,

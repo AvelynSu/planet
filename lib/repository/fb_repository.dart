@@ -73,6 +73,12 @@ class ApiRepository {
     return planet.copyWith(name: name);
   }
 
+  ///  행성 숨기기 변경
+  Future<Planet> hidePlanet(Planet planet, bool isDeleted) async {
+    var res = await _planetCol.doc(planet.id).update({"isDeleted": isDeleted});
+    return planet.copyWith(isDeleted: isDeleted);
+  }
+
   /// 로컬에 니모닉 저장
 
   /// 사용 가능한 닉네임인지 확인

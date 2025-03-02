@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/add_planet/select_network_modal.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/planet_nickname_frame.dart';
 
 import '../../../enum/screen_status.dart';
@@ -41,7 +42,14 @@ class _AddPlanetScreenState extends State<AddPlanetScreen> {
     super.initState();
     networkType = widget.networkType;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateNetwork();
+      var planets = (context.read<AppBloc>().state as AppLoaded).planets;
+
+      if (planets.length < 20) {
+        _updateNetwork();
+      } else {
+        DefaultDialog.show(context,
+            description: "You can add up to 20 planets.");
+      }
     });
   }
 
