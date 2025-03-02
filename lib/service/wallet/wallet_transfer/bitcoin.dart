@@ -19,7 +19,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   };
 
   @override
-  @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
     String? toAddress,
@@ -28,7 +27,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     try {
       // 1. 현재 권장 수수료율 조회 (satoshi/byte)
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/fees'),
+        Uri.parse('$_apiBaseUrl'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
         const Duration(seconds: 15),
@@ -43,7 +42,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       // 네트워크에서 제공하는 수수료율 사용 (기본값은 더 현실적으로)
       final standardFeeRate =
-          BigInt.from(data['medium'] ?? 50); // 50 satoshi/byte로 조정
+          BigInt.from((data['medium_fee_per_kb'] ?? 50000) ~/ 1000);
 
       // 트랜잭션 크기 동적 계산
       final inputCount = 1; // 예시: 입력 개수
@@ -65,6 +64,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           priority: TransferFee(
             gasPrice: BigInt.from(0),
             gasLimit: BigInt.from(0),
+            // satoshi 값을 그대로 유지 (나누지 않음)
             estimatedFee: fees[priority]!,
           )
       };
@@ -86,7 +86,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           priority: TransferFee(
             gasPrice: BigInt.from(0),
             gasLimit: BigInt.from(0),
-            estimatedFee: fees[priority]!,
+            // satoshi에서 BTC로 변환 (1 BTC = 100,000,000 satoshi)
+            estimatedFee: fees[priority]! ~/ BigInt.from(100000000),
           )
       };
     }

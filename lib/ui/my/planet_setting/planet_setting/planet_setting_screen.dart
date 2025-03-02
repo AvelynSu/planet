@@ -132,7 +132,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
               ],
             ),
           ),
-          PlanetComonent(
+          PlanetComponent(
             data: planet.name,
             size: 40,
           ),

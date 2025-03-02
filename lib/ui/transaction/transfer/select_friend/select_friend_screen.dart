@@ -192,7 +192,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
               child: Row(
                 children: [
                   Stack(alignment: Alignment.center, children: [
-                    PlanetComonent(
+                    PlanetComponent(
                       data: "planetWallet",
                       size: 40,
                     ),
@@ -244,7 +244,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
             Expanded(
               child: Row(
                 children: [
-                  PlanetComonent(
+                  PlanetComponent(
                     data: planet.name,
                     size: 40,
                   ),

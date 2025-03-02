@@ -14,12 +14,13 @@ enum Environment {
 }
 
 class WalletConfig {
-  static Environment env = Environment.prod; // 개발 환경으로 변경
+  static Environment env = Environment.dev; // 개발 환경으로 변경
 
   final String rpcUrl;
   final int chainId; // 1: mainnet, 5: goerli testnet
   final String etherscanApiKey;
   final String bitcoinApiUrl;
+  final String etherscanApiUrl;
   static final WalletConfig _instance = WalletConfig._internal();
 
   factory WalletConfig() => _instance;
@@ -29,13 +30,16 @@ class WalletConfig {
             ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
             : "https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba",
         // Goerli 테스트넷
-        chainId = env == Environment.prod ? 1 : 1,
+        chainId = env == Environment.prod ? 1 : 5,
         // Goerli는 chainId 5
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"
             : "https://api.blockcypher.com/v1/btc/test3",
-        // 비트코인 테스트넷3
+        // 이더스캔 키
         etherscanApiKey = env == Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
-            : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF";
+            : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF",
+        etherscanApiUrl = env == Environment.prod
+            ? "api.etherscan.io"
+            : "api-goerli.etherscan.io";
 }

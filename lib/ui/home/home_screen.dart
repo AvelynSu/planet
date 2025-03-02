@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       Container(
                                         margin: const EdgeInsets.all(20),
-                                        child: PlanetComonent(
+                                        child: PlanetComponent(
                                           data: state.data,
                                           size: 160,
                                         ),
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _planetRow(Planet planet) {
     return Row(
       children: [
-        PlanetComonent(
+        PlanetComponent(
           data: planet.name,
           size: 20,
         ),

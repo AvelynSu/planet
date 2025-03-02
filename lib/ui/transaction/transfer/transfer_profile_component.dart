@@ -28,7 +28,7 @@ class TransferProfileComponent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          PlanetComonent(
+          PlanetComponent(
             data: planet.name,
             size: 28,
           ),
@@ -48,7 +48,7 @@ class TransferProfileComponent extends StatelessWidget {
         if (enablePlanet)
           Container(
             margin: EdgeInsets.only(right: 12 * (size / 40)),
-            child: PlanetComonent(
+            child: PlanetComponent(
               data: planet.name,
               size: size,
             ),

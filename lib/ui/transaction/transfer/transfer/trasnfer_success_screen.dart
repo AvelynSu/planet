@@ -98,7 +98,7 @@ class TransferSuccessScreen extends StatelessWidget {
                     value: appState.current.name,
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
-                      child: PlanetComonent(
+                      child: PlanetComponent(
                         data: appState.current.name,
                         size: 24,
                       ),
@@ -113,7 +113,7 @@ class TransferSuccessScreen extends StatelessWidget {
                         margin: const EdgeInsets.only(right: 12),
                         child: recipient.name.isEmpty
                             ? null
-                            : PlanetComonent(
+                            : PlanetComponent(
                                 data: recipient.name,
                                 size: 24,
                               ),
@@ -132,7 +132,7 @@ class TransferSuccessScreen extends StatelessWidget {
                   _label(
                     title: "Fee",
                     value:
-                        "${fee.feeToEth(tokenInfo.networkType)} ${tokenInfo.symbol}",
+                        "${fee.feeToUiValue(tokenInfo.networkType)} ${tokenInfo.symbol}",
                   ),
                   // _label(
                   //   title: "TXhash",

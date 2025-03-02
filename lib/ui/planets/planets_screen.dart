@@ -128,7 +128,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PlanetComonent(data: e.name, size: 180),
+            PlanetComponent(data: e.name, size: 180),
             Container(
               padding: const EdgeInsets.only(top: 20, bottom: 8),
               child: Text(

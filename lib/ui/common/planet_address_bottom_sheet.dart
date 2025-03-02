@@ -102,7 +102,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(100),
             ),
-            child: PlanetComonent(
+            child: PlanetComponent(
               data: widget.planet.name,
               size: 60, // 원하는 크기
             ),

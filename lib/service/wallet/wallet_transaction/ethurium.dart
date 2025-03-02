@@ -11,7 +11,7 @@ class _EthereumHistoryService implements _BlockchainHistoryService {
     required TransactionHistory Function(Map<String, dynamic>, String) mapper,
     int offset = 100,
   }) async {
-    final uri = Uri.https('api.etherscan.io', '/api', {
+    final uri = Uri.https(WalletConfig().etherscanApiUrl, '/api', {
       'module': 'account',
       'action': action,
       'address': address,

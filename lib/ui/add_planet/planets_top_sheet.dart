@@ -104,7 +104,7 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
         children: [
           Row(
             children: [
-              PlanetComonent(
+              PlanetComponent(
                 data: planet.name,
                 size: 30,
               ),

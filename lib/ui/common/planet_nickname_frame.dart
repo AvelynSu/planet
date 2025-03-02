@@ -146,7 +146,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                           ),
                         ),
                       const SizedBox(height: 100),
-                      PlanetComonent(
+                      PlanetComponent(
                         data: widget.nickname,
                         size: 200,
                       ),

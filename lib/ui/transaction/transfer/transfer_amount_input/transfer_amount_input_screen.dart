@@ -163,14 +163,15 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
+                    color: C.current.sub02,
+                    padding: EdgeInsets.only(
                       left: hPadding,
                       right: hPadding,
                       bottom: AppUi.bottomPadding(context),
                     ),
                     child: DefaultButton(
                       title: "Submit",
-                      onTap: state.isValidateAmount
+                      onTap: !state.isValidateAmount
                           ? () {
                               widget.onSelect(state.amount);
                             }
