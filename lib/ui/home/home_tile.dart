@@ -14,13 +14,13 @@ class HomeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 20,
         right: 16,
         top: 16,
         bottom: 16,
       ),
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
         bottom: 12,
         // left: hPadding,
         // right: hPadding,

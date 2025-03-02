@@ -173,7 +173,8 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
       if (success) {
         // Refresh balances
-        appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
+        appBloc.add(
+            AppUpdate(updatePlanets: false, updateBalanceToken: tokenInfo));
       }
 
       emit(state.copyWith(status: ScreenStatus.success));

@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
+import 'package:planet/ui/add_planet/planets_top_sheet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/custom_image.dart';
@@ -13,7 +14,6 @@ import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
 import 'package:planet/ui/home/home_tile.dart';
-import 'package:planet/ui/home/planets_top_sheet.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../util/app_ui.dart';

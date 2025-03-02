@@ -50,7 +50,7 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
           await apiRepository.updatePlanet(planet, state.nickname);
 
       await LocalStorageService.saveMnemonics([updatePlanet]);
-      appBloc.add(AppUpdate());
+      appBloc.add(AppUpdate(updateBalance: false));
       emit(state.copyWith(status: ScreenStatus.success));
     } else {
       emit(

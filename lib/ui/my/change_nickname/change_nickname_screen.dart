@@ -8,7 +8,7 @@ import 'package:planet/ui/common/custom_image.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
-import '../../planet_nickname_frame.dart';
+import '../../common/planet_nickname_frame.dart';
 import 'cubit/change_nickname_cubit.dart';
 
 class ChangeNicknameScreen extends StatefulWidget {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/ui/common/mnemonic_pharse_component.dart';
 import 'package:planet/ui/common/small_round_button.dart';
 
 import '../../../common/default_dialog.dart';
@@ -52,49 +53,7 @@ class _CreateWalletShowMnemonicPageState
         const SizedBox(height: 42),
         // 니모닉 단어 표시
         if (state.mnemonic.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: GridView.builder(
-              padding: EdgeInsets.all(0),
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 12.0,
-                crossAxisSpacing: 12.0,
-                mainAxisExtent: 44,
-              ),
-              itemCount: state.mnemonic.split(" ").length,
-              shrinkWrap: true,
-              itemBuilder: (context, i) {
-                var items = state.mnemonic.split(" ");
-                var item = items.length > i ? items[i] : "";
-                return Container(
-                  decoration: BoxDecoration(
-                    color: C.current.lightBase,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: C.current.sub01.withValues(alpha: 0.5),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      "${i + 1}. $item",
-                      style: fontM(14, color: C.current.mainText),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          MnemonicPharseComponent(mnemonic: state.mnemonic),
 
         const SizedBox(height: 24),
         if (state.mnemonic.isNotEmpty)

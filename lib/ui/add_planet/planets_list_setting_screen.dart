@@ -15,9 +15,9 @@ import 'package:planet/util/app_ui.dart';
 import '../../custom_theme.dart';
 import '../../enum/network_type.dart';
 import '../../service/local_storage_service.dart';
-import '../add_planet/add_planet_screen.dart';
 import '../common/custom_image.dart';
 import '../common/default_dialog.dart';
+import 'add_planet_screen.dart';
 
 class PlanetListSettingScreen extends StatefulWidget {
   const PlanetListSettingScreen({super.key});
@@ -109,7 +109,7 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
     var current = (context.read<AppBloc>().state as AppLoaded).current;
     return Container(
       color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: hPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

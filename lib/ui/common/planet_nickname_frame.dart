@@ -8,11 +8,11 @@ import 'package:planet/model/custom_exception.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 
-import '../custom_theme.dart';
-import 'common/base_scaffold.dart';
-import 'common/generate_planet.dart';
-import 'common/line_text_field.dart';
-import 'common/set_nickname_button.dart';
+import '../../custom_theme.dart';
+import 'base_scaffold.dart';
+import 'generate_planet.dart';
+import 'line_text_field.dart';
+import 'set_nickname_button.dart';
 
 class PlanetNicknameFrame extends StatefulWidget {
   final ScreenStatus status;

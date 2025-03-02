@@ -9,7 +9,7 @@ import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
-import 'package:planet/ui/my/planet_setting/planet_setting/sample_screen.dart';
+import 'package:planet/ui/my/planet_setting/planet_setting/planet_setting_screen.dart';
 import 'package:planet/util/app_constant.dart';
 
 import '../../../../enum/screen_status.dart';

@@ -8,12 +8,14 @@ class SmallRoundButton extends StatefulWidget {
   final Function onTap;
   final String iconPath;
   final String title;
+  final Color? backgroundColor;
 
   const SmallRoundButton({
     super.key,
     required this.onTap,
     required this.iconPath,
     required this.title,
+    this.backgroundColor,
   });
 
   @override
@@ -31,10 +33,10 @@ class _SmallRoundButtonState extends State<SmallRoundButton> {
             widget.onTap();
           },
           child: Container(
-            height: 48,
+            height: 46,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: C.current.background,
+              color: widget.backgroundColor ?? C.current.background,
               border: Border.all(color: C.current.sub01.withValues(alpha: 0.4)),
               borderRadius: BorderRadius.circular(100),
             ),

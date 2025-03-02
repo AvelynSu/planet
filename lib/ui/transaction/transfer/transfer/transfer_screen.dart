@@ -320,9 +320,10 @@ class _TransferScreenState extends State<TransferScreen> {
             recipient: cubit.state.toPlanet,
           );
 
-          context
-              .read<AppBloc>()
-              .add(AppUpdate(updateBalanceToken: widget.info));
+          context.read<AppBloc>().add(AppUpdate(
+                updatePlanets: false,
+                updateBalanceToken: widget.info,
+              ));
         }
       } catch (e) {
         // Hide loading dialog

@@ -4,7 +4,7 @@ import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/add_planet/select_network_modal.dart';
 import 'package:planet/ui/common/default_dialog.dart';
-import 'package:planet/ui/planet_nickname_frame.dart';
+import 'package:planet/ui/common/planet_nickname_frame.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../enum/network_type.dart';

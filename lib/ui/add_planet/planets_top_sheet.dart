@@ -8,10 +8,10 @@ import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/add_planet/add_planet_screen.dart';
+import 'package:planet/ui/add_planet/planets_list_setting_screen.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-import 'package:planet/ui/home/planets_list_setting_screen.dart';
 
 import '../../custom_theme.dart';
 import '../../service/local_storage_service.dart';
@@ -47,6 +47,7 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 12),
         ...planets.map((e) {
           if (e.isDeleted) {
             return Container();
@@ -61,11 +62,13 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
             },
           );
         }),
+        SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(width: 32),
             SmallRoundButton(
+              backgroundColor: C.current.sub02,
               onTap: () {
                 AddPlanetScreen.push(context,
                     networkType: NetworkType.ethereum);

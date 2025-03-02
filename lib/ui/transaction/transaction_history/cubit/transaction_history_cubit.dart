@@ -56,7 +56,10 @@ class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
             planet: planet, balance: initialValue, items: history));
 
         await Future.delayed(const Duration(milliseconds: 50));
-        appBloc.add(AppUpdate(updateBalanceToken: initialValue.info));
+        appBloc.add(AppUpdate(
+          updatePlanets: false,
+          updateBalanceToken: initialValue.info,
+        ));
       }
     } catch (err) {
       emit(state.copyWith(status: ScreenStatus.loaded, items: []));

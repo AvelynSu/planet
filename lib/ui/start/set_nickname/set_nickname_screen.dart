@@ -6,7 +6,7 @@ import 'package:planet/repository/fb_repository.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
-import '../../planet_nickname_frame.dart';
+import '../../common/planet_nickname_frame.dart';
 import 'cubit/set_nickname_cubit.dart';
 
 class SetNicknameScreen extends StatefulWidget {
