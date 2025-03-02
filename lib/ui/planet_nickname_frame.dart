@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/enum/screen_status.dart';
 import 'package:planet/model/custom_exception.dart';
+import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 
 import '../custom_theme.dart';
@@ -19,6 +21,8 @@ class PlanetNicknameFrame extends StatefulWidget {
   final String? title;
   final Function(String) onUpdateValue;
   final Function onComplete;
+  final NetworkType? network;
+  final Function? onChangeNetwork;
 
   const PlanetNicknameFrame({
     super.key,
@@ -28,6 +32,8 @@ class PlanetNicknameFrame extends StatefulWidget {
     required this.nickname,
     required this.onUpdateValue,
     required this.onComplete,
+    this.network,
+    this.onChangeNetwork,
   });
 
   @override
@@ -48,6 +54,34 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
     return BaseScaffold(
       isTransparentAppbar: true,
       title: widget.title,
+      titleWidget: widget.network != null
+          ? GestureDetector(
+              onTap: () {
+                widget.onChangeNetwork!();
+              },
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: C.current.sub02,
+                  borderRadius: BorderRadius.circular(100),
+                  border:
+                      Border.all(color: C.current.sub01.withValues(alpha: 0.2)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomImage(path: widget.network!.icon),
+                    SizedBox(width: 4),
+                    Text(
+                      widget.network!.title,
+                      style: fontR(14, color: C.current.mainText),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
       onBack: () {
         Navigator.pop(context);
       },

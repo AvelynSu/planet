@@ -41,6 +41,17 @@ enum NetworkType {
     }
   }
 
+  String get icon {
+    switch (this) {
+      case NetworkType.ethereum:
+        return "icons/ic_ethereum.png";
+      case NetworkType.bitcoin:
+        return "icons/ic_bitcoin.png";
+      case NetworkType.solana:
+        return "SOL";
+    }
+  }
+
   String get title {
     switch (this) {
       case NetworkType.ethereum:

@@ -35,13 +35,13 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
     required this.amount,
   }) : super(const TokenTransferState()) {
     subscription = appBloc.stream.listen((state) {
-      updateApp();
+      _update();
     });
   }
 
   NetworkType get networkType => tokenInfo.networkType;
 
-  updateApp() {
+  _update() {
     var appState = appBloc.state as AppLoaded;
     var balances = appState.balances
         .where((e) => e.info.symbol == tokenInfo.symbol)
@@ -74,7 +74,6 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       var balances = appState.balances
           .where((e) => e.info.symbol == tokenInfo.symbol)
           .firstOrNull;
-      appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
       emit(state.copyWith(
         toPlanet: toPlanet,
         amount: amount,

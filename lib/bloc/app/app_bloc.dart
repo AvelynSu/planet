@@ -47,6 +47,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
       // 현재 메인 플래닛의 토큰 밸런스들
       var updateBalance = await _getTokenBalance(
+        oldValues: [],
         currentPlanet: current,
         updateAllBalance: true,
       );
@@ -77,6 +78,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // 밸런스 업데이트 필요한 경우
       if (event.updateBalance || event.updateBalanceToken != TokenInfo.empty) {
         updateBalance = await _getTokenBalance(
+          oldValues: updateBalance,
           currentPlanet: current,
           updateAllBalance: event.updateBalance,
           updateBalanceToken: event.updateBalanceToken,
@@ -107,11 +109,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   /// 한개만 업데이트 필요한 경우와 전체 필요한 경우 구분해서 보여줌
   Future<List<TokenBalance>> _getTokenBalance({
+    required List<TokenBalance> oldValues,
     required Planet currentPlanet,
     bool updateAllBalance = false,
     TokenInfo updateBalanceToken = TokenInfo.empty,
   }) async {
-    List<TokenBalance> updateBalance = [];
+    List<TokenBalance> updateBalance = [...oldValues];
     var walletService = WalletBalanceService();
     var current = currentPlanet.address;
     var network = currentPlanet.networkType!;

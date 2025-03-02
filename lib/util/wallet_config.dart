@@ -29,7 +29,7 @@ class WalletConfig {
             ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
             : "https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba",
         // Goerli 테스트넷
-        chainId = env == Environment.prod ? 1 : 5,
+        chainId = env == Environment.prod ? 1 : 1,
         // Goerli는 chainId 5
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"

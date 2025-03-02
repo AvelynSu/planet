@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/repository/fb_repository.dart';
-import 'package:planet/ui/common/default_dialog.dart';
+import 'package:planet/ui/add_planet/select_network_modal.dart';
 import 'package:planet/ui/planet_nickname_frame.dart';
 
 import '../../../enum/screen_status.dart';
@@ -41,15 +41,19 @@ class _AddPlanetScreenState extends State<AddPlanetScreen> {
     super.initState();
     networkType = widget.networkType;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      DefaultDialog.show(
-        context,
-        description: "비트코인으로 만들겠스빈까? ",
-        onSecondAction: () {
-          networkType = NetworkType.bitcoin;
-          setState(() {});
-        },
-      );
+      _updateNetwork();
     });
+  }
+
+  _updateNetwork() {
+    SelectNetworkModal.show(
+      context,
+      networkType: networkType,
+      onSuccess: (network) {
+        networkType = network;
+        setState(() {});
+      },
+    );
   }
 
   @override
@@ -76,8 +80,12 @@ class _AddPlanetScreenState extends State<AddPlanetScreen> {
                     status: state.status,
                     exception: state.exception,
                     nickname: state.nickname,
+                    network: networkType,
                     onUpdateValue: (value) {
                       cubit.updateValue(value);
+                    },
+                    onChangeNetwork: () {
+                      _updateNetwork();
                     },
                     onComplete: () {
                       cubit.onCreatePlanet(networkType);
