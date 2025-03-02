@@ -28,8 +28,12 @@ class ApiRepository {
   }
 
   /// 행성 전부 불러오기
-  Future<List<Planet>> getAllPlanetForTest() async {
-    var res = await _planetCol.get();
+  Future<List<Planet>> getAllPlanetForTest({NetworkType? networkType}) async {
+    var res = networkType == null
+        ? await _planetCol.get()
+        : await _planetCol
+            .where("networkType", isEqualTo: networkType.name)
+            .get();
 
     var result =
         res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();

@@ -1,12 +1,39 @@
 import '../util/data/token_data.dart';
 
+enum TransactionHistoryStatus {
+  isPending,
+  isSent,
+  isReceived;
+
+  String get iconPath {
+    switch (this) {
+      case isPending:
+        return "icons/ic_pending.svg";
+      case isSent:
+        return "icons/ic_sent.svg";
+      case isReceived:
+        return "icons/ic_received.svg";
+    }
+  }
+
+  String get title {
+    switch (this) {
+      case isPending:
+        return "Pending";
+      case isSent:
+        return "Sent";
+      case isReceived:
+        return "Received";
+    }
+  }
+}
+
 class TransactionHistory {
   // 공통 필드
   final String hash; // 트랜잭션 해시 (이더리움/비트코인 공통)
   final String from; // 송신자 주소 (이더리움/비트코인 공통)
   final String to; // 수신자 주소 (이더리움/비트코인 공통)
   final DateTime? timestamp; // 트랜잭션 타임스탬프 (이더리움/비트코인 공통)
-  final bool isIncoming; // 입금 여부 (이더리움/비트코인 공통)
   final int? confirmations; // 확인 수 (이더리움/비트코인 공통)
   final bool? isSuccess; // 성공 여부 (이더리움/비트코인 공통)
 
@@ -21,14 +48,13 @@ class TransactionHistory {
   final int? gas; // 가스 한도 (이더리움 전용)
   final double? gasPrice; // 가스 가격 (이더리움 전용)
   final int? gasUsed; // 사용된 가스 (이더리움 전용)
-  final String? status; // 트랜잭션 상태 (이더리움/비트코인 공통)
+  final TransactionHistoryStatus? status; // 트랜잭션 상태 (이더리움/비트코인 공통)
 
   const TransactionHistory({
     this.hash = "",
     this.from = "",
     this.to = "",
     this.timestamp,
-    this.isIncoming = true,
     this.tokenSymbol,
     this.amount,
     this.confirmations,
@@ -72,8 +98,8 @@ class TransactionHistory {
         feeWhole.toDouble() + (feeFraction.toDouble() / divisor.toDouble());
 
     final isSuccess = tx['txreceipt_status'] == '1';
-    final status = isSuccess ? 'confirmed' : 'failed';
 
+    bool isIncoming = tx['to'].toLowerCase() == userAddress.toLowerCase();
     return TransactionHistory(
       hash: tx['hash'],
       from: tx['from'],
@@ -81,18 +107,24 @@ class TransactionHistory {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
         int.parse(tx['timeStamp']) * 1000,
       ),
-      isIncoming: tx['to'].toLowerCase() == userAddress.toLowerCase(),
+      // isIncoming: ,
       tokenSymbol: 'ETH',
       amount: amount,
       confirmations: int.parse(tx['confirmations']),
       isSuccess: isSuccess,
       decimals: decimals,
-      tokenAddress: null, // ETH는 토큰 주소가 없음
+      tokenAddress: null,
+      // ETH는 토큰 주소가 없음
       fee: fee,
       gas: int.parse(tx['gas']),
-      gasPrice: double.parse(tx['gasPrice']) / 1e9, // Gwei로 변환
+      gasPrice: double.parse(tx['gasPrice']) / 1e9,
+      // Gwei로 변환
       gasUsed: int.parse(tx['gasUsed']),
-      status: status,
+      status: tx["confirmations"] == 0
+          ? TransactionHistoryStatus.isPending
+          : (isIncoming
+              ? TransactionHistoryStatus.isReceived
+              : TransactionHistoryStatus.isSent),
     );
   }
 
@@ -135,6 +167,7 @@ class TransactionHistory {
       fee = null;
     }
 
+    bool isIncoming = tx['to'].toLowerCase() == userAddress.toLowerCase();
     return TransactionHistory(
       hash: tx['hash'],
       from: tx['from'],
@@ -142,20 +175,24 @@ class TransactionHistory {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
         int.parse(tx['timeStamp']) * 1000,
       ),
-      isIncoming: tx['to'].toLowerCase() == userAddress.toLowerCase(),
       tokenSymbol: tx['tokenSymbol'],
       amount: amount,
       confirmations: int.parse(tx['confirmations']),
-      isSuccess: true, // 토큰 트랜잭션은 성공한 것으로 간주
+      isSuccess: true,
+      // 토큰 트랜잭션은 성공한 것으로 간주
       decimals: decimals,
       tokenAddress: tx['contractAddress'],
       fee: fee,
       gas: tx['gas'] != null ? int.parse(tx['gas']) : null,
-      gasPrice: tx['gasPrice'] != null
-          ? double.parse(tx['gasPrice']) / 1e9
-          : null, // Gwei로 변환
+      gasPrice:
+          tx['gasPrice'] != null ? double.parse(tx['gasPrice']) / 1e9 : null,
+      // Gwei로 변환
       gasUsed: tx['gasUsed'] != null ? int.parse(tx['gasUsed']) : null,
-      status: 'confirmed',
+      status: tx["confirmations"] == 0
+          ? TransactionHistoryStatus.isPending
+          : (isIncoming
+              ? TransactionHistoryStatus.isReceived
+              : TransactionHistoryStatus.isSent),
     );
   }
 
@@ -180,6 +217,7 @@ class TransactionHistory {
     final fractionalPart = fraction.toDouble() / divisor.toDouble();
     final amount = wholeNumber.toDouble() + fractionalPart;
 
+    bool isIncoming = tx['to'].toLowerCase() == userAddress.toLowerCase();
     return TransactionHistory(
       hash: tx['hash'],
       from: tx['from'],
@@ -187,7 +225,6 @@ class TransactionHistory {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
         int.parse(tx['timeStamp']) * 1000,
       ),
-      isIncoming: tx['to'].toLowerCase() == userAddress.toLowerCase(),
       tokenSymbol: 'ETH',
       amount: amount,
       confirmations: int.parse(tx['blockNumber']),
@@ -195,15 +232,22 @@ class TransactionHistory {
       isSuccess: true,
       // 내부 트랜잭션은 성공한 트랜잭션만 반환됨
       decimals: info.decimals,
-      tokenAddress: null, // ETH는 토큰 주소가 없음
-      fee: 0, // 내부 트랜잭션은 별도의 수수료가 없음
+      tokenAddress: null,
+      // ETH는 토큰 주소가 없음
+      fee: 0,
+      // 내부 트랜잭션은 별도의 수수료가 없음
       gas: 0,
       gasPrice: 0,
       gasUsed: 0,
-      status: 'confirmed',
+      status: tx["confirmations"] == 0
+          ? TransactionHistoryStatus.isPending
+          : (isIncoming
+              ? TransactionHistoryStatus.isReceived
+              : TransactionHistoryStatus.isSent),
     );
   }
 
+  // BlockCypher 비트코인 트랜잭션 응답에서 생성 (비트코인 전용)
   // BlockCypher 비트코인 트랜잭션 응답에서 생성 (비트코인 전용)
   factory TransactionHistory.fromBlockCypherTx(
     Map<String, dynamic> tx,
@@ -260,25 +304,38 @@ class TransactionHistory {
         to = outputs[0]['addresses'][0];
       }
 
-      String status = confirmations > 0 ? 'confirmed' : 'pending';
+      // 트랜잭션 상태 결정
+      TransactionHistoryStatus transactionStatus;
+      if (confirmations == 0) {
+        transactionStatus = TransactionHistoryStatus.isPending;
+      } else {
+        transactionStatus = isIncoming
+            ? TransactionHistoryStatus.isReceived
+            : TransactionHistoryStatus.isSent;
+      }
 
       return TransactionHistory(
         hash: txHash,
         from: from,
         to: to,
         timestamp: timestamp,
-        isIncoming: isIncoming,
         tokenSymbol: 'BTC',
         amount: value.abs(),
         confirmations: confirmations,
-        isSuccess: true, // BlockCypher API는 성공한 트랜잭션만 반환
-        decimals: 8, // BTC는 항상 8 소수점
-        tokenAddress: null, // BTC는 토큰 주소가 없음
+        isSuccess: true,
+        // BlockCypher API는 성공한 트랜잭션만 반환
+        decimals: 8,
+        // BTC는 항상 8 소수점
+        tokenAddress: null,
+        // BTC는 토큰 주소가 없음
         fee: fee,
-        gas: 0, // Bitcoin에는 해당 없음
-        gasPrice: 0, // Bitcoin에는 해당 없음
-        gasUsed: 0, // Bitcoin에는 해당 없음
-        status: status,
+        gas: 0,
+        // Bitcoin에는 해당 없음
+        gasPrice: 0,
+        // Bitcoin에는 해당 없음
+        gasUsed: 0,
+        // Bitcoin에는 해당 없음
+        status: transactionStatus,
       );
     } catch (e) {
       print('Error parsing Bitcoin transaction: $e');

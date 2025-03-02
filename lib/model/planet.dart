@@ -56,7 +56,7 @@ class Planet extends Equatable {
       'createdAt': FBFormatter.toJsonDate(createdAt),
       'isCurrent': isCurrent,
       'pathIdx': pathIdx,
-      'parentsAddress': parentsAddress,
+      'parentsAddress': parentsAddress.isEmpty ? address : parentsAddress,
       'isDeleted': isDeleted ?? false,
     };
   }

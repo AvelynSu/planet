@@ -45,33 +45,6 @@ class WalletService {
     }
   }
 
-  Future<Credentials> getCredentialsFromMnemonic(
-    String mnemonic,
-    NetworkType type,
-    int idx,
-  ) async {
-    if (!bip39.validateMnemonic(mnemonic)) {
-      throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
-    }
-
-    // 니모닉으로부터 시드 생성
-    final seed = bip39.mnemonicToSeed(mnemonic);
-
-    // 이더리움 경로 (첫 번째 계정 - index 0)
-    final path = "m/44'/60'/0'/0/$idx";
-
-    // HD 노드 생성
-    final bip32.BIP32 node = bip32.BIP32.fromSeed(seed);
-
-    // 경로에 따른 자식 키 생성
-    final child = node.derivePath(path);
-
-    // 프라이빗 키 생성
-    final privateKey = EthPrivateKey.fromHex(bytesToHex(child.privateKey!));
-
-    return privateKey;
-  }
-
   Future<String> getPrivateKeyFromMnemonic(
     String mnemonic,
     NetworkType type,
@@ -82,15 +55,21 @@ class WalletService {
     }
 
     final seed = bip39.mnemonicToSeed(mnemonic);
-    final path = "m/44'/60'/0'/0/$idx";
+    // 네트워크 타입에 맞는 경로 사용
+    final path = type.getDerivationPath(idx);
     final node = bip32.BIP32.fromSeed(seed);
     final child = node.derivePath(path);
 
     // private key를 16진수 문자열로 변환
     final privateKeyHex = bytesToHex(child.privateKey!);
 
-    // 0x 접두사 추가 (선택사항)
-    return "0x$privateKeyHex";
+    // 네트워크 타입에 따라 접두사 결정
+    String prefix = "";
+    if (type == NetworkType.ethereum) {
+      prefix = "0x";
+    }
+
+    return "$prefix$privateKeyHex";
   }
 
   /// 주소 생성 ----------------------------------------------------------------------
@@ -127,7 +106,10 @@ class WalletService {
     final publicKeyHash = _hash160(child.publicKey);
 
     // 4-2. Base58Check 인코딩으로 최종 주소 생성
-    const version = 0x00; // mainnet P2PKH address version
+    // 환경 설정에 따라 버전 바이트 결정
+    final isMainnet = WalletConfig.env == Environment.prod;
+    final version = isMainnet ? 0x00 : 0x6F; // mainnet: 0x00, testnet: 0x6F
+
     final payload = Base58CheckPayload(version, publicKeyHash);
     final codec = Base58CheckCodec.bitcoin();
     final address = codec.encode(payload);

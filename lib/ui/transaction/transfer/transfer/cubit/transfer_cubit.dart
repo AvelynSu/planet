@@ -39,6 +39,8 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
     });
   }
 
+  NetworkType get networkType => tokenInfo.networkType;
+
   updateApp() {
     var appState = appBloc.state as AppLoaded;
     var balances = appState.currentTokens
@@ -56,8 +58,19 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
         status: ScreenStatus.loading, toPlanet: toPlanet, amount: amount));
 
     try {
-      final gasFees = await _transferService.estimateGasFeesByPriority();
+      // 앱 상태 가져오기
       var appState = appBloc.state as AppLoaded;
+
+      // 현재 플래닛의 네트워크 타입과 주소 가져오기
+      final fromAddress = appState.currentPlanet.address;
+
+      // estimateGasFeesByPriority 대신 estimateTransferFees 사용
+      final gasFees = await _transferService.estimateTransferFees(
+        networkType: networkType,
+        fromAddress: fromAddress,
+        toAddress: toPlanet.address,
+      );
+
       var balances = appState.currentTokens
           .where((e) => e.info.symbol == tokenInfo.symbol)
           .firstOrNull;
@@ -118,37 +131,45 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
     try {
       // Get current wallet credentials
       final appState = appBloc.state as AppLoaded;
+      final currentPlanet = appState.currentPlanet;
 
-      // Get wallet credentials
-      final mnemonic = appState.currentPlanet.mnemonic;
-      final credentials = await _walletService.getCredentialsFromMnemonic(
-          mnemonic, NetworkType.ethereum, 0);
+      // Get wallet private key from mnemonic
+      final mnemonic = currentPlanet.mnemonic;
+      final privateKey = await _walletService.getPrivateKeyFromMnemonic(
+          mnemonic, networkType, 0);
 
       // Parse amount
       final amountInWei = AppUtil.convertToWei(state.amount);
 
       bool success;
 
-      // todo : 이거 이더리움만인지 하위 토큰도인지
       // Check if using custom gas settings
       if (state.useCustomGas && state.customGasFee != null) {
-        // Execute transaction with custom gas settings
-        success = await _transferService.sendAndWaitForTransactionWithCustomGas(
+        // sendAndWaitForTransactionWithCustomGas 대신 sendTransactionWithCustomFee 사용
+        final txHash = await _transferService.sendTransactionWithCustomFee(
+          fromAddress: currentPlanet.address,
           toAddress: state.toPlanet.address,
           amount: amountInWei,
-          credentials: credentials,
-          gasPrice: state.customGasFee!.gasPrice,
-          gasLimit: state.customGasFee!.gasLimit,
+          privateKey: privateKey,
+          fee: state.customGasFee!.estimatedFee,
+          networkType: networkType,
+        );
+
+        // 트랜잭션 상태 확인
+        success = await _transferService.checkTransactionStatus(
+          txHash: txHash,
+          networkType: networkType,
         );
       } else {
-        // Execute transaction with predefined gas priority
+        // sendAndWaitForTransaction 사용하되 필수 파라미터 추가
         success = await _transferService.sendAndWaitForTransaction(
-              toAddress: state.toPlanet.address,
-              amount: amountInWei,
-              credentials: credentials,
-              gasPriority: state.selectedGasPriority,
-            ) ??
-            false;
+          fromAddress: currentPlanet.address,
+          toAddress: state.toPlanet.address,
+          amount: amountInWei,
+          privateKey: privateKey,
+          gasPriority: state.selectedGasPriority,
+          networkType: networkType,
+        );
       }
 
       if (success) {

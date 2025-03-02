@@ -54,7 +54,6 @@ class EthereumHistoryService implements BlockchainHistoryService {
   final config = WalletConfig();
 
   /// 공통 Etherscan API 요청 메서드
-  /// 공통 Etherscan API 요청 메서드
   Future<List<TransactionHistory>> _fetchEtherscanData({
     required String action,
     required String address,
@@ -146,7 +145,8 @@ class EthereumHistoryService implements BlockchainHistoryService {
 
       return allTransactions;
     } catch (e) {
-      throw Exception('Failed to get all transactions: $e');
+      print('Failed to get all transactions: $e');
+      return []; // 오류 발생 시 빈 목록 반환
     }
   }
 
@@ -266,77 +266,5 @@ class BitcoinHistoryService implements BlockchainHistoryService {
   @override
   void dispose() {
     _httpClient.close();
-  }
-}
-
-// TransactionHistory 클래스에 BitcoinTransaction 파싱을 위한 확장 메서드 추가
-extension TransactionHistoryBitcoinExt on TransactionHistory {
-  static TransactionHistory fromBlockCypherTx(
-      Map<String, dynamic> tx, String userAddress) {
-    try {
-      final String txHash = tx['hash'] ?? '';
-      final int confirmations = tx['confirmations'] ?? 0;
-      final DateTime? timestamp =
-          tx['received'] != null ? DateTime.parse(tx['received']) : null;
-
-      // 총 입력 및 출력 계산
-      List inputs = tx['inputs'] ?? [];
-      List outputs = tx['outputs'] ?? [];
-
-      // 사용자 주소와 관련된 입출금 금액 계산
-      double value = 0;
-      bool isIncoming = false;
-
-      // 받은 금액 계산 (outputs 중 사용자 주소로 들어온 금액)
-      for (var output in outputs) {
-        List addresses = output['addresses'] ?? [];
-        if (addresses.contains(userAddress)) {
-          value += (output['value'] ?? 0) / 100000000; // satoshi -> BTC 변환
-          isIncoming = true;
-        }
-      }
-
-      // 보낸 금액 계산 (inputs 중 사용자 주소에서 나간 금액)
-      for (var input in inputs) {
-        List addresses = input['addresses'] ?? [];
-        if (addresses.contains(userAddress)) {
-          // 이미 incoming으로 계산된 경우가 아니라면 outgoing으로 처리
-          if (!isIncoming) {
-            value -=
-                (input['output_value'] ?? 0) / 100000000; // satoshi -> BTC 변환
-          }
-        }
-      }
-
-      // 수수료 계산 (전송한 경우에만)
-      double fee = 0;
-      if (!isIncoming && tx['fees'] != null) {
-        fee = tx['fees'] / 100000000; // satoshi -> BTC 변환
-      }
-
-      return TransactionHistory(
-        hash: txHash,
-        from: inputs.isNotEmpty
-            ? (inputs[0]['addresses'] ?? ['Unknown'])[0]
-            : 'Unknown',
-        to: outputs.isNotEmpty
-            ? (outputs[0]['addresses'] ?? ['Unknown'])[0]
-            : 'Unknown',
-        amount: value.abs(),
-        timestamp: timestamp,
-        isIncoming: isIncoming,
-        confirmations: confirmations,
-        fee: fee,
-        gas: 0, // Bitcoin에는 해당 없음
-        gasPrice: 0, // Bitcoin에는 해당 없음
-        gasUsed: 0, // Bitcoin에는 해당 없음
-        tokenSymbol: 'BTC',
-        decimals: 8,
-        status: confirmations > 0 ? 'confirmed' : 'pending',
-      );
-    } catch (e) {
-      print('Error parsing Bitcoin transaction: $e');
-      return TransactionHistory.empty;
-    }
   }
 }

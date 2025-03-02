@@ -29,14 +29,12 @@ class _TransactionHistoryTileState extends State<TransactionHistoryTile> {
           Row(
             children: [
               CustomImage(
-                path: widget.item.isIncoming
-                    ? "icons/ic_received.svg"
-                    : "icons/ic_sent.svg",
+                path: widget.item.status?.iconPath ?? "",
                 width: 24,
               ),
               const SizedBox(width: 10),
               Text(
-                widget.item.isIncoming ? "Received" : "Sent",
+                widget.item.status?.title ?? "",
                 style: fontM(16, color: C.current.mainText),
               ),
             ],

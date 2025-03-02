@@ -169,6 +169,7 @@ class BitcoinBalanceService implements BlockchainBalanceService {
 
         // API 응답에서 잔액 추출 (satoshi 단위로 가정)
         final int satoshiBalance = data['balance'] ?? 0;
+        // final_balance 는 미확정까지 포함
 
         // satoshi를 BTC로 변환 (1 BTC = 100,000,000 satoshi)
         final double btcBalance = satoshiBalance / 100000000;

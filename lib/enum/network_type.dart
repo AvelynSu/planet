@@ -1,3 +1,5 @@
+import '../util/wallet_config.dart';
+
 enum NetworkType {
   ethereum,
   bitcoin,
@@ -8,7 +10,9 @@ enum NetworkType {
       case NetworkType.ethereum:
         return "60";
       case NetworkType.bitcoin:
-        return "0";
+        // WalletConfig에서 환경 설정 확인
+        final isMainnet = WalletConfig.env == Environment.prod;
+        return isMainnet ? "0" : "1";
       case NetworkType.solana:
         return "501";
     }

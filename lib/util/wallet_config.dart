@@ -1,7 +1,7 @@
-enum _Environment { dev, prod }
+enum Environment { dev, prod }
 
 class WalletConfig {
-  static _Environment _env = _Environment.prod;
+  static Environment env = Environment.dev; // 개발 환경으로 변경
 
   final String rpcUrl;
   final int chainId; // 1: mainnet, 5: goerli testnet
@@ -12,12 +12,14 @@ class WalletConfig {
   factory WalletConfig() => _instance;
 
   WalletConfig._internal()
-      : rpcUrl = _env == _Environment.prod
+      : rpcUrl = env == Environment.prod
             ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
-            : "",
-        chainId = _env == _Environment.prod ? 1 : 5,
-        bitcoinApiUrl = "https://api.blockcypher.com/v1/btc/main",
-        etherscanApiKey = _env == _Environment.prod
+            : "https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba", // Goerli 테스트넷
+        chainId = env == Environment.prod ? 1 : 5, // Goerli는 chainId 5
+        bitcoinApiUrl = env == Environment.prod
+            ? "https://api.blockcypher.com/v1/btc/main"
+            : "https://api.blockcypher.com/v1/btc/test3", // 비트코인 테스트넷3
+        etherscanApiKey = env == Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
             : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF";
 }
