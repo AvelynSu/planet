@@ -85,7 +85,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    var current = (context.read<AppBloc>().state as AppLoaded).currentPlanet;
+    var current = (context.read<AppBloc>().state as AppLoaded).current;
 
     return Stack(children: [
       // 숨겨진 PlanetWidget (이미지 변환용)

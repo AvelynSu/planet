@@ -23,13 +23,12 @@ class SelectFriendsCubit extends Cubit<SelectFriendsState> {
 
   initialize() async {
     var appState = appBloc.state as AppLoaded;
-    var current = appState.currentPlanet;
+    var current = appState.current;
     var planets = await apiRepository.getAllPlanetForTest(
         networkType: current.networkType!);
 
-    planets = planets
-        .where((e) => e.address != appState.currentPlanet.address)
-        .toList();
+    planets =
+        planets.where((e) => e.address != appState.current.address).toList();
 
     emit(state.copyWith(planets: planets));
   }

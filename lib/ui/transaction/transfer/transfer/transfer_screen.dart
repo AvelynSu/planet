@@ -158,14 +158,14 @@ class _TransferScreenState extends State<TransferScreen> {
                           children: [
                             TransferLabel(
                                 title: "To",
-                                value: appState.currentPlanet.name,
+                                value: appState.current.name,
                                 description: AppUtil.shortenWalletAddress(
-                                    appState.currentPlanet.address)),
+                                    appState.current.address)),
                             TransferLabel(
                                 title: "From",
                                 value: state.toPlanet.name.isEmpty
                                     ? AppUtil.shortenWalletAddress(
-                                        appState.currentPlanet.address)
+                                        appState.current.address)
                                     : state.toPlanet.name,
                                 description: AppUtil.shortenWalletAddress(
                                     state.toPlanet.address)),
@@ -277,7 +277,7 @@ class _TransferScreenState extends State<TransferScreen> {
           context,
           title: "Confirm Transfer",
           description:
-              "Are you sure you want to send *${appState.currentPlanet.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
+              "Are you sure you want to send *${appState.current.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
           onSecondAction: () {},
           // cancelText: "Cancel",
           // confirmText: "Confirm",

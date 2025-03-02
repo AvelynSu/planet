@@ -29,14 +29,12 @@ class PlanetSettingCubit extends Cubit<PlanetSettingState> {
 
   update() {
     var appState = appBloc.state as AppLoaded;
-    emit(state.copyWith(
-        planet: appState.currentPlanet, status: ScreenStatus.loaded));
+    emit(state.copyWith(planet: appState.current, status: ScreenStatus.loaded));
   }
 
   initialize() async {
     var appState = appBloc.state as AppLoaded;
-    emit(state.copyWith(
-        planet: appState.currentPlanet, status: ScreenStatus.loaded));
+    emit(state.copyWith(planet: appState.current, status: ScreenStatus.loaded));
   }
 
   @override

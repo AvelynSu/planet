@@ -33,7 +33,7 @@ class TransferAmountInputCubit extends Cubit<TransferAmountInputState> {
 
   updateApp() {
     var appState = appBloc.state as AppLoaded;
-    var balances = appState.currentTokens
+    var balances = appState.balances
         .where((e) => e.info.symbol == tokenInfo.symbol)
         .firstOrNull;
     emit(state.copyWith(
@@ -42,7 +42,7 @@ class TransferAmountInputCubit extends Cubit<TransferAmountInputState> {
 
   initialize() async {
     var appState = appBloc.state as AppLoaded;
-    var balances = appState.currentTokens
+    var balances = appState.balances
         .where((e) => e.info.symbol == tokenInfo.symbol)
         .firstOrNull;
 

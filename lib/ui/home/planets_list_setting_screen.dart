@@ -41,9 +41,9 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
   @override
   void initState() {
     super.initState();
-    planets = (context.read<AppBloc>().state as AppLoaded).myPlanets;
+    planets = (context.read<AppBloc>().state as AppLoaded).planets;
     subscription = context.read<AppBloc>().stream.listen((e) {
-      planets = (e as AppLoaded).myPlanets;
+      planets = (e as AppLoaded).planets;
       setState(() {});
     });
   }

@@ -52,7 +52,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
     }
     emit(state.copyWith(status: ScreenStatus.loading));
 
-    var currentPlanet = (appBloc.state as AppLoaded).currentPlanet;
+    var currentPlanet = (appBloc.state as AppLoaded).current;
 
     // 사용가능한 닉네임인지 보기
     var enablePlanetName = await apiRepository.enablePlanetName(state.nickname);
@@ -61,7 +61,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       var walletService = WalletService();
 
       var planets = (appBloc.state as AppLoaded)
-          .myPlanets
+          .planets
           .where((e) => e.networkType == networkType)
           .toList();
 

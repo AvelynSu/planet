@@ -27,8 +27,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   updateApp(AppLoaded appState) {
     emit(state.copyWith(
-        balances: appState.currentTokens,
-        planet: appState.currentPlanet,
+        balances: appState.balances,
+        planet: appState.current,
         status: ScreenStatus.loaded));
   }
 

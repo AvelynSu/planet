@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -39,73 +40,101 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     if (localPlanets.isEmpty) {
       yield AppUnInitialized.sign;
     } else {
-      var walletService = WalletBalanceService();
-
       // 로컬에 있는 플래닛 FB에서 정보 가져오기
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
       // 현재 앱에서 보여줄 메인 플래닛
-      var current =
-          planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
+      var current = _getCurrentPlanet(planets);
+
       // 현재 메인 플래닛의 토큰 밸런스들
-      var updateBalance = await walletService.getAllTokenBalances(
-          walletAddress: current.address, networkType: current.networkType!);
+      var updateBalance = await _getTokenBalance(
+        currentPlanet: current,
+        updateAllBalance: true,
+      );
+
+      // 심볼 보여주기 위한 딜레이
       await Future.delayed(const Duration(seconds: 2));
       yield AppLoaded(
-        myPlanets: planets,
-        currentTokens: updateBalance,
-        currentPlanet: current,
+        planets: planets,
+        balances: updateBalance,
+        current: current,
       );
     }
-
-    // await userRepository.signOut();
   }
 
   Stream<AppState> mapAppUpdateToState(AppUpdate event) async* {
     try {
-      var walletService = WalletBalanceService();
-
       // 로컬에서 플래닛 가져오기
-      var localPlanets = await LocalStorageService.getLocalPlanets();
-
-      // 로컬에서 가져온 플래닛의 정보 FB에서 불러오기
-      var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+      var planets = await _getPlanetDto();
 
       // 현재 앱에서 메인으로 다루는 플래닛
-      var currentPlanet =
-          planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
+      var current = _getCurrentPlanet(planets);
 
       // 메인 플래닛의 토큰 Balance 들
-      List<TokenBalance> updateBalance = (state as AppLoaded).currentTokens;
+      List<TokenBalance> updateBalance = (state as AppLoaded).balances;
 
       // 밸런스 업데이트 필요한 경우
-      if (event.updateBalance) {
-        // 모든 밸런스 업데이트
-        updateBalance = await walletService.getAllTokenBalances(
-            walletAddress: currentPlanet.address,
-            networkType: currentPlanet.networkType!);
-      } else if (event.updateBalanceToken != TokenInfo.empty) {
-        // 특정 한개 밸런스만 업데이트
-        var updateTokenBalance = await walletService.getTokenBalance(
-          address: currentPlanet.address,
-          info: event.updateBalanceToken,
-          networkType: currentPlanet.networkType!,
+      if (event.updateBalance || event.updateBalanceToken != TokenInfo.empty) {
+        updateBalance = await _getTokenBalance(
+          currentPlanet: current,
+          updateAllBalance: event.updateBalance,
+          updateBalanceToken: event.updateBalanceToken,
         );
-
-        // 기존 밸런스에서 한개만 업데이트 하기
-        updateBalance = updateBalance
-            .map((e) => e.info.address == updateTokenBalance.info.address
-                ? updateTokenBalance
-                : e)
-            .toList();
       }
 
       yield AppLoaded(
-        myPlanets: planets,
-        currentTokens: updateBalance,
-        currentPlanet: currentPlanet,
+        planets: planets,
+        balances: updateBalance,
+        current: current,
       );
     } catch (_) {}
   }
+
+  /// functions ------------------------------------
+  /// functions ------------------------------------
+  /// functions ------------------------------------
+  Future<List<Planet>> _getPlanetDto() async {
+    var localPlanets = await LocalStorageService.getLocalPlanets();
+    // 로컬에서 가져온 플래닛의 정보 FB에서 불러오기
+    var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+    return planets;
+  }
+
+  Planet _getCurrentPlanet(List<Planet> planets) {
+    return planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
+  }
+
+  /// 한개만 업데이트 필요한 경우와 전체 필요한 경우 구분해서 보여줌
+  Future<List<TokenBalance>> _getTokenBalance({
+    required Planet currentPlanet,
+    bool updateAllBalance = false,
+    TokenInfo updateBalanceToken = TokenInfo.empty,
+  }) async {
+    List<TokenBalance> updateBalance = [];
+    var walletService = WalletBalanceService();
+    var current = currentPlanet.address;
+    var network = currentPlanet.networkType!;
+    if (updateAllBalance) {
+      // 모든 밸런스 업데이트
+      updateBalance = await walletService.getAllTokenBalances(
+          walletAddress: current, networkType: network);
+    } else if (updateBalanceToken != TokenInfo.empty) {
+      // 특정 한개 밸런스만 업데이트
+      var updateTokenBalance = await walletService.getTokenBalance(
+          address: current, info: updateBalanceToken, networkType: network);
+
+      // 기존 밸런스에서 한개만 업데이트 하기
+      updateBalance = updateBalance
+          .map((e) => e.info.address == updateTokenBalance.info.address
+              ? updateTokenBalance
+              : e)
+          .toList();
+    }
+    return updateBalance;
+  }
+
+  /// ---------------------------------------------------
+  /// ---------------------------------------------------
+  /// ---------------------------------------------------
 
   Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {
     await apiRepository.signOut();

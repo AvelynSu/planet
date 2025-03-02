@@ -43,7 +43,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
 
   updateApp() {
     var appState = appBloc.state as AppLoaded;
-    var balances = appState.currentTokens
+    var balances = appState.balances
         .where((e) => e.info.symbol == tokenInfo.symbol)
         .firstOrNull;
     emit(state.copyWith(
@@ -62,7 +62,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       var appState = appBloc.state as AppLoaded;
 
       // 현재 플래닛의 네트워크 타입과 주소 가져오기
-      final fromAddress = appState.currentPlanet.address;
+      final fromAddress = appState.current.address;
 
       // estimateGasFeesByPriority 대신 estimateTransferFees 사용
       final gasFees = await _transferService.estimateTransferFees(
@@ -71,7 +71,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
         toAddress: toPlanet.address,
       );
 
-      var balances = appState.currentTokens
+      var balances = appState.balances
           .where((e) => e.info.symbol == tokenInfo.symbol)
           .firstOrNull;
       appBloc.add(AppUpdate(updateBalanceToken: tokenInfo));
@@ -131,7 +131,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
     try {
       // Get current wallet credentials
       final appState = appBloc.state as AppLoaded;
-      final currentPlanet = appState.currentPlanet;
+      final currentPlanet = appState.current;
 
       // Get wallet private key from mnemonic
       final mnemonic = currentPlanet.mnemonic;

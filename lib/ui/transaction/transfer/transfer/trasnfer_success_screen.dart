@@ -95,16 +95,16 @@ class TransferSuccessScreen extends StatelessWidget {
 
                   TransferLabel(
                     title: "To",
-                    value: appState.currentPlanet.name,
+                    value: appState.current.name,
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
                       child: PlanetComonent(
-                        data: appState.currentPlanet.name,
+                        data: appState.current.name,
                         size: 24,
                       ),
                     ),
                     description: AppUtil.shortenWalletAddress(
-                      appState.currentPlanet.address,
+                      appState.current.address,
                     ),
                   ),
                   TransferLabel(

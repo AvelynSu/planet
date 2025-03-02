@@ -65,7 +65,7 @@ class _MyScreenState extends State<MyScreen> {
                   BounceButton(
                     onTap: () {},
                     child: BoldMsgGenerator.toRichText(
-                      text: "You're on\n*${appState.currentPlanet.name}*",
+                      text: "You're on\n*${appState.current.name}*",
                       textAlign: TextAlign.center,
                       style: fontR(28,
                           color: C.current.mainText,
@@ -82,9 +82,9 @@ class _MyScreenState extends State<MyScreen> {
                           onTap: () {
                             PlanetSettingScreen.push(context);
                           },
-                          title: appState.currentPlanet.name,
+                          title: appState.current.name,
                           body: PlanetComonent(
-                            data: appState.currentPlanet.name,
+                            data: appState.current.name,
                             size: 36,
                           ),
                         ),
