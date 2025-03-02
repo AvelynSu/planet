@@ -171,7 +171,8 @@ class _TransferScreenState extends State<TransferScreen> {
                                     state.toPlanet.address)),
                             TransferLabel(
                               title: "Fee",
-                              value: '${currentFee?.feeToEth} ETH',
+                              value:
+                                  '${currentFee?.feeToEth(widget.info.networkType)} ${widget.info.networkType.symbol}',
                               description:
                                   'Gas: ${currentFee?.gasPrice.toRadixString(10)}',
                             ),

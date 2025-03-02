@@ -361,6 +361,7 @@ class BitcoinTransferService implements BlockchainTransferService {
   };
 
   @override
+  @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
     String? toAddress,
@@ -382,11 +383,15 @@ class BitcoinTransferService implements BlockchainTransferService {
 
       final data = json.decode(response.body);
 
-      // 표준 수수료율 (satoshi/byte)
-      final standardFeeRate = BigInt.from(data['medium'] ?? 20);
+      // 네트워크에서 제공하는 수수료율 사용 (기본값은 더 현실적으로)
+      final standardFeeRate =
+          BigInt.from(data['medium'] ?? 50); // 50 satoshi/byte로 조정
 
-      // 표준 트랜잭션 크기 (바이트) - 일반적인 P2PKH 트랜잭션 (1 input, 2 outputs)
-      final standardTxSize = BigInt.from(250);
+      // 트랜잭션 크기 동적 계산
+      final inputCount = 1; // 예시: 입력 개수
+      final outputCount = 2; // 예시: 출력 개수 (수취인, 잔액 변경)
+      final standardTxSize =
+          BigInt.from(_calculateTxSize(inputCount, outputCount));
 
       // 기본 수수료 (satoshi)
       final baseFee = standardFeeRate * standardTxSize;
@@ -397,22 +402,22 @@ class BitcoinTransferService implements BlockchainTransferService {
           entry.key: _applyMultiplier(baseFee, entry.value)
       };
 
-      // 각 우선순위별 TransferFee 생성
       return {
         for (var priority in GasPriority.values)
           priority: TransferFee(
-            gasPrice: BigInt.from(0), // 비트코인은 gasPrice 개념이 없음
-            gasLimit: BigInt.from(0), // 비트코인은 gasLimit 개념이 없음
+            gasPrice: BigInt.from(0),
+            gasLimit: BigInt.from(0),
             estimatedFee: fees[priority]!,
           )
       };
     } catch (e) {
       debugPrint('Error estimating Bitcoin fees: $e');
 
-      // API 호출 실패 시 기본값 사용
-      final baseFee = BigInt.from(5000); // 기본 5000 satoshi
+      // 대체 수수료 계산 로직 개선
+      final fallbackFeeRate = BigInt.from(100); // 더 현실적인 기본 수수료율
+      final fallbackTxSize = BigInt.from(250); // 평균적인 트랜잭션 크기
+      final baseFee = fallbackFeeRate * fallbackTxSize;
 
-      // 기본 수수료로 각 우선순위별 수수료 계산
       final fees = {
         for (var entry in _feePriorityMultipliers.entries)
           entry.key: _applyMultiplier(baseFee, entry.value)
@@ -427,6 +432,17 @@ class BitcoinTransferService implements BlockchainTransferService {
           )
       };
     }
+  }
+
+// 트랜잭션 크기 계산 헬퍼 메서드
+  int _calculateTxSize(int inputCount, int outputCount) {
+    // 대략적인 트랜잭션 크기 계산
+    // 이는 대략적인 추정치이며, 실제 크기는 서명 등에 따라 달라질 수 있음
+    const int baseSize = 10; // 기본 트랜잭션 오버헤드
+    const int inputSize = 150; // P2PKH 인풋 평균 크기
+    const int outputSize = 34; // P2PKH 아웃풋 평균 크기
+
+    return baseSize + (inputCount * inputSize) + (outputCount * outputSize);
   }
 
   // double 배율을 BigInt에 안전하게 적용하는 헬퍼 메서드

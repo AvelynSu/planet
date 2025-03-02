@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:planet/enum/network_type.dart';
 import 'package:web3dart/web3dart.dart';
 
 class TransferFee {
@@ -19,9 +20,19 @@ class TransferFee {
   // 사용자 표시용 포맷팅
   String get formatted => '${feeInEth.toStringAsFixed(8)} ETH';
 
-  String get feeToEth {
-    final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
-        .getValueInUnit(EtherUnit.ether);
-    return ethValue.toStringAsFixed(8);
+  String feeToEth(NetworkType network) {
+    switch (network) {
+      case NetworkType.ethereum:
+        final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
+            .getValueInUnit(EtherUnit.ether);
+        return ethValue.toStringAsFixed(8);
+
+      case NetworkType.bitcoin:
+        final bitValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
+            .getValueInUnit(EtherUnit.kwei); // 1 bit = 1000 wei
+        return bitValue.toStringAsFixed(8);
+      case NetworkType.solana:
+        return "";
+    }
   }
 }

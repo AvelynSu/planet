@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/util/app_constant.dart';
+import 'package:planet/util/wallet_config.dart';
 
 class ApiRepository {
   final fbAuth = auth.FirebaseAuth.instance;
@@ -54,7 +55,7 @@ class ApiRepository {
 
   /// 행성 저장하기
   Future<Planet> addPlanet(Planet planet) async {
-    var json = planet.toJson();
+    planet = planet.copyWith(env: WalletConfig.env);
     var res = await _planetCol.add(planet.toJson(isLocal: false));
     await _planetNameDoc.update({
       "items": FieldValue.arrayUnion([planet.name])

@@ -131,7 +131,8 @@ class TransferSuccessScreen extends StatelessWidget {
                   ),
                   _label(
                     title: "Fee",
-                    value: "${fee.feeToEth} ${tokenInfo.symbol}",
+                    value:
+                        "${fee.feeToEth(tokenInfo.networkType)} ${tokenInfo.symbol}",
                   ),
                   // _label(
                   //   title: "TXhash",

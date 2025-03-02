@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:planet/util/fb_formatter.dart';
+import 'package:planet/util/wallet_config.dart';
 
 import '../enum/network_type.dart';
 
@@ -12,6 +13,8 @@ class Planet extends Equatable {
   final DateTime? createdAt;
   final bool isCurrent;
   final bool isDeleted;
+
+  final Environment env;
 
   final String parentsAddress; // idx 0 의 주소
   final int pathIdx;
@@ -27,6 +30,7 @@ class Planet extends Equatable {
     this.pathIdx = 0,
     this.parentsAddress = "",
     this.isDeleted = false,
+    this.env = Environment.prod,
   });
 
   static const empty = Planet();
@@ -43,6 +47,7 @@ class Planet extends Equatable {
       isCurrent: json["isCurrent"] ?? false,
       parentsAddress: json["parentsAddress"] ?? json["address"] ?? "",
       isDeleted: json["isDeleted"] ?? false,
+      env: Environment.fromJson(json["env"]),
     );
   }
 
@@ -58,6 +63,7 @@ class Planet extends Equatable {
       'pathIdx': pathIdx,
       'parentsAddress': parentsAddress.isEmpty ? address : parentsAddress,
       'isDeleted': isDeleted ?? false,
+      'env': env.name,
     };
   }
 
@@ -72,6 +78,7 @@ class Planet extends Equatable {
     int? pathIdx,
     String? parentsAddress,
     bool? isDeleted,
+    Environment? env,
   }) {
     return Planet(
       id: id ?? this.id,
@@ -84,6 +91,7 @@ class Planet extends Equatable {
       pathIdx: pathIdx ?? this.pathIdx,
       parentsAddress: parentsAddress ?? this.parentsAddress,
       isDeleted: isDeleted ?? this.isDeleted,
+      env: env ?? this.env,
     );
   }
 
@@ -99,5 +107,6 @@ class Planet extends Equatable {
         pathIdx,
         parentsAddress,
         isDeleted,
+        env,
       ];
 }
