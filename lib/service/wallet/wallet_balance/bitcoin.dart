@@ -1,0 +1,122 @@
+part of 'wallet_balance_service.dart';
+
+class _BitcoinBalanceService implements _BlockchainBalanceService {
+  final String _apiBaseUrl;
+  final http.Client _httpClient;
+
+  _BitcoinBalanceService({String? apiBaseUrl})
+      : _apiBaseUrl = apiBaseUrl ?? WalletConfig().bitcoinApiUrl,
+        _httpClient = http.Client();
+
+  @override
+  Future<TokenBalance> getTokenBalance({
+    required String address,
+    required TokenInfo info,
+  }) async {
+    try {
+      // BTC는 네이티브 토큰이므로 기본적으로 처리
+      if (info.symbol == "BTC") {
+        final response = await _httpClient.get(
+          Uri.parse('$_apiBaseUrl/addrs/$address'),
+          headers: {'Content-Type': 'application/json'},
+        );
+
+        if (response.statusCode != 200) {
+          throw Exception(
+              'Failed to fetch Bitcoin balance: ${response.statusCode}');
+        }
+
+        final data = json.decode(response.body);
+
+        // API 응답에서 잔액 추출 (satoshi 단위로 가정)
+        final int satoshiBalance = data['balance'] ?? 0;
+        // final_balance 는 미확정까지 포함
+
+        // satoshi를 BTC로 변환 (1 BTC = 100,000,000 satoshi)
+        final double btcBalance = satoshiBalance / 100000000;
+
+        return TokenBalance(
+          address: address,
+          info: info,
+          balance: btcBalance,
+        );
+      }
+      // BTC 기반 토큰 (예: Omni Layer 토큰, Liquid 자산 등) - 필요하다면 확장
+      else {
+        throw Exception('${info.symbol} is not supported on Bitcoin network');
+      }
+    } catch (e) {
+      debugPrint('Error getting Bitcoin balance: $e');
+      throw Exception('Failed to get Bitcoin balance: $e');
+    }
+  }
+
+  @override
+  Future<List<TokenBalance>> getAllTokenBalances({
+    required String walletAddress,
+  }) async {
+    try {
+      // BTC만 가져오는 방식으로 간소화
+      final TokenInfo btcInfo = TokenData.bitToken;
+
+      final btcBalance = await getTokenBalance(
+        address: walletAddress,
+        info: btcInfo,
+      );
+
+      return [btcBalance];
+
+      // 나중에 Omni USDT 등이 필요하면 추가할 수 있음
+    } catch (e) {
+      debugPrint('Error getting Bitcoin balance: $e');
+      throw Exception('Failed to get Bitcoin balance');
+    }
+  }
+
+  /// UTXO(미사용 트랜잭션 출력) 목록 가져오기
+  /// 필요할 경우 사용
+  Future<List<Map<String, dynamic>>> getUTXOs(String address) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('$_apiBaseUrl/address/$address/utxo'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to fetch Bitcoin UTXOs: ${response.statusCode}');
+      }
+
+      final List<dynamic> data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      debugPrint('Error getting Bitcoin UTXOs: $e');
+      throw Exception('Failed to get Bitcoin UTXOs: $e');
+    }
+  }
+
+  /// 트랜잭션 상세 조회
+  /// 필요할 경우 사용
+  Future<Map<String, dynamic>> getTransaction(String txid) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('$_apiBaseUrl/tx/$txid'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch transaction: ${response.statusCode}');
+      }
+
+      return json.decode(response.body);
+    } catch (e) {
+      debugPrint('Error getting transaction: $e');
+      throw Exception('Failed to get transaction: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _httpClient.close();
+  }
+}

@@ -8,7 +8,7 @@ import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/transaction_history.dart';
-import 'package:planet/service/wallet/transaction_history_service.dart';
+import 'package:planet/service/wallet/wallet_transaction/transaction_history_service.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';

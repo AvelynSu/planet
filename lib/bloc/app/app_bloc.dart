@@ -6,8 +6,8 @@ import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
-import 'package:planet/service/wallet/wallet_balance_service.dart';
 
+import '../../service/wallet/wallet_balance/wallet_balance_service.dart';
 import 'bloc.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
