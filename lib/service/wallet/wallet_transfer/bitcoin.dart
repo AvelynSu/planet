@@ -125,7 +125,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       // 2. UTXOs 조회
       final utxosResponse = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/addrs/$fromAddress/utxo'),
+        Uri.parse(
+            '$_apiBaseUrl/addrs/$fromAddress/utxo?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -150,7 +151,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       };
 
       final txBuildResponse = await _httpClient.post(
-        Uri.parse('$_apiBaseUrl/txs/new'),
+        Uri.parse(
+            '$_apiBaseUrl/txs/new?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(txData),
       );
@@ -171,7 +173,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       };
 
       final txSendResponse = await _httpClient.post(
-        Uri.parse('$_apiBaseUrl/txs/send'),
+        Uri.parse(
+            '$_apiBaseUrl/txs/send?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(signedTxData),
       );
@@ -205,7 +208,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     try {
       // UTXOs 조회
       final utxosResponse = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/addrs/$fromAddress/utxo'),
+        Uri.parse(
+            '$_apiBaseUrl/addrs/$fromAddress/utxo?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -230,7 +234,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       };
 
       final txBuildResponse = await _httpClient.post(
-        Uri.parse('$_apiBaseUrl/txs/new'),
+        Uri.parse(
+            '$_apiBaseUrl/txs/new?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(txData),
       );
@@ -251,7 +256,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       };
 
       final txSendResponse = await _httpClient.post(
-        Uri.parse('$_apiBaseUrl/txs/send'),
+        Uri.parse(
+            '$_apiBaseUrl/txs/send?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(signedTxData),
       );
@@ -272,7 +278,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   Future<bool> checkTransactionStatus(String txHash) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/txs/$txHash'),
+        Uri.parse(
+            '$_apiBaseUrl/txs/$txHash?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
         const Duration(seconds: 15),

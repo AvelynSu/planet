@@ -20,6 +20,7 @@ class WalletConfig {
   final int chainId; // 1: mainnet, 5: goerli testnet
   final String etherscanApiKey;
   final String bitcoinApiUrl;
+  final String blockCypherToken;
   final String etherscanApiUrl;
   static final WalletConfig _instance = WalletConfig._internal();
 
@@ -35,6 +36,9 @@ class WalletConfig {
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"
             : "https://api.blockcypher.com/v1/btc/test3",
+        blockCypherToken = env == Environment.prod
+            ? "b0bce5d62dba4e308ec307c1f9b92f78"
+            : "b0bce5d62dba4e308ec307c1f9b92f78",
         // 이더스캔 키
         etherscanApiKey = env == Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'

@@ -13,7 +13,8 @@ class _BitcoinHistoryService implements _BlockchainHistoryService {
   Future<List<TransactionHistory>> getAllTransactions(String address) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/addrs/$address/full?limit=50'),
+        Uri.parse(
+            '$_apiBaseUrl/addrs/$address/full?limit=50?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
         const Duration(seconds: 15),

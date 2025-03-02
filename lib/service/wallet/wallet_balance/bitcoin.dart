@@ -14,10 +14,11 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
     required TokenInfo info,
   }) async {
     try {
-      // BTC는 네이티브 토큰이므로 기본적으로 처리
       if (info.symbol == "BTC") {
+        // BlockCypher API를 사용하여 잔액 조회
         final response = await _httpClient.get(
-          Uri.parse('$_apiBaseUrl/addrs/$address'),
+          Uri.parse(
+              '$_apiBaseUrl/addrs/$address?token=${WalletConfig().blockCypherToken}'),
           headers: {'Content-Type': 'application/json'},
         );
 
@@ -27,22 +28,24 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
         }
 
         final data = json.decode(response.body);
+        print('BlockCypher Response: $data'); // 응답 로깅
 
-        // API 응답에서 잔액 추출 (satoshi 단위로 가정)
-        final int satoshiBalance = data['balance'] ?? 0;
-        // final_balance 는 미확정까지 포함
+        // BlockCypher API는 'balance', 'unconfirmed_balance' 필드를 제공
+        final int confirmedBalance = data['balance'] ?? 0;
+        final int unconfirmedBalance = data['unconfirmed_balance'] ?? 0;
+
+        // 전체 잔액 (확정 + 미확정)
+        final int totalBalance = confirmedBalance + unconfirmedBalance;
 
         // satoshi를 BTC로 변환 (1 BTC = 100,000,000 satoshi)
-        final double btcBalance = satoshiBalance / 100000000;
+        final double btcBalance = totalBalance / 100000000;
 
         return TokenBalance(
           address: address,
           info: info,
           balance: btcBalance,
         );
-      }
-      // BTC 기반 토큰 (예: Omni Layer 토큰, Liquid 자산 등) - 필요하다면 확장
-      else {
+      } else {
         throw Exception('${info.symbol} is not supported on Bitcoin network');
       }
     } catch (e) {
@@ -78,7 +81,8 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
   Future<List<Map<String, dynamic>>> getUTXOs(String address) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/address/$address/utxo'),
+        Uri.parse(
+            '$_apiBaseUrl/address/$address/utxo?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -100,7 +104,8 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
   Future<Map<String, dynamic>> getTransaction(String txid) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl/tx/$txid'),
+        Uri.parse(
+            '$_apiBaseUrl/tx/$txid?token=${WalletConfig().blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       );
 
