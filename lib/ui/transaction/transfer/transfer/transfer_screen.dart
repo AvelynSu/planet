@@ -5,7 +5,6 @@ import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
@@ -257,13 +256,7 @@ class _TransferScreenState extends State<TransferScreen> {
                       title: "Send",
                       onTap: state.isFormValid
                           ? () {
-                              if (widget.info.networkType ==
-                                  NetworkType.ethereum) {
-                                _confirmAndExecuteTransfer(context, cubit);
-                              } else {
-                                DefaultDialog.showTimerDialog(context,
-                                    description: "Coming soon..");
-                              }
+                              _confirmAndExecuteTransfer(context, cubit);
                             }
                           : null,
                     ),

@@ -31,11 +31,11 @@ class WalletConfig {
             ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
             : "https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba",
         // Goerli 테스트넷
-        chainId = env == Environment.prod ? 1 : 5,
+        chainId = env == Environment.prod ? 1 : 1,
         // Goerli는 chainId 5
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"
-            : "https://api.blockcypher.com/v1/btc/test3",
+            : "https://api.blockcypher.com/v1/bcy/test",
         blockCypherToken = env == Environment.prod
             ? "b0bce5d62dba4e308ec307c1f9b92f78"
             : "b0bce5d62dba4e308ec307c1f9b92f78",
@@ -43,7 +43,6 @@ class WalletConfig {
         etherscanApiKey = env == Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
             : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF",
-        etherscanApiUrl = env == Environment.prod
-            ? "api.etherscan.io"
-            : "api-goerli.etherscan.io";
+        etherscanApiUrl =
+            env == Environment.prod ? "api.etherscan.io" : "api.etherscan.io";
 }

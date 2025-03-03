@@ -171,7 +171,7 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                     ),
                     child: DefaultButton(
                       title: "Submit",
-                      onTap: !state.isValidateAmount
+                      onTap: state.isValidateAmount
                           ? () {
                               widget.onSelect(state.amount);
                             }

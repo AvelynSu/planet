@@ -135,10 +135,10 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       // Get wallet private key from mnemonic
       final mnemonic = currentPlanet.mnemonic;
       final privateKey = await _walletService.getPrivateKeyFromMnemonic(
-          mnemonic, networkType, 0);
+          mnemonic, networkType, currentPlanet.pathIdx);
 
       // Parse amount
-      final amountInWei = AppUtil.convertToWei(state.amount);
+      final amountInWei = AppUtil.convertToRawValue(state.amount, networkType);
 
       bool success;
 

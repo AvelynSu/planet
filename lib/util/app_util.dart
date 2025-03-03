@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
+import 'package:planet/enum/network_type.dart';
 
 import 'data/planet_name_data.dart';
 
@@ -82,21 +83,35 @@ class AppUtil {
     }
   }
 
-  static BigInt convertToWei(String amount) {
+  // wei or satoshi
+  static BigInt convertToRawValue(String amount, NetworkType network) {
     // Handle empty input
     if (amount.isEmpty) {
       return BigInt.zero;
     }
 
-    try {
-      // Parse the amount to double first
-      final double ethAmount = double.parse(amount);
+    if (network == NetworkType.bitcoin) {
+      try {
+        // Parse the amount to double first
+        final double btcAmount = double.parse(amount);
 
-      // Convert to Wei (1 ETH = 10^18 Wei)
-      final BigInt weiAmount = BigInt.from(ethAmount * 1e18);
-      return weiAmount;
-    } catch (e) {
-      return BigInt.zero;
+        // Convert to Satoshi (1 BTC = 10^8 Satoshi)
+        final BigInt satoshiAmount = BigInt.from(btcAmount * 1e8);
+        return satoshiAmount;
+      } catch (e) {
+        return BigInt.zero;
+      }
+    } else {
+      try {
+        // Parse the amount to double first
+        final double ethAmount = double.parse(amount);
+
+        // Convert to Wei (1 ETH = 10^18 Wei)
+        final BigInt weiAmount = BigInt.from(ethAmount * 1e18);
+        return weiAmount;
+      } catch (e) {
+        return BigInt.zero;
+      }
     }
   }
 

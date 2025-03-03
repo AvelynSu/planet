@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:bs58/bs58.dart';
 import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter/widgets.dart';
@@ -55,19 +56,46 @@ class WalletService {
     }
 
     final seed = bip39.mnemonicToSeed(mnemonic);
-    // 네트워크 타입에 맞는 경로 사용
     final path = type.getDerivationPath(idx);
     final node = bip32.BIP32.fromSeed(seed);
     final child = node.derivePath(path);
 
-    // private key를 16진수 문자열로 변환
-    final privateKeyHex = bytesToHex(child.privateKey!);
+    if (type == NetworkType.bitcoin) {
+      // 메인넷/테스트넷에 따라 네트워크 선택
+      final network = WalletConfig.env == Environment.prod
+          ? btc.bitcoin
+          : btc.NetworkType(
+              messagePrefix: '\x18BlockCypher Signed Message:\n',
+              bech32: 'bc',
+              bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+              pubKeyHash: 0x1B,
+              scriptHash: 0x1F,
+              wif: 0x49,
+            );
 
-    // 네트워크 타입에 따라 접두사 결정
-    String prefix = "";
-    if (type == NetworkType.ethereum) {
-      prefix = "0x";
+      // 개인 키를 WIF로 변환 (체크섬 포함)
+      final extendedKey = Uint8List.fromList([
+        network.wif, // 버전 바이트
+        ...child.privateKey!,
+        0x01 // 압축 형식 플래그 (선택적)
+      ]);
+
+      // SHA-256 더블 해시로 체크섬 계산
+      final hash = sha256.convert(sha256.convert(extendedKey).bytes).bytes;
+      final checksum = hash.sublist(0, 4);
+
+      // 최종 WIF 키 생성 (버전 바이트 + 개인 키 + 체크섬)
+      final finalKey = Uint8List.fromList([...extendedKey, ...checksum]);
+
+      // Base58 인코딩
+      final wif = base58.encode(finalKey);
+
+      return wif;
     }
+
+    // 다른 네트워크는 기존 로직 유지
+    final privateKeyHex = bytesToHex(child.privateKey!);
+    String prefix = type == NetworkType.ethereum ? "0x" : "";
 
     return "$prefix$privateKeyHex";
   }
@@ -100,8 +128,18 @@ class WalletService {
     final child = node.derivePath(path);
 
     // 환경에 따라 네트워크 선택
-    final network =
-        WalletConfig.env == Environment.prod ? btc.bitcoin : btc.testnet;
+    final network = WalletConfig.env == Environment.prod
+        ? btc.bitcoin
+        : btc.NetworkType(
+            messagePrefix: '\x18BlockCypher Signed Message:\n',
+            bech32: 'bc',
+            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+            pubKeyHash: 0x1B,
+            // BCY testnet용 pubKeyHash
+            scriptHash: 0x1F,
+            // BCY testnet용 scriptHash
+            wif: 0x49, // BCY testnet용 WIF
+          ); // BCY.test 네트워크 사용
 
     // 주소 생성
     final address = btc
@@ -111,6 +149,8 @@ class WalletService {
         )
         .data
         .address;
+
+    print("생성된 주소: $address"); // 로그 추가
 
     return address ?? "";
   }
