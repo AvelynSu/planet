@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.shiftfunction.planet</string>
+	<string>io.grabity.PlanetWallet</string>
 	<key>PROJECT_ID</key>
 	<string>planet-908b5</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:271562196054:ios:2b1fbdefe5c55a6a10a7f7</string>
+	<string>1:271562196054:ios:af161ae7b07f8cac10a7f7</string>
 </dict>
 </plist>

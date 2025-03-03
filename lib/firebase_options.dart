@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDqt_dHQsbEbtidtWaR4XQGRs0v2vmeA8M',
-    appId: '1:271562196054:ios:2b1fbdefe5c55a6a10a7f7',
+    appId: '1:271562196054:ios:af161ae7b07f8cac10a7f7',
     messagingSenderId: '271562196054',
     projectId: 'planet-908b5',
     storageBucket: 'planet-908b5.firebasestorage.app',
-    iosBundleId: 'com.shiftfn.planet',
+    iosBundleId: 'io.grabity.PlanetWallet',
   );
+
 }
