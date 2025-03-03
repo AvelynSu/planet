@@ -50,6 +50,11 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
       }
     } catch (e) {
       debugPrint('Error getting Bitcoin balance: $e');
+      // return TokenBalance(
+      //   address: address,
+      //   info: info,
+      //   balance: 0.001,
+      // );
       throw Exception('Failed to get Bitcoin balance: $e');
     }
   }

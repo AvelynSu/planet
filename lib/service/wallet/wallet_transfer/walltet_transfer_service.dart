@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
 
-import 'package:bs58/bs58.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:http/http.dart' as http;
@@ -70,7 +69,7 @@ class WalletTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
     required NetworkType networkType,
   }) {
     return _services[networkType]!.sendAndWaitForTransaction(
@@ -78,7 +77,7 @@ class WalletTransferService {
       toAddress: toAddress,
       amount: amount,
       privateKey: privateKey,
-      gasPriority: gasPriority,
+      fee: fee,
     );
   }
 
@@ -130,7 +129,7 @@ abstract class _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
   });
 
   Future<String> sendTransactionWithCustomFee({

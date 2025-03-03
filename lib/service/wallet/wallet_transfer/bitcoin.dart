@@ -137,6 +137,42 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     }
   }
 
+// 주소 생성 메서드
+  String getAddressFromPrivateKey(String privateKey) {
+    final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey));
+    final network = WalletConfig.env == Environment.prod
+        ? btc.bitcoin
+        : btc.NetworkType(
+            messagePrefix: '\x18BlockCypher Signed Message:\n',
+            bech32: 'bc',
+            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+            pubKeyHash: 0x1B,
+            scriptHash: 0x1F,
+            wif: 0x49,
+          );
+    return btc
+            .P2PKH(
+              data: btc.PaymentData(pubkey: keyPair.publicKey),
+              network: network,
+            )
+            .data
+            .address ??
+        "";
+  }
+
+  Uint8List hexToUint8List(String hex) {
+    // 16진수 문자열에서 '0x' 접두사 제거
+    hex = hex.replaceFirst('0x', '');
+
+    // 홀수 길이일 경우 앞에 0 추가
+    if (hex.length % 2 != 0) {
+      hex = '0$hex';
+    }
+
+    return Uint8List.fromList(List.generate(hex.length ~/ 2,
+        (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)));
+  }
+
   @override
   Future<String> sendTransactionWithCustomFee({
     required String fromAddress,
@@ -146,120 +182,112 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     required BigInt fee,
   }) async {
     try {
-      // 1. 새 트랜잭션 생성 요청
-      final token = config.blockCypherToken;
-      final newTxUrl = '$_apiBaseUrl/txs/new?token=$token';
-
-      final newTxResponse = await _httpClient
-          .post(
-            Uri.parse(newTxUrl),
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode({
-              'inputs': [
-                {
-                  'addresses': [fromAddress]
-                }
-              ],
-              'outputs': [
-                {
-                  'addresses': [toAddress],
-                  'value': amount.toInt()
-                }
-              ],
-              'fees': fee.toInt(),
-            }),
-          )
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () =>
-                throw Exception('Request timed out creating transaction'),
-          );
-
-      if (newTxResponse.statusCode != 200 && newTxResponse.statusCode != 201) {
-        throw Exception(
-            'Failed to create transaction: ${newTxResponse.statusCode}, ${newTxResponse.body}');
-      }
-
-      final txSkeleton = json.decode(newTxResponse.body);
-
-      // 서명을 위한 데이터가 없으면 오류
-      if (txSkeleton['tosign'] == null ||
-          (txSkeleton['tosign'] as List).isEmpty) {
-        throw Exception('No data to sign in transaction response');
-      }
-
-      // 2. 데이터 서명
-      final signatures = <String>[];
-      final List<dynamic> toSignList = txSkeleton['tosign'];
-
-      // 비트코인 라이브러리를 사용하여 데이터 서명
-      final bitcoinNetwork = WalletConfig.env == Environment.prod
+      // 3. 트랜잭션 준비
+      final network = WalletConfig.env == Environment.prod
           ? btc.bitcoin
           : btc.NetworkType(
               messagePrefix: '\x18BlockCypher Signed Message:\n',
               bech32: 'bc',
               bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
               pubKeyHash: 0x1B,
+              // BCY testnet용 pubKeyHash
               scriptHash: 0x1F,
+              // BCY testnet용 scriptHash
               wif: 0x49, // BCY testnet용 WIF
             );
 
-      final cleanPrivateKey = privateKey.trim();
+      // 1. 발신자의 개인 키로부터 공개 키와 주소 생성
+      final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey),
+          network: network);
+      final senderAddress = getAddressFromPrivateKey(privateKey);
 
-      final keyPair =
-          btc.ECPair.fromWIF(cleanPrivateKey, network: bitcoinNetwork);
+      // 주소 일치 확인
+      if (senderAddress != fromAddress) {
+        throw Exception('제공된 주소와 개인 키가 일치하지 않습니다.');
+      }
 
-      signatures.clear(); // 기존 signatures 초기화
+      // 2. 미사용 트랜잭션 출력(UTXO) 가져오기
+      final utxoResponse = await http.get(Uri.parse(
+          '$_apiBaseUrl/addrs/$fromAddress/full?unspentOnly=true&token=${WalletConfig().blockCypherToken}'));
 
-      for (String dataToSign in toSignList.cast<String>()) {
-        if (dataToSign.isEmpty) {
-          throw Exception('Empty data to sign');
+      if (utxoResponse.statusCode != 200) {
+        throw Exception('UTXO 가져오기 실패: ${utxoResponse.body}');
+      }
+
+      final Map<String, dynamic> utxoData = json.decode(utxoResponse.body);
+      final List<dynamic> utxos = utxoData['txs'] ?? [];
+
+      if (utxos.isEmpty) {
+        throw Exception('사용 가능한 UTXO가 없습니다.');
+      }
+
+      final txb = btc.TransactionBuilder(network: network);
+      int totalInput = 0;
+
+      // UTXO 추가 및 총 입력 계산
+      for (var utxo in utxos) {
+        // 'tx_hash' 대신 'hash'를 사용하고, 'tx_output_n' 대신 출력 인덱스를 찾아야 합니다
+        // 'outputs' 배열에서 해당 주소로 보낸 출력을 찾습니다
+        String txHash = utxo['hash'];
+
+        // outputs 배열을 순회하며 내 주소로 보낸 출력을 찾습니다
+        List<dynamic> outputs = utxo['outputs'] ?? [];
+        for (int i = 0; i < outputs.length; i++) {
+          var output = outputs[i];
+          List<dynamic> addresses = output['addresses'] ?? [];
+
+          // 내 주소가 포함된 출력을 찾습니다
+          if (addresses.contains(fromAddress)) {
+            // myAddress는 지갑 주소변수로 대체해야 합니다
+            txb.addInput(txHash, i); // 해당 트랜잭션 해시와 출력 인덱스 사용
+            totalInput += output['value'] as int; // 'value'를 사용하여 금액 추가
+          }
         }
-
-        // 16진수 문자열을 바이트 배열로 변환
-        final dataBytes = _hexToBytes(dataToSign);
-
-        // 서명 생성
-        final signature = keyPair.sign(dataBytes);
-
-        signatures.add(_bytesToHex(signature));
       }
 
-      // 서명 없으면 예외 처리
-      if (signatures.isEmpty) {
-        throw Exception('No signatures generated');
-      }
+      // 사토시 단위로 변환
+      final int outputAmount = amount.toInt();
+      final int txFee = fee.toInt();
 
-      // 3. 서명된 트랜잭션 전송
-      final sendTxUrl = '$_apiBaseUrl/txs/send?token=$token';
-      final body = {
-        'tx': txSkeleton['tx'],
-        'tosign': txSkeleton['tosign'],
-        'signatures': signatures,
-        'pubkeys': [_bytesToHex(keyPair.publicKey)],
-      };
-      print(body);
-      final sendResponse = await _httpClient
-          .post(
-            Uri.parse(sendTxUrl),
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode(body),
-          )
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () =>
-                throw Exception('Request timed out sending transaction'),
-          );
+      // 출력 추가 (수신 주소)
+      txb.addOutput(toAddress, outputAmount);
 
-      if (sendResponse.statusCode != 200 && sendResponse.statusCode != 201) {
+      // 거스름돈 계산 및 출력 추가
+      final int changeAmount = totalInput - outputAmount - txFee;
+      if (changeAmount < 0) {
         throw Exception(
-            'Failed to send transaction: ${sendResponse.statusCode}, ${sendResponse.body}');
+            '잔액 부족: 총 입력($totalInput)이 출력($outputAmount)과 수수료($txFee)보다 작습니다.');
       }
 
-      final sendData = json.decode(sendResponse.body);
+      // 거스름돈을 발신자 주소로 반환
+      if (changeAmount > 0) {
+        txb.addOutput(fromAddress, changeAmount);
+      }
 
-      // 트랜잭션 해시 반환
-      return sendData['tx']['hash'];
+      // 4. 트랜잭션 서명
+      for (int i = 0; i < utxos.length; i++) {
+        txb.sign(
+          vin: i,
+          keyPair: keyPair,
+        );
+      }
+
+      // 5. 트랜잭션 브로드캐스트
+      final txHex = txb.build().toHex();
+      final broadcastResponse = await http.post(
+        Uri.parse(
+            '$_apiBaseUrl/txs/push?token=${WalletConfig().blockCypherToken}'),
+        body: json.encode({'tx': txHex}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (broadcastResponse.statusCode != 201) {
+        throw Exception('트랜잭션 브로드캐스트 실패: ${broadcastResponse.body}');
+      }
+
+      final broadcastResult = json.decode(broadcastResponse.body);
+
+      return broadcastResult['tx']['hash'];
     } catch (e) {
       debugPrint('Error sending Bitcoin transaction with custom fee: $e');
       throw Exception('Failed to send Bitcoin transaction: $e');
@@ -300,16 +328,16 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
   }) async {
     try {
       // 트랜잭션 전송
-      final txHash = await sendTransaction(
+      final txHash = await sendTransactionWithCustomFee(
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,
         privateKey: privateKey,
-        gasPriority: gasPriority,
+        fee: fee,
       );
 
       // 트랜잭션 확인 대기 (최대 20번 시도, 15초마다)

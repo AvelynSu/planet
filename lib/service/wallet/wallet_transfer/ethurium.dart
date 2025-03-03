@@ -181,16 +181,16 @@ class _EthereumTransferService implements _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
   }) async {
     try {
       // 1. 트랜잭션 전송
-      final txHash = await sendTransaction(
+      final txHash = await sendTransactionWithCustomFee(
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,
         privateKey: privateKey,
-        gasPriority: gasPriority,
+        fee: fee,
       );
 
       // 2. 트랜잭션 처리 완료 대기

@@ -166,7 +166,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
           toAddress: state.toPlanet.address,
           amount: amountInWei,
           privateKey: privateKey,
-          gasPriority: state.selectedGasPriority,
+          fee: state.gasFees[state.selectedGasPriority]!.estimatedFee,
           networkType: networkType,
         );
       }
