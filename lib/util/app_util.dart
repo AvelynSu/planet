@@ -8,6 +8,39 @@ import 'package:planet/enum/network_type.dart';
 import 'data/planet_name_data.dart';
 
 class AppUtil {
+  static bool isUpdateRequired(String currentVersion, String latestVersion) {
+    // 버전 문자열에서 숫자 부분만 추출
+    List<int> currentParts = currentVersion
+        .split('.')
+        .map((part) => int.tryParse(part) ?? 0)
+        .toList();
+
+    List<int> latestParts = latestVersion
+        .split('.')
+        .map((part) => int.tryParse(part) ?? 0)
+        .toList();
+
+    // 각 버전 부분의 길이를 맞춤
+    while (currentParts.length < latestParts.length) {
+      currentParts.add(0);
+    }
+
+    while (latestParts.length < currentParts.length) {
+      latestParts.add(0);
+    }
+
+    // 버전 비교
+    for (int i = 0; i < currentParts.length; i++) {
+      if (latestParts[i] > currentParts[i]) {
+        return true; // 업데이트 필요
+      } else if (latestParts[i] < currentParts[i]) {
+        return false; // 현재 버전이 더 높음
+      }
+    }
+
+    return false; // 버전이 동일함
+  }
+
   static String getRandomNickname(List<String> alreadyNickname) {
     var planet =
         Data.planetNames[Random().nextInt(Data.planetNames.length - 1)];

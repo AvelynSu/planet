@@ -6,6 +6,8 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/app/app_view.dart';
 import 'package:planet/ui/common/splash_screen.dart';
+import 'package:planet/ui/force_update_screen.dart';
+import 'package:planet/ui/pin_screen.dart';
 import 'package:planet/ui/start/start/start_screen.dart';
 import 'package:planet/util/app_constant.dart';
 
@@ -91,9 +93,18 @@ class _AppScreenState extends State<AppScreen> {
           Widget screen = const SplashScreen();
 
           if (state is AppLoading) {
+          } else if (state is AppRequiredVersionUpdate) {
+            screen = ForceUpdateScreen();
           } else if (state is AppUnInitialized) {
             if (state.requiredSign) {
               screen = const StartScreen();
+            } else if (state.requiredPinCode) {
+              return PinScreen(
+                onSuccess: (val) {
+                  context.read<AppBloc>().add(AppInitialize());
+                },
+                mode: PinMode.setup,
+              );
             }
           } else if (state is AppLoaded) {
             screen = AppView();

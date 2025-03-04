@@ -12,13 +12,19 @@ class AppState extends Equatable {
 // 홈화면 진입 전 : 로그인 타입 선택 전, 로그인 이후
 class AppUnInitialized extends AppState {
   final bool requiredSign;
+  final bool requiredPinCode;
 
   const AppUnInitialized({
     this.requiredSign = false,
+    this.requiredPinCode = false,
   }) : super();
 
   static AppUnInitialized get sign => const AppUnInitialized(
         requiredSign: true,
+      );
+
+  static AppUnInitialized get pin => const AppUnInitialized(
+        requiredPinCode: true,
       );
 
   @override
@@ -68,6 +74,8 @@ class AppLoaded extends AppState {
 }
 
 class AppLoading extends AppState {}
+
+class AppRequiredVersionUpdate extends AppState {}
 
 class AppErr extends AppState {
   final String? err;

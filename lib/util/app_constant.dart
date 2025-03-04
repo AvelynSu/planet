@@ -4,4 +4,8 @@ class AppConstant {
   static String fbPlanetNameDoc = "planet_name";
 
   static String spThemeMode = "spThemeMode";
+
+  static String pinCode = "";
+
+  static String appVersion = "1.05";
 }

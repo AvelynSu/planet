@@ -12,6 +12,7 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
+import 'package:planet/ui/pin_screen.dart';
 import 'package:planet/ui/transaction/transfer/transfer/trasnfer_success_screen.dart';
 
 import '../../../../enum/screen_status.dart';
@@ -255,7 +256,7 @@ class _TransferScreenState extends State<TransferScreen> {
                     child: DefaultButton(
                       title: "Send",
                       onTap: state.isFormValid
-                          ? () {
+                          ? () async {
                               _confirmAndExecuteTransfer(context, cubit);
                             }
                           : null,
@@ -273,61 +274,78 @@ class _TransferScreenState extends State<TransferScreen> {
   Future<void> _confirmAndExecuteTransfer(
       BuildContext context, TokenTransferCubit cubit) async {
     var appState = (context.read<AppBloc>().state as AppLoaded);
+
     final confirmed = await DefaultDialog.show(
           context,
           title: "Confirm Transfer",
           description:
               "Are you sure you want to send *${appState.current.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
           onSecondAction: () {},
-          // cancelText: "Cancel",
-          // confirmText: "Confirm",
         ) ??
         false;
 
     if (confirmed == true) {
-      final loadingDialog = TransferLoadingDialog.show(context,
-          gasPriority: cubit.state.selectedGasPriority);
+      var enablePin = await PinScreen.push(
+        context,
+        onBack: () {
+          Navigator.pop(context);
+        },
+        onSuccess: (val) {
+          if (val) {
+            Navigator.pop(context, true);
+          }
+        },
+        mode: PinMode.validate,
+      );
 
-      try {
-        final success = await cubit.executeTransfer();
+      if (enablePin ?? false) {
+        final loadingDialog = TransferLoadingDialog.show(context,
+            gasPriority: cubit.state.selectedGasPriority);
 
-        // Hide loading dialog
-        Navigator.pop(context);
+        try {
+          final success = await cubit.executeTransfer();
 
-        /// 최종 확인 화면
-        Navigator.pop(context);
-        if (success) {
-          /// 금액 확인 부분
+          // Hide loading dialog
           Navigator.pop(context);
 
-          /// 친구 선택 확인 부분
+          /// 최종 확인 화면
+          Navigator.pop(context);
+          if (success) {
+            /// 금액 확인 부분
+            Navigator.pop(context);
+
+            /// 친구 선택 확인 부분
+            Navigator.pop(context);
+
+            var currentFee =
+                cubit.state.gasFees[cubit.state.selectedGasPriority];
+            TransferSuccessScreen.push(
+              context,
+              transactionId: "",
+              amount: cubit.state.amount,
+              tokenInfo: cubit.state.balance.info,
+              fee: currentFee!,
+              recipient: cubit.state.toPlanet,
+            );
+
+            context.read<AppBloc>().add(AppUpdate(
+                  updatePlanets: false,
+                  updateBalanceToken: widget.info,
+                ));
+          }
+        } catch (e) {
+          // Hide loading dialog
           Navigator.pop(context);
 
-          var currentFee = cubit.state.gasFees[cubit.state.selectedGasPriority];
-          TransferSuccessScreen.push(
+          // amount 입력 페이지로 이동
+          Navigator.pop(context);
+          await DefaultDialog.show(
             context,
-            transactionId: "",
-            amount: cubit.state.amount,
-            tokenInfo: cubit.state.balance.info,
-            fee: currentFee!,
-            recipient: cubit.state.toPlanet,
+            title: "Error",
+            description: "An error occurred: ${e.toString()}",
+            // confirmText: "OK",
           );
-
-          context.read<AppBloc>().add(AppUpdate(
-                updatePlanets: false,
-                updateBalanceToken: widget.info,
-              ));
         }
-      } catch (e) {
-        // Hide loading dialog
-        Navigator.pop(context);
-
-        await DefaultDialog.show(
-          context,
-          title: "Error",
-          description: "An error occurred: ${e.toString()}",
-          // confirmText: "OK",
-        );
       }
     }
   }

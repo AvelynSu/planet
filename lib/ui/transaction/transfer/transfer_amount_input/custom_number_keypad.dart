@@ -8,11 +8,13 @@ import '../../../common/custom_image.dart';
 class CustomNumberKeyPad extends StatefulWidget {
   final String initialValue;
   final Function(String) onUpdateValue;
+  final bool enableDot;
 
   const CustomNumberKeyPad({
     super.key,
     required this.initialValue,
     required this.onUpdateValue,
+    this.enableDot = true,
   });
 
   @override
@@ -61,7 +63,7 @@ class _CustomNumberKeyPadState extends State<CustomNumberKeyPad> {
           Expanded(
             child: Row(
               children: [
-                _button(value: "."),
+                _button(value: widget.enableDot ? "." : ""),
                 _button(value: "0"),
                 _button(value: "delete"),
               ],

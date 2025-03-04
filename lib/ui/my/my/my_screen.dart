@@ -7,9 +7,9 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
-import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/my/planet_setting/planet_setting/planet_setting_screen.dart';
+import 'package:planet/ui/my/security/security_screen.dart';
 import 'package:planet/util/app_constant.dart';
 
 import '../../../../enum/screen_status.dart';
@@ -93,7 +93,7 @@ class _MyScreenState extends State<MyScreen> {
                       Expanded(
                         child: _verticalTile(
                           onTap: () {
-                            DefaultDialog.showComingSoon(context);
+                            SecurityScreen.push(context);
                           },
                           title: "Security",
                           iconPath: "icons/ic_lock.svg",
@@ -154,7 +154,7 @@ class _MyScreenState extends State<MyScreen> {
                         onTap: () {},
                         title: "Version",
                         showArrow: false,
-                        subText: "1.0.0",
+                        subText: AppConstant.appVersion,
                       ),
                       SettingRowTile(
                         onTap: () async {

@@ -7,6 +7,8 @@ import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
+import 'package:planet/util/app_constant.dart';
+import 'package:planet/util/app_util.dart';
 
 import '../../service/wallet/wallet_balance/wallet_balance_service.dart';
 import 'bloc.dart';
@@ -31,33 +33,28 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
     // await apiRepository.signOut();
-
-    // final response = await http.Client().post(
-    //   Uri.parse(
-    //       'https://api.blockcypher.com/v1/bcy/test/faucet?token=${WalletConfig().blockCypherToken}'),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: jsonEncode({
-    //     'address': 'C1JCxVzgKoAcp4uEqDvPTreEDWVpzcqZ64', // 여기에 테스트넷 주소 입력
-    //     'amount': 1000000 // 요청할 금액 (사토시 단위, 최대 1,000,000)
-    //   }),
-    // );
-    //
-    // if (response.statusCode != 200) {
-    //   throw Exception(
-    //       'Failed to request testnet coins: ${response.statusCode}, ${response.body}');
-    // }
-    // return;
-
     yield AppLoading();
     FirebaseAnalytics.instance.logAppOpen();
+
+    var latestVersion = await apiRepository.getVersion();
+
+    if (AppUtil.isUpdateRequired(AppConstant.appVersion, latestVersion)) {
+      yield AppRequiredVersionUpdate();
+      return;
+    }
+
     var localPlanets = await LocalStorageService.getLocalPlanets();
 
     /// 로컬에 저장된 플래닛이 없는 경우
     if (localPlanets.isEmpty) {
       yield AppUnInitialized.sign;
     } else {
+      var pin = SharedPrefsUtil.getString(AppConstant.pinCode) ?? "";
+      if (pin.isEmpty) {
+        yield AppUnInitialized.pin;
+        return;
+      }
+
       // 로컬에 있는 플래닛 FB에서 정보 가져오기
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
       // 현재 앱에서 보여줄 메인 플래닛

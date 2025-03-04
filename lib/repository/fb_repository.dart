@@ -14,6 +14,18 @@ class ApiRepository {
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
+  final _commonCol =
+      FirebaseFirestore.instance.collection(AppConstant.fbCommon);
+
+  /// 현재 앱 버전 가져오기
+  /// 행성 전부 불러오기
+  Future<String> getVersion() async {
+    var res = await _commonCol.doc("admin").get();
+    var result = res.data()?["latest_version"] ?? "";
+
+    return result;
+  }
+
   /// 부모 주소의 하위 행성들 불러오기
   // parentPlanet : network 에 맞는 인덱스가 0인 행성
   Future<List<Planet>> getChildPlanets(
