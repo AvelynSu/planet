@@ -104,7 +104,7 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeCurrencyBottomSheet> {
         padding: EdgeInsets.symmetric(horizontal: hPadding),
         child: Text(
           title,
-          style: fontR(16, color: C.current.mainText)
+          style: fontR(16, color: Colors.black)
               .copyWith(fontWeight: currency == title ? FontWeight.w600 : null),
         ),
       ),

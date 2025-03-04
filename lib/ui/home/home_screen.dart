@@ -64,75 +64,68 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Container(
                       height: double.infinity,
-                      child: SingleChildScrollView(
-                        child: Container(
-                          constraints: BoxConstraints(
-                              minHeight: MediaQuery.of(context).size.height),
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                  height: 52 + AppUi.statusBarHeight(context)),
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height,
+                      ),
+                      child: ListView(
+                        padding: const EdgeInsets.all(0),
+                        children: [
+                          SizedBox(height: 52 + AppUi.statusBarHeight(context)),
 
-                              /// 플래닛 이름
-                              Column(
+                          /// 플래닛 이름
+                          Column(
+                            children: [
+                              Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.all(20),
-                                        child: PlanetComponent(
-                                          data: state.data,
-                                          size: 160,
-                                        ),
-                                      ),
-                                      Lottie.asset("assets/sparkle.json",
-                                          width: 200),
-                                    ],
-                                  ),
                                   Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 16, bottom: 8),
-                                    child: Text(
-                                      state.planet.name,
-                                      style: fontR(
-                                        24,
-                                        color: C.current.mainText,
-                                      ),
+                                    margin: const EdgeInsets.all(20),
+                                    child: PlanetComponent(
+                                      data: state.data,
+                                      size: 160,
                                     ),
                                   ),
-                                  CopyComponent(
-                                    planet: state.planet,
-                                    onSuccess: () {
-                                      PlanetAddressBottomSheet.show(context,
-                                          planet: state.planet);
-                                    },
-                                  ),
+                                  Lottie.asset("assets/sparkle.json",
+                                      width: 200),
                                 ],
                               ),
-
-                              const SizedBox(height: 28),
-                              if (state.status == ScreenStatus.loading)
-                                Column(
-                                  children: [
-                                    ...List.generate(
-                                        5, (e) => Skeleton.homeTile),
-                                  ],
+                              Container(
+                                padding:
+                                    const EdgeInsets.only(top: 16, bottom: 8),
+                                child: Text(
+                                  state.planet.name,
+                                  style: fontR(
+                                    24,
+                                    color: C.current.mainText,
+                                  ),
                                 ),
-                              ...state.balances.map(
-                                (e) => BounceButton(
-                                  onTap: () {
-                                    TransactionHistoryScreen.push(context,
-                                        info: e);
-                                  },
-                                  child: HomeTile(item: e),
-                                ),
+                              ),
+                              CopyComponent(
+                                planet: state.planet,
+                                onSuccess: () {
+                                  PlanetAddressBottomSheet.show(context,
+                                      planet: state.planet);
+                                },
                               ),
                             ],
                           ),
-                        ),
+
+                          const SizedBox(height: 28),
+                          if (state.status == ScreenStatus.loading)
+                            Column(
+                              children: [
+                                ...List.generate(5, (e) => Skeleton.homeTile),
+                              ],
+                            ),
+                          ...state.balances.map(
+                            (e) => BounceButton(
+                              onTap: () {
+                                TransactionHistoryScreen.push(context, info: e);
+                              },
+                              child: HomeTile(item: e),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -178,22 +171,23 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 52,
       padding: EdgeInsets.symmetric(horizontal: hPadding),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomImage(
-            path: "icons/ic_planet.svg",
-            color: C.current.sub01,
-            width: 32,
-          ),
+          // Container(
+          //   // path: "icons/ic_planet.svg",
+          //   // color: C.current.sub01,
+          //   width: 32,
+          // ),
           Text(
             state.planet.networkType?.title ?? "",
             style: fontR(18, color: C.current.onBackground),
           ),
+          const SizedBox(width: 4),
           CustomImage(
-            width: 26,
+            width: 20,
             rotate: pi / 2,
             path: "icons/ic_small_arrow.svg",
-            color: C.current.sub01,
+            color: C.current.onBackground,
           )
         ],
       ),

@@ -9,6 +9,7 @@ import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
+import 'package:planet/ui/transaction/transfer/select_friend/qr_scanner_screen.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
@@ -66,6 +67,16 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
               onBack: () {
                 Navigator.pop(context);
               },
+              suffix: CustomImage(
+                width: 32,
+                path: "icons/ic_capture.svg",
+                onTap: () async {
+                  var result = await QrScannerScreen.push(context);
+                  if (result != null) {
+                    cubit.onUpdateSearchValue(result!);
+                  }
+                },
+              ),
               title: "Transer",
               body: Stack(
                 alignment: Alignment.bottomCenter,
@@ -116,22 +127,20 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                               children: [
                                 _listGroupTitle("Planets"),
                                 Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        ...state.filtered.map(
-                                          (e) => _planetTile(
-                                            e,
-                                            () {
-                                              widget.onSelect(e);
-                                            },
-                                          ),
+                                  child: ListView(
+                                    padding: EdgeInsets.zero,
+                                    children: [
+                                      ...state.filtered.map(
+                                        (e) => _planetTile(
+                                          e,
+                                          () {
+                                            widget.onSelect(e);
+                                          },
                                         ),
-                                        SizedBox(
-                                            height:
-                                                AppUi.bottomPadding(context)),
-                                      ],
-                                    ),
+                                      ),
+                                      SizedBox(
+                                          height: AppUi.bottomPadding(context)),
+                                    ],
                                   ),
                                 ),
                               ],

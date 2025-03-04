@@ -62,13 +62,13 @@ class _PinScreenState extends State<PinScreen> {
   void _updateGuideText() {
     switch (currentMode) {
       case PinMode.setup:
-        guideText = "새로운 PIN 번호를 입력하세요";
+        guideText = "Enter your new PIN code";
         break;
       case PinMode.confirm:
-        guideText = "PIN 번호를 다시 입력하세요";
+        guideText = "Re-enter your PIN code";
         break;
       case PinMode.validate:
-        guideText = "PIN 번호를 입력하세요";
+        guideText = "Enter your PIN code";
         break;
     }
     setState(() {});
@@ -101,7 +101,7 @@ class _PinScreenState extends State<PinScreen> {
               _updateGuideText();
               // 오류 메시지 표시
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("PIN 번호가 일치하지 않습니다. 다시 시도해주세요.")));
+                  SnackBar(content: Text("PIN codes don't match. Try again.")));
             });
           }
           break;
@@ -115,7 +115,7 @@ class _PinScreenState extends State<PinScreen> {
               value = "";
               // 오류 메시지 표시
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("잘못된 PIN 번호입니다. 다시 시도해주세요.")));
+                  SnackBar(content: Text("Incorrect PIN code. Try again.")));
             });
           }
           break;
@@ -146,7 +146,7 @@ class _PinScreenState extends State<PinScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "암호를 입력하세요",
+                      "Enter your passcode",
                       style: fontM(14, color: C.current.sub01),
                     ),
                     const SizedBox(height: 36),

@@ -50,5 +50,9 @@
       <string>sms</string>
       <string>tel</string>
     </array>
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
+    <key>NSCameraUsageDescription</key>
+    <string>QR코드 스캔을 위해 카메라 사용 권한을 허용하시겠습니까?</string>
 </dict>
 </plist>

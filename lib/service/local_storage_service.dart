@@ -6,6 +6,8 @@ import 'package:planet/model/planet.dart';
 import 'package:planet/util/wallet_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../util/app_constant.dart';
+
 class LocalStorageService {
   // 넣는값만 추가하거나 수정하기
   static Future<void> saveMnemonics(List<Planet> mnemonics,
@@ -117,4 +119,7 @@ class SharedPrefsUtil {
   static Future<bool> remove(String key) => _prefs.remove(key);
 
   static Future<bool> clear() => _prefs.clear();
+
+  static get currency =>
+      SharedPrefsUtil.getString(AppConstant.currency) ?? "USD";
 }

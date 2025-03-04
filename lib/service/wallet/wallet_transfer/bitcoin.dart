@@ -208,11 +208,11 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           '$_apiBaseUrl/addrs/$fromAddress?unspentOnly=true&includeScript=true&token=${WalletConfig().blockCypherToken}'));
 
       if (utxoResponse.statusCode != 200) {
-        throw Exception('UTXO 가져오기 실패: ${utxoResponse.body}');
+        throw Exception('Failed to fetch UTXOs : ${utxoResponse.body}');
       }
 
       // API 응답 디버깅
-      debugPrint('UTXO 응답: ${utxoResponse.body}');
+      debugPrint('UTXO response : ${utxoResponse.body}');
 
       final Map<String, dynamic> responseData = json.decode(utxoResponse.body);
 
@@ -228,7 +228,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           .toList();
 
       if (unspentOutputs.isEmpty) {
-        throw Exception('사용 가능한 미사용 UTXO가 없습니다.');
+        throw Exception('No available unspent UTXOs found.');
       }
 
       // 트랜잭션 빌더
@@ -252,7 +252,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       if (totalInput < amount.toInt() + fee.toInt()) {
         throw Exception(
-            '잔액 부족: 총 입력($totalInput)이 출력(${amount.toInt()})과 수수료(${fee.toInt()})보다 작습니다.');
+            'Insufficient balance: total input ($totalInput) is less than output (${amount.toInt()}) plus fee(${fee.toInt()})');
       }
 
       // 출력 추가
@@ -276,7 +276,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       // 트랜잭션 브로드캐스트
       final txHex = txb.build().toHex();
 
-      debugPrint('트랜잭션 Hex: $txHex');
+      debugPrint('Transaction Hex: $txHex');
 
       final broadcastResponse = await http.post(
         Uri.parse(
@@ -286,7 +286,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       );
 
       if (broadcastResponse.statusCode != 201) {
-        throw Exception('트랜잭션 브로드캐스트 실패: ${broadcastResponse.body}');
+        throw Exception(
+            'Failed to broadcast transaction : ${broadcastResponse.body}');
       }
 
       final broadcastResult = json.decode(broadcastResponse.body);

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,8 +95,8 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: ListView(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         /// 사용 가능한 잔액
                         Container(
@@ -154,7 +156,7 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                     ),
                   ),
                   Container(
-                    height: 360,
+                    height: min(360, MediaQuery.of(context).size.height * 0.4),
                     child: CustomNumberKeyPad(
                       initialValue: state.amount,
                       onUpdateValue: (amount) {

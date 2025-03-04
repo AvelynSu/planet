@@ -28,6 +28,8 @@ class _CustomBottomSheetFrameState extends State<CustomBottomSheetFrame> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
       width: double.infinity,
       margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       decoration: BoxDecoration(

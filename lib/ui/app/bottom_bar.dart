@@ -26,7 +26,7 @@ class _BottomBarState extends State<BottomBar> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(
-        top: 14,
+        top: 12,
         bottom: AppUi.bottomPadding(context),
         left: 32,
         right: 32,
@@ -74,9 +74,9 @@ class _BottomBarState extends State<BottomBar> {
             CustomImage(
               path: type.iconPath,
               color: isSelected ? primary : borderDisabled,
-              height: 38,
+              height: 36,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               type.title,
               style: fontM(

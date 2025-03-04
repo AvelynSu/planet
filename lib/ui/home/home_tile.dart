@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/token_balance.dart';
+import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_image.dart';
 
 class HomeTile extends StatelessWidget {
@@ -14,9 +15,9 @@ class HomeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 16,
+      padding: EdgeInsets.only(
+        left: hPadding,
+        right: hPadding,
         top: 16,
         bottom: 16,
       ),
@@ -31,10 +32,10 @@ class HomeTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 24,
+            height: 24,
             clipBehavior: Clip.antiAlias,
-            margin: const EdgeInsets.only(right: 12),
+            margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
               color: C.color(C.current.sub01.withValues(alpha: 0.18),
@@ -45,7 +46,7 @@ class HomeTile extends StatelessWidget {
           Expanded(
             child: Text(
               item.info.name,
-              style: fontM(15, color: C.current.mainText),
+              style: fontM(14, color: C.current.mainText),
             ),
           ),
           Column(
@@ -53,16 +54,17 @@ class HomeTile extends StatelessWidget {
             children: [
               Text(
                 "${item.balance}" + " ${item.info.symbol}",
-                style: fontM(15, color: C.current.mainText),
+                style: fontM(14, color: C.current.mainText),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
-                "${item.balance}",
-                style: fontM(14, color: C.current.sub01),
+                "${item.balance}"
+                "${SharedPrefsUtil.currency}",
+                style: fontM(12, color: C.current.sub01),
               ),
             ],
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 4),
           CustomImage(
             width: 20,
             path: "icons/ic_small_arrow.svg",
