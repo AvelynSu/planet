@@ -259,37 +259,67 @@ class TransactionHistory {
       final DateTime? timestamp =
           tx['received'] != null ? DateTime.parse(tx['received']) : null;
 
-      // 총 입력 및 출력 계산
+      // 총 입력 및 출력 리스트 가져오기
       List inputs = tx['inputs'] ?? [];
       List outputs = tx['outputs'] ?? [];
 
-      // 사용자 주소와 관련된 입출금 금액 계산
-      double value = 0;
-      bool isIncoming = false;
+      // 사용자 주소가 inputs에 포함되어 있는지 확인 (내가 보낸 거래인지 체크)
+      bool isSentTransaction = inputs.any((input) {
+        List addresses = input['addresses'] ?? [];
+        return addresses.contains(userAddress);
+      });
 
-      // 받은 금액 계산 (outputs 중 사용자 주소로 들어온 금액)
-      for (var output in outputs) {
+      // 사용자 주소가 outputs에 포함되어 있는지 확인 (내가 받은 거래인지 체크)
+      bool isReceivedTransaction = outputs.any((output) {
         List addresses = output['addresses'] ?? [];
-        if (addresses.contains(userAddress)) {
-          value += (output['value'] ?? 0) / 100000000; // satoshi -> BTC 변환
-          isIncoming = true;
-        }
-      }
+        return addresses.contains(userAddress);
+      });
 
-      // 보낸 금액 계산 (inputs 중 사용자 주소에서 나간 금액)
-      if (!isIncoming) {
+      // 거래 유형 결정 (보낸 것인지 받은 것인지)
+      bool isIncoming = isReceivedTransaction && !isSentTransaction;
+
+      // 송금액 계산
+      double amount = 0;
+
+      if (isIncoming) {
+        // 받은 경우: outputs에서 내 주소로 들어온 금액 합산
+        for (var output in outputs) {
+          List addresses = output['addresses'] ?? [];
+          if (addresses.contains(userAddress)) {
+            amount += (output['value'] ?? 0) / 100000000; // satoshi -> BTC 변환
+          }
+        }
+      } else {
+        // 보낸 경우: 내가 보낸 총 금액 - 잔돈
+        double totalSent = 0;
+        double changeAmount = 0;
+
+        // Inputs에서 내가 보낸 총 금액 계산
         for (var input in inputs) {
           List addresses = input['addresses'] ?? [];
           if (addresses.contains(userAddress)) {
-            value = (tx['total'] ?? 0) / 100000000; // satoshi -> BTC 변환
+            totalSent +=
+                (input['output_value'] ?? 0) / 100000000; // satoshi -> BTC 변환
           }
         }
+
+        // Outputs에서 내가 다시 받은 잔돈 확인
+        for (var output in outputs) {
+          List addresses = output['addresses'] ?? [];
+          if (addresses.contains(userAddress)) {
+            changeAmount +=
+                (output['value'] ?? 0) / 100000000; // satoshi -> BTC 변환
+          }
+        }
+
+        // 실제 송금액 = 내가 보낸 총 금액 - 내가 받은 잔돈
+        amount = totalSent - changeAmount;
       }
 
       // 수수료 계산
       double fee = (tx['fees'] ?? 0) / 100000000; // satoshi -> BTC 변환
 
-      // 송신자/수신자 주소 결정
+      // 송신자 주소 설정
       String from = 'Unknown';
       if (inputs.isNotEmpty &&
           inputs[0]['addresses'] is List &&
@@ -297,6 +327,7 @@ class TransactionHistory {
         from = inputs[0]['addresses'][0];
       }
 
+      // 수신자 주소 설정
       String to = 'Unknown';
       if (outputs.isNotEmpty &&
           outputs[0]['addresses'] is List &&
@@ -320,21 +351,15 @@ class TransactionHistory {
         to: to,
         timestamp: timestamp,
         tokenSymbol: 'BTC',
-        amount: value.abs(),
+        amount: amount.abs(), // 절대값 사용
         confirmations: confirmations,
-        isSuccess: true,
-        // BlockCypher API는 성공한 트랜잭션만 반환
-        decimals: 8,
-        // BTC는 항상 8 소수점
-        tokenAddress: null,
-        // BTC는 토큰 주소가 없음
+        isSuccess: true, // BlockCypher API는 성공한 트랜잭션만 반환
+        decimals: 8, // BTC는 항상 8 소수점
+        tokenAddress: null, // BTC는 토큰 주소가 없음
         fee: fee,
-        gas: 0,
-        // Bitcoin에는 해당 없음
-        gasPrice: 0,
-        // Bitcoin에는 해당 없음
-        gasUsed: 0,
-        // Bitcoin에는 해당 없음
+        gas: 0, // Bitcoin에는 해당 없음
+        gasPrice: 0, // Bitcoin에는 해당 없음
+        gasUsed: 0, // Bitcoin에는 해당 없음
         status: transactionStatus,
       );
     } catch (e) {

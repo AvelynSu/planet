@@ -182,7 +182,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     required BigInt fee,
   }) async {
     try {
-      // 3. 트랜잭션 준비
+      // 네트워크 설정
       final network = WalletConfig.env == Environment.prod
           ? btc.bitcoin
           : btc.NetworkType(
@@ -190,90 +190,94 @@ class _BitcoinTransferService implements _BlockchainTransferService {
               bech32: 'bc',
               bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
               pubKeyHash: 0x1B,
-              // BCY testnet용 pubKeyHash
               scriptHash: 0x1F,
-              // BCY testnet용 scriptHash
-              wif: 0x49, // BCY testnet용 WIF
+              wif: 0x49,
             );
 
-      // 1. 발신자의 개인 키로부터 공개 키와 주소 생성
+      // 키페어 생성
       final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey),
           network: network);
       final senderAddress = getAddressFromPrivateKey(privateKey);
 
-      // 주소 일치 확인
       if (senderAddress != fromAddress) {
         throw Exception('제공된 주소와 개인 키가 일치하지 않습니다.');
       }
 
-      // 2. 미사용 트랜잭션 출력(UTXO) 가져오기
+      // 다른 API 엔드포인트 사용 - unspent outputs만 가져옴
       final utxoResponse = await http.get(Uri.parse(
-          '$_apiBaseUrl/addrs/$fromAddress/full?unspentOnly=true&token=${WalletConfig().blockCypherToken}'));
+          '$_apiBaseUrl/addrs/$fromAddress?unspentOnly=true&includeScript=true&token=${WalletConfig().blockCypherToken}'));
 
       if (utxoResponse.statusCode != 200) {
         throw Exception('UTXO 가져오기 실패: ${utxoResponse.body}');
       }
 
-      final Map<String, dynamic> utxoData = json.decode(utxoResponse.body);
-      final List<dynamic> utxos = utxoData['txs'] ?? [];
+      // API 응답 디버깅
+      debugPrint('UTXO 응답: ${utxoResponse.body}');
 
-      if (utxos.isEmpty) {
-        throw Exception('사용 가능한 UTXO가 없습니다.');
+      final Map<String, dynamic> responseData = json.decode(utxoResponse.body);
+
+      // txrefs 필드에서 미사용 출력 가져옴
+      List<dynamic> unspentOutputs = responseData['txrefs'] ?? [];
+
+      // 미사용 상태만 명시적으로 필터링
+      unspentOutputs = unspentOutputs
+          .where((txref) =>
+                  txref['spent'] != true &&
+                  txref['tx_output_n'] >= 0 // 출력 인덱스가 0 이상인 경우만 (입력이 아닌 출력)
+              )
+          .toList();
+
+      if (unspentOutputs.isEmpty) {
+        throw Exception('사용 가능한 미사용 UTXO가 없습니다.');
       }
 
+      // 트랜잭션 빌더
       final txb = btc.TransactionBuilder(network: network);
       int totalInput = 0;
 
-      // UTXO 추가 및 총 입력 계산
-      for (var utxo in utxos) {
-        // 'tx_hash' 대신 'hash'를 사용하고, 'tx_output_n' 대신 출력 인덱스를 찾아야 합니다
-        // 'outputs' 배열에서 해당 주소로 보낸 출력을 찾습니다
-        String txHash = utxo['hash'];
+      // 선택된 UTXO 입력 추가
+      for (var utxo in unspentOutputs) {
+        String txHash = utxo['tx_hash'];
+        int vout = utxo['tx_output_n'];
+        int value = utxo['value'];
 
-        // outputs 배열을 순회하며 내 주소로 보낸 출력을 찾습니다
-        List<dynamic> outputs = utxo['outputs'] ?? [];
-        for (int i = 0; i < outputs.length; i++) {
-          var output = outputs[i];
-          List<dynamic> addresses = output['addresses'] ?? [];
+        txb.addInput(txHash, vout);
+        totalInput += value;
 
-          // 내 주소가 포함된 출력을 찾습니다
-          if (addresses.contains(fromAddress)) {
-            // myAddress는 지갑 주소변수로 대체해야 합니다
-            txb.addInput(txHash, i); // 해당 트랜잭션 해시와 출력 인덱스 사용
-            totalInput += output['value'] as int; // 'value'를 사용하여 금액 추가
-          }
+        // 필요한 금액을 충족하면 중단 (입력 최소화)
+        if (totalInput >= amount.toInt() + fee.toInt()) {
+          break;
         }
       }
 
-      // 사토시 단위로 변환
-      final int outputAmount = amount.toInt();
-      final int txFee = fee.toInt();
-
-      // 출력 추가 (수신 주소)
-      txb.addOutput(toAddress, outputAmount);
-
-      // 거스름돈 계산 및 출력 추가
-      final int changeAmount = totalInput - outputAmount - txFee;
-      if (changeAmount < 0) {
+      if (totalInput < amount.toInt() + fee.toInt()) {
         throw Exception(
-            '잔액 부족: 총 입력($totalInput)이 출력($outputAmount)과 수수료($txFee)보다 작습니다.');
+            '잔액 부족: 총 입력($totalInput)이 출력(${amount.toInt()})과 수수료(${fee.toInt()})보다 작습니다.');
       }
 
-      // 거스름돈을 발신자 주소로 반환
-      if (changeAmount > 0) {
+      // 출력 추가
+      txb.addOutput(toAddress, amount.toInt());
+
+      // 거스름돈 계산 및 추가
+      final int changeAmount = totalInput - amount.toInt() - fee.toInt();
+      if (changeAmount > 546) {
+        // 546 사토시는 더스트 한계
         txb.addOutput(fromAddress, changeAmount);
       }
 
-      // 4. 트랜잭션 서명
-      for (int i = 0; i < utxos.length; i++) {
+      // 서명
+      for (int i = 0; i < txb.inputs.length; i++) {
         txb.sign(
           vin: i,
           keyPair: keyPair,
         );
       }
 
-      // 5. 트랜잭션 브로드캐스트
+      // 트랜잭션 브로드캐스트
       final txHex = txb.build().toHex();
+
+      debugPrint('트랜잭션 Hex: $txHex');
+
       final broadcastResponse = await http.post(
         Uri.parse(
             '$_apiBaseUrl/txs/push?token=${WalletConfig().blockCypherToken}'),
@@ -286,7 +290,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       }
 
       final broadcastResult = json.decode(broadcastResponse.body);
-
       return broadcastResult['tx']['hash'];
     } catch (e) {
       debugPrint('Error sending Bitcoin transaction with custom fee: $e');

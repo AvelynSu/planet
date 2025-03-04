@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/model/planet.dart';
+import 'package:planet/util/wallet_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -50,7 +51,8 @@ class LocalStorageService {
     if (encodedJson == null) return [];
 
     final jsonList = jsonDecode(encodedJson) as List;
-    return jsonList.map((json) => Planet.fromJson(json)).toList();
+    var result = jsonList.map((json) => Planet.fromJson(json)).toList();
+    return result.where((e) => e.env == WalletConfig.env).toList();
   }
 
   static Future<void> clearMnemonics() async {

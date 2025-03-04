@@ -50,7 +50,7 @@ class ApiRepository {
 
     var result =
         res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
-
+    result = result.where((e) => e.env == WalletConfig.env).toList();
     return result;
   }
 
