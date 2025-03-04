@@ -5,6 +5,7 @@ import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
+import 'package:planet/ui/change_curreny_bottom_sheet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/generate_planet.dart';
@@ -84,10 +85,7 @@ class _MyScreenState extends State<MyScreen> {
                             PlanetSettingScreen.push(context);
                           },
                           title: appState.current.name,
-                          body: PlanetComponent(
-                            data: appState.current.name,
-                            size: 36,
-                          ),
+                          body: planet(appState),
                         ),
                       ),
                       Expanded(
@@ -111,12 +109,17 @@ class _MyScreenState extends State<MyScreen> {
                       //   title: "Announcements",
                       // ),
                       // SettingRowTile(onTap: () {}, title: "FAQ"),
-                      // SettingRowTile(
-                      //   onTap: () {},
-                      //   showArrow: false,
-                      //   title: "Currency",
-                      //   subText: "USD",
-                      // ),
+                      SettingRowTile(
+                        onTap: () async {
+                          await ChangeCurrencyBottomSheet.show(context);
+                          setState(() {});
+                        },
+                        showArrow: false,
+                        title: "Currency",
+                        subText:
+                            SharedPrefsUtil.getString(AppConstant.currency) ??
+                                "USD",
+                      ),
                       SettingRowTile(
                         onTap: () {
                           setThemeTheme();
@@ -174,6 +177,34 @@ class _MyScreenState extends State<MyScreen> {
           },
         ),
       ),
+    );
+  }
+
+  planet(AppLoaded appState) {
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        PlanetComponent(
+          data: appState.current.name,
+          size: 36,
+        ),
+        Transform.translate(
+          offset: Offset(12, 4),
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: C.current.background,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: CustomImage(
+              width: 22,
+              path: "icons/ic_setting.svg",
+              color: C.current.mainText,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

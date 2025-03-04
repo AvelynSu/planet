@@ -19,7 +19,7 @@ enum MenuType {
       case MenuType.home:
         return "icons/ic_planet.svg";
       case MenuType.planets:
-        return "icons/ic_planet_setting.svg";
+        return "icons/ic_planets_menu.svg";
       case MenuType.my:
         return "icons/ic_setting.svg";
     }

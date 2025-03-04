@@ -158,6 +158,8 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
                   ),
                 ),
                 CopyComponent(
+                  showSuccessDialog: true,
+                  onSuccess: () {},
                   planet: widget.planet,
                 ),
                 const SizedBox(height: 60),
