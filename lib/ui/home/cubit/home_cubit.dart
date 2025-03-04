@@ -36,8 +36,11 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(status: ScreenStatus.loading));
     _update(appBloc.state as AppLoaded);
 
+    // var current = appBloc.state as AppLoaded;
+    // if ()
+
     // 홈화면 눌러서 돌아올때마다 업데이트해줘야 하므로
-    appBloc.add(AppUpdate(updateBalance: true));
+    // appBloc.add(AppUpdate(updateBalance: true));
   }
 
   onUpdate() async {
