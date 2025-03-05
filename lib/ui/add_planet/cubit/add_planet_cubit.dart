@@ -50,28 +50,24 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
     if (state.nickname.isEmpty) {
       return;
     }
-    emit(state.copyWith(status: ScreenStatus.loading));
 
-    var currentPlanet = (appBloc.state as AppLoaded).current;
+    emit(state.copyWith(status: ScreenStatus.loading));
 
     // 사용가능한 닉네임인지 보기
     var enablePlanetName = await apiRepository.enablePlanetName(state.nickname);
 
+    // 현재 플래닛
+    var currentPlanet = (appBloc.state as AppLoaded).current;
+
     if (enablePlanetName) {
       var walletService = WalletService();
 
-      var planets = (appBloc.state as AppLoaded)
-          .planets
-          .where((e) => e.networkType == networkType)
-          .toList();
+      // 내 플래닛 중에 해당 네트워크 플래닛 가져오기
+      var planets = await apiRepository.getPlanetsByParents(
+          mnemonic: currentPlanet.mnemonic, network: networkType);
 
       // fb에서 불러온것 중에 부모 행성 찾기
       var parent = planets.where((e) => e.pathIdx == 0).firstOrNull;
-
-      // 부모가 있는 경우 child 가져오기 (인덱스 계산해주기 위함) : 만약 부모가 없으면 무조건 0을 만듦 (비트코인 같은거)
-      List<Planet> childs = parent != null
-          ? await apiRepository.getChildPlanets(parent.address, networkType)
-          : [];
       var idx = 0;
 
       // 새로운 child 만들기 위한 dto
@@ -86,8 +82,8 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       );
 
       // 이번에 니모닉 몇 번째꺼 해야 하는지
-      if (childs.isNotEmpty) {
-        for (var item in childs) {
+      if (planets.isNotEmpty) {
+        for (var item in planets) {
           if (item.pathIdx >= idx) {
             idx = item.pathIdx + 1;
           }
@@ -101,6 +97,8 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       planet = planet.copyWith(
         address: address,
         pathIdx: idx,
+
+        // 부모 지갑이 없으면 이게 부모지갑이 됨
         parentsAddress: planet.parentsAddress.isEmpty ? address : null,
       );
 
@@ -108,7 +106,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       await apiRepository.addPlanet(planet);
 
       // 로컬에 저장
-      await LocalStorageService.saveMnemonics([planet],
+      await LocalStorageService.saveMnemonics([planet, ...planets],
           isCurrentAddress: planet.address);
 
       appBloc.add(AppUpdate(updateBalance: true));

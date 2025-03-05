@@ -121,8 +121,6 @@ class WalletService {
         .data
         .address;
 
-    print("생성된 주소: $address"); // 로그 추가
-
     return address ?? "";
   }
 

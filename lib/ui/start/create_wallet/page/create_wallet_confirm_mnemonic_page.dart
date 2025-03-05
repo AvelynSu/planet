@@ -77,7 +77,7 @@ class _CreateWalletConfirmMnemonicPageState
   }
 
   // 단어 선택 처리
-  void _handleWordSelection(String selectedWord) {
+  void _handleWordSelection(String selectedWord) async {
     if (isVerifying) return;
 
     setState(() {
@@ -92,15 +92,18 @@ class _CreateWalletConfirmMnemonicPageState
       // 정답일 경우
       if (currentStep == challengeIndices.length - 1) {
         // 모든 단계 완료
-        Future.delayed(const Duration(milliseconds: 500), () {
-          Navigator.pop(context);
+        var planet = await cubit.onGetRequiredPlanet();
+
+        Navigator.pop(context);
+
+        if (planet != null) {
           SetNicknameScreen.push(
             context,
             planet: Planet(
               mnemonic: cubit.state.mnemonic,
             ),
           );
-        });
+        }
       } else {
         // 다음 단계로
         setState(() {

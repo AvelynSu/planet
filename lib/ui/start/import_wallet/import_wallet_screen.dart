@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_field.dart';
@@ -224,15 +223,12 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                           title: "Restore Wallet",
                           onTap: _isValidInput
                               ? () async {
-                                  var planet = await cubit.getAddress();
-                                  if (planet != Planet.empty) {
-                                    if (planet.name.isEmpty) {
-                                      Navigator.pop(context);
-                                      SetNicknameScreen.push(context,
-                                          planet: planet);
-                                    } else {
-                                      Navigator.pop(context);
-                                    }
+                                  var planet =
+                                      await cubit.getRequiredNicknamePlanet();
+                                  Navigator.pop(context);
+                                  if (planet != null && planet.name.isEmpty) {
+                                    SetNicknameScreen.push(context,
+                                        planet: planet);
                                   }
                                 }
                               : null,

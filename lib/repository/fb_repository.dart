@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
+import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/wallet_config.dart';
+
+import '../service/local_storage_service.dart';
 
 class ApiRepository {
   final _planetNameDoc = FirebaseFirestore.instance
@@ -24,19 +27,55 @@ class ApiRepository {
     return result;
   }
 
+  Future<Planet?> getRequiredNicknamePlanet({
+    required String mnemonic,
+    required Function onAppInitialize,
+  }) async {
+    var planet = Planet.empty;
+    var planets = await getPlanetsByParents(mnemonic: mnemonic);
+
+    // 등록된 지갑이 아니면
+    if (planets.isEmpty) {
+      // 등록된 지갑이 아니면 빈 Planet 생성
+      var address = await WalletService()
+          .generateHDAddress(NetworkType.ethereum, mnemonic, 0);
+      planet = Planet(
+        networkType: NetworkType.ethereum,
+        address: address,
+        mnemonic: mnemonic,
+      );
+      return planet;
+    } else {
+      // 등록된 지갑이면 저장해주기
+      await LocalStorageService.saveMnemonics(planets);
+      onAppInitialize();
+    }
+  }
+
   /// 부모의 하위 행성들 모두 가져오기
   // 부모가 포함된 배열이 나옴
   // networkType 이 따로 없는 경우 모두 가져옴
-  Future<List<Planet>> getPlanetsByParents({
-    required List<Planet> parents,
-    NetworkType? networkType,
-  }) async {
+  Future<List<Planet>> getPlanetsByParents(
+      {required String mnemonic, NetworkType? network}) async {
+    var eth = await WalletService()
+        .generateHDAddress(NetworkType.ethereum, mnemonic, 0);
+    var btc = await WalletService()
+        .generateHDAddress(NetworkType.bitcoin, mnemonic, 0);
+
+    var parents = [
+      Planet(networkType: NetworkType.ethereum, parentsAddress: eth),
+      Planet(networkType: NetworkType.bitcoin, parentsAddress: btc)
+    ];
+
     var res = await _planetCol.where("parentsAddress",
         whereIn: [...parents.map((e) => e.parentsAddress)]).get();
 
     // 가져온 문서들을 Planet 객체로 변환
-    var planets =
-        res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
+    var planets = res.docs
+        .map((e) => Planet.fromJson(e.data(), id: e.id).copyWith(
+              mnemonic: mnemonic,
+            ))
+        .toList();
 
     var result = planets.where((planet) {
       return parents.any((parent) =>
@@ -44,8 +83,8 @@ class ApiRepository {
           parent.networkType == planet.networkType);
     }).toList();
 
-    if (networkType != null) {
-      result = result.where((e) => e.networkType == networkType).toList();
+    if (network != null) {
+      result = result.where((e) => e.networkType == network).toList();
     }
 
     return result;
