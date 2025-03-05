@@ -36,8 +36,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     yield AppLoading();
     FirebaseAnalytics.instance.logAppOpen();
 
+    /// 강제 업데이트
     var latestVersion = await apiRepository.getVersion();
-
     if (AppUtil.isUpdateRequired(AppConstant.appVersion, latestVersion)) {
       yield AppRequiredVersionUpdate();
       return;
@@ -45,16 +45,20 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     var localPlanets = await LocalStorageService.getLocalPlanets();
 
-    /// 로컬에 저장된 플래닛이 없는 경우
+    // 로컬에 저장된 플래닛이 없는 경우
     if (localPlanets.isEmpty) {
       yield AppUnInitialized.sign;
     } else {
+      // 로컬에 저장된거 있는데
+      // 핀번호가 없는 경우
       var pin = SharedPrefsUtil.getString(AppConstant.pinCode) ?? "";
       if (pin.isEmpty) {
         yield AppUnInitialized.pin;
         return;
       }
 
+      // 핀번호까지 잘 마친 경우
+      //-
       // 로컬에 있는 플래닛 FB에서 정보 가져오기
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
       // 현재 앱에서 보여줄 메인 플래닛
@@ -108,6 +112,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     } catch (_) {}
   }
 
+  Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {
+    await apiRepository.signOut();
+    add(AppInitialize());
+  }
+
   /// functions ------------------------------------
   /// functions ------------------------------------
   /// functions ------------------------------------
@@ -155,9 +164,4 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   /// ---------------------------------------------------
   /// ---------------------------------------------------
   /// ---------------------------------------------------
-
-  Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {
-    await apiRepository.signOut();
-    add(AppInitialize());
-  }
 }

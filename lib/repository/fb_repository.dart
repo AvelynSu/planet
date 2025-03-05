@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
@@ -7,7 +6,6 @@ import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/wallet_config.dart';
 
 class ApiRepository {
-  final fbAuth = auth.FirebaseAuth.instance;
   final _planetNameDoc = FirebaseFirestore.instance
       .collection(AppConstant.fbCommon)
       .doc(AppConstant.fbPlanetNameDoc);
@@ -26,16 +24,29 @@ class ApiRepository {
     return result;
   }
 
-  /// 부모 주소의 하위 행성들 불러오기
-  // parentPlanet : network 에 맞는 인덱스가 0인 행성
-  Future<List<Planet>> getChildPlanets(
-      String? parentPlanetAddress, NetworkType networkType) async {
-    var res = await _planetCol
-        .where("parentsAddress", isEqualTo: parentPlanetAddress)
-        .where("networkType", isEqualTo: networkType.name)
-        .get();
-    var result =
+  /// 부모의 하위 행성들 모두 가져오기
+  // 부모가 포함된 배열이 나옴
+  // networkType 이 따로 없는 경우 모두 가져옴
+  Future<List<Planet>> getPlanetsByParents({
+    required List<Planet> parents,
+    NetworkType? networkType,
+  }) async {
+    var res = await _planetCol.where("parentsAddress",
+        whereIn: [...parents.map((e) => e.parentsAddress)]).get();
+
+    // 가져온 문서들을 Planet 객체로 변환
+    var planets =
         res.docs.map((e) => Planet.fromJson(e.data(), id: e.id)).toList();
+
+    var result = planets.where((planet) {
+      return parents.any((parent) =>
+          parent.parentsAddress == planet.parentsAddress &&
+          parent.networkType == planet.networkType);
+    }).toList();
+
+    if (networkType != null) {
+      result = result.where((e) => e.networkType == networkType).toList();
+    }
 
     return result;
   }
