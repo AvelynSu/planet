@@ -94,8 +94,10 @@ class _CreateWalletConfirmMnemonicPageState
         // 모든 단계 완료
         var planet = await cubit.onGetRequiredPlanet();
 
+        // 컴펌하던 페이지 지우고
         Navigator.pop(context);
 
+        // 만약 수정해야할 플래닛이 있으면 닉네임 세팅 페이지 보여줌
         if (planet != null) {
           SetNicknameScreen.push(
             context,

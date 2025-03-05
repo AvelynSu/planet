@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/repository/fb_repository.dart';
+import 'package:planet/service/global_service.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/app/app_view.dart';
 import 'package:planet/ui/common/splash_screen.dart';
@@ -10,6 +13,7 @@ import 'package:planet/ui/force_update_screen.dart';
 import 'package:planet/ui/pin_screen.dart';
 import 'package:planet/ui/start/start/start_screen.dart';
 import 'package:planet/util/app_constant.dart';
+import 'package:provider/provider.dart';
 
 import 'bloc/app/app_bloc.dart';
 import 'bloc/app/app_event.dart';
@@ -28,14 +32,19 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MultiRepositoryProvider(
-    providers: [
-      RepositoryProvider<ApiRepository>(
-        create: (_) => ApiRepository(),
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => GlobalService(),
+      child: MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider<ApiRepository>(
+            create: (_) => ApiRepository(),
+          ),
+        ],
+        child: App(),
       ),
-    ],
-    child: App(),
-  ));
+    ),
+  );
 }
 
 class App extends StatefulWidget {
@@ -55,8 +64,17 @@ class _AppState extends State<App> {
       child: ValueListenableBuilder<ThemeMode>(
           valueListenable: CustomThemeMode.themeMode,
           builder: (context, mode, child) {
+            final settings = context.watch<GlobalService>();
             return MaterialApp(
-              title: "Planet Wallet",
+              title: AppLocalizations.of(context)?.planet_wallet,
+              locale: settings.locale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
               debugShowCheckedModeBanner: false,
               themeMode: mode,
               theme: ThemeData(
