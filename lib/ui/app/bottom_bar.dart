@@ -78,7 +78,7 @@ class _BottomBarState extends State<BottomBar> {
             ),
             const SizedBox(height: 4),
             Text(
-              type.title,
+              type.title(context),
               style: fontM(
                 12,
                 color: isSelected ? primary : borderDisabled,

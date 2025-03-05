@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/model/transfer_fee.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -79,7 +80,11 @@ class _AdvancedGasSelectorState extends State<AdvancedGasSelector> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Gas Price: ${fee.gasPrice} Wei',
+                          (AppLocalizations.of(context)
+                                      ?.gas_settings_gas_price_title(
+                                          fee.gasPrice) ??
+                                  "") +
+                              'Wei',
                           style: fontR(12, color: C.current.sub01),
                         ),
                       ],

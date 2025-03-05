@@ -1,16 +1,20 @@
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 enum MenuType {
   home,
   planets,
   my;
 
-  String get title {
+  String title(BuildContext context) {
     switch (this) {
       case MenuType.home:
-        return "Home";
+        return AppLocalizations.of(context)?.menu_type_home ?? '';
       case MenuType.planets:
-        return "Planets";
+        return AppLocalizations.of(context)?.menu_type_planets ?? '';
       case MenuType.my:
-        return "My";
+        return AppLocalizations.of(context)?.menu_type_my ?? '';
     }
   }
 

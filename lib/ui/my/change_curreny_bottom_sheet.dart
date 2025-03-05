@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_frame.dart';
@@ -63,7 +64,10 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeCurrencyBottomSheet> {
           update(newValue, count + 1);
         } else {
           /// 횟수 초과 팝업
-          DefaultDialog.show(context, description: "하루 최대 3번 수정할 수 있습니다");
+          DefaultDialog.show(context,
+              description:
+                  AppLocalizations.of(context)?.modify_currency_daily_limit ??
+                      '');
         }
       }
     }

@@ -3,7 +3,7 @@ import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/transaction/transfer/transfer_amount_input/custom_number_keypad.dart';
 import 'package:planet/util/app_constant.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../custom_theme.dart';
 import '../util/app_ui.dart';
 
@@ -62,13 +62,13 @@ class _PinScreenState extends State<PinScreen> {
   void _updateGuideText() {
     switch (currentMode) {
       case PinMode.setup:
-        guideText = "Enter your new PIN code";
+        guideText = AppLocalizations.of(context)?.pin_new ?? '';
         break;
       case PinMode.confirm:
-        guideText = "Re-enter your PIN code";
+        guideText = AppLocalizations.of(context)?.pin_reenter ?? '';
         break;
       case PinMode.validate:
-        guideText = "Enter your PIN code";
+        guideText = AppLocalizations.of(context)?.pin_enter ?? '';
         break;
     }
     setState(() {});
@@ -101,7 +101,7 @@ class _PinScreenState extends State<PinScreen> {
               _updateGuideText();
               // 오류 메시지 표시
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("PIN codes don't match. Try again.")));
+                  SnackBar(content: Text(AppLocalizations.of(context)?.pin_not_match ?? '')));
             });
           }
           break;
@@ -115,7 +115,7 @@ class _PinScreenState extends State<PinScreen> {
               value = "";
               // 오류 메시지 표시
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Incorrect PIN code. Try again.")));
+                  SnackBar(content: Text(AppLocalizations.of(context)?.pin_incorrect ?? '')));
             });
           }
           break;
@@ -146,7 +146,7 @@ class _PinScreenState extends State<PinScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "Enter your passcode",
+                      AppLocalizations.of(context)?.pin_passcode ?? '',
                       style: fontM(14, color: C.current.sub01),
                     ),
                     const SizedBox(height: 36),

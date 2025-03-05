@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
@@ -86,7 +87,7 @@ class TransferSuccessScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Transaction Successful',
+                    AppLocalizations.of(context)?.transfer_successful ?? '',
                     style: fontSB(14, color: C.current.mainText),
                     textAlign: TextAlign.center,
                   ),
@@ -94,7 +95,8 @@ class TransferSuccessScreen extends StatelessWidget {
                   const SizedBox(height: 80),
 
                   TransferLabel(
-                    title: "To",
+                    title:
+                        AppLocalizations.of(context)?.transfer_label_to ?? '',
                     value: appState.current.name,
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
@@ -108,7 +110,9 @@ class TransferSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   TransferLabel(
-                      title: "From",
+                      title:
+                          AppLocalizations.of(context)?.transfer_label_from ??
+                              '',
                       body: Container(
                         margin: const EdgeInsets.only(right: 12),
                         child: recipient.name.isEmpty
@@ -126,7 +130,7 @@ class TransferSuccessScreen extends StatelessWidget {
                           : AppUtil.shortenWalletAddress(recipient.address)),
 
                   _label(
-                    title: "Amount",
+                    title: AppLocalizations.of(context)?.transfer_amount ?? '',
                     value: "$amount ${tokenInfo.symbol}",
                   ),
                   _label(
@@ -139,7 +143,7 @@ class TransferSuccessScreen extends StatelessWidget {
                   //   value: transactionId,
                   // ),
                   _label(
-                    title: "Date",
+                    title: AppLocalizations.of(context)?.transfer_date ?? '',
                     value: DateFormat.yMEd().format(DateTime.now()) +
                         DateFormat.Hms().format(DateTime.now()),
                   ),
@@ -147,7 +151,7 @@ class TransferSuccessScreen extends StatelessWidget {
               ),
             ),
             DefaultButton(
-              title: "Complete",
+              title: AppLocalizations.of(context)?.transfer_complete ?? '',
               onTap: () {
                 Navigator.pop(context);
               },

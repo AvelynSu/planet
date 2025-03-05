@@ -9,7 +9,7 @@ import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../create_wallet/create_wallet_screen.dart';
 import '../import_wallet/import_wallet_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
 
@@ -59,7 +59,7 @@ class _StartScreenState extends State<StartScreen> {
                             //   width: 180,
                             // ),
                             Text(
-                              'Make Your\nOwn Planet',
+                              AppLocalizations.of(context)?.start_tagline ?? '',
                               textAlign: TextAlign.center,
                               style: fontR(28,
                                   color: Colors.white,
@@ -73,7 +73,7 @@ class _StartScreenState extends State<StartScreen> {
                     Column(
                       children: [
                         DefaultButton(
-                          title: "Create Planet",
+                          title: AppLocalizations.of(context)?.start_create_planet ?? '',
                           onTap: () {
                             CreateWalletScreen.push(context);
                           },
@@ -81,7 +81,7 @@ class _StartScreenState extends State<StartScreen> {
                         const SizedBox(height: 12),
                         DefaultButton(
                           isReverse: true,
-                          title: "Import Another Planet",
+                          title: AppLocalizations.of(context)?.start_import_planet ?? '',
                           onTap: () {
                             ImportWalletScreen.push(context);
                           },

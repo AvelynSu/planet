@@ -7,7 +7,7 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
 import 'package:planet/ui/transaction/transaction_history/token_history_tile.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../../common/skeleton.dart';
@@ -98,7 +98,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                               Expanded(
                                 child: DefaultButton(
                                   isReverse: true,
-                                  title: "Address",
+                                  title: AppLocalizations.of(context)?.transfer_address ?? '',
                                   onTap: () {
                                     PlanetAddressBottomSheet.show(context,
                                         planet: state.planet);
@@ -108,7 +108,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DefaultButton(
-                                  title: "Transfer",
+                                  title: AppLocalizations.of(context)?.transaction_transfer ?? '',
                                   onTap: () {
                                     if (state.status != ScreenStatus.loaded) {
                                       return;
@@ -157,7 +157,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                             Container(
                               margin: EdgeInsets.symmetric(vertical: 50),
                               child: Text(
-                                'Empty List',
+                                AppLocalizations.of(context)?.transaction_empty_list ?? '',
                                 style: fontR(16, color: C.current.sub01),
                               ),
                             ),

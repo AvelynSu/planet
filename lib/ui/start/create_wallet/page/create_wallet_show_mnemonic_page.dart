@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/mnemonic_pharse_component.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../common/default_dialog.dart';
 import '../cubit/create_wallet_cubit.dart';
 
@@ -42,7 +42,7 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "In the next step, we will ask you to select some of these words for verification. Make sure to remember them well!",
+            AppLocalizations.of(context)?.wallet_create_remember_note ?? '',
             // '다음 단계에서 일부 단어를 선택하여 확인할 예정입니다.\n 단어들을 잘 기억해두세요!',
             style: fontR(14,
                 color: C.current.mainText.withValues(alpha: 0.5), height: 1.3),
@@ -61,10 +61,11 @@ class _CreateWalletShowMnemonicPageState
             onTap: () async {
               await Clipboard.setData(ClipboardData(text: state.mnemonic));
               DefaultDialog.showTimerDialog(context,
-                  description: "Success copy", duration: Duration(seconds: 1));
+                  description: AppLocalizations.of(context)?.success_copy ?? '',
+                  duration: Duration(seconds: 1));
             },
             iconPath: "icons/ic_copy.svg",
-            title: "Copy Words",
+            title: AppLocalizations.of(context)?.wallet_create_copy_words ?? '',
           ),
         const SizedBox(height: 28),
 
@@ -90,7 +91,7 @@ class _CreateWalletShowMnemonicPageState
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    "These mnemonic words are used to recover your wallet. Never share them with anyone else.",
+                    AppLocalizations.of(context)?.wallet_create_warning ?? '',
                     // '니모닉 단어들은 지갑 복구에 사용됩니다. 절대 다른 사람과 공유하지 마세요',
                     style: fontR(15, color: C.current.primary, height: 1.5),
                   ),

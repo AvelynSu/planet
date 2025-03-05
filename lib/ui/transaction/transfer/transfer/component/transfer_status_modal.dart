@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/enum/gas_priority.dart';
 
@@ -41,13 +42,13 @@ class TransferLoadingDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Processing Transaction',
+              AppLocalizations.of(context)?.transfer_processing ?? '',
               style: fontSB(18, color: C.current.mainText),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Please wait while your transaction is being processed. This may take a few minutes.',
+              AppLocalizations.of(context)?.transfer_processing_wait ?? '',
               style: fontR(14, color: C.current.sub01),
               textAlign: TextAlign.center,
             ),

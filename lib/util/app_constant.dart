@@ -9,6 +9,7 @@ class AppConstant {
 
   static String appVersion = "1.06";
 
-  static String currency = "USD"; // KRW
+  static String currency = "currency"; // KRW
   static String currencyCount = "currencyCount";
+  static String locale = "locale"; // en, kr
 }

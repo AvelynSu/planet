@@ -66,7 +66,7 @@ class _AppState extends State<App> {
           builder: (context, mode, child) {
             final settings = context.watch<GlobalService>();
             return MaterialApp(
-              title: AppLocalizations.of(context)?.planet_wallet,
+              title: "Planet Wallet",
               locale: settings.locale,
               localizationsDelegates: const [
                 AppLocalizations.delegate,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -36,18 +37,18 @@ class ForceUpdateScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              "Version Update",
+              AppLocalizations.of(context)?.update_title ?? '',
               style: fontR(20, color: C.current.mainText),
             ),
             const SizedBox(height: 12),
             Text(
-              "A new Planet Wallet version\nupdate is now available.",
+              AppLocalizations.of(context)?.update_message ?? '',
               textAlign: TextAlign.center,
               style: fontM(16, color: C.current.mainText),
             ),
             const SizedBox(height: 28),
             DefaultButton(
-              title: "Update",
+              title: AppLocalizations.of(context)?.update_button ?? '',
               isReverse: true,
               onTap: () {
                 launchAppStore();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/model/transfer_fee.dart';
@@ -58,11 +59,11 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
   String _getPriorityLabel(GasPriority priority) {
     switch (priority) {
       case GasPriority.slow:
-        return 'Slow';
+        return AppLocalizations.of(context)?.gas_priority_slow ?? '';
       case GasPriority.medium:
-        return 'Average';
+        return AppLocalizations.of(context)?.gas_priority_average ?? '';
       case GasPriority.fast:
-        return 'Fast';
+        return AppLocalizations.of(context)?.gas_priority_fast ?? '';
     }
   }
 
@@ -106,21 +107,21 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Slow',
+                    _getPriorityLabel(GasPriority.slow),
                     style: fontR(12,
                         color: currentPriority == GasPriority.slow
                             ? C.current.primary
                             : C.current.sub01),
                   ),
                   Text(
-                    'Average',
+                    _getPriorityLabel(GasPriority.medium),
                     style: fontR(12,
                         color: currentPriority == GasPriority.medium
                             ? C.current.primary
                             : C.current.sub01),
                   ),
                   Text(
-                    'Fast',
+                    _getPriorityLabel(GasPriority.fast),
                     style: fontR(12,
                         color: currentPriority == GasPriority.fast
                             ? C.current.primary

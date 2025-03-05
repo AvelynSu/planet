@@ -8,7 +8,7 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_field.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../set_nickname/set_nickname_screen.dart';
@@ -62,7 +62,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
             return BaseScaffold(
               onLoading: state.status == ScreenStatus.loading,
-              title: "Enter Recovery Phrase",
+              title: AppLocalizations.of(context)?.wallet_import_title ?? '',
               //                  "복구 문구 입력",
               onBack: () {
                 Navigator.pop(context);
@@ -112,7 +112,8 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
                             // 입력 필드 라벨
                             Text(
-                              "Recovery Phrase", //   '복구 문구',
+                              AppLocalizations.of(context)?.wallet_import_recovery_phrase ?? '',
+                              //   '복구 문구',
                               style: fontR(16, color: C.current.mainText),
                             ),
 
@@ -136,7 +137,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                     controller: _controller,
                                     maxLine: 5,
                                     hintText:
-                                        "word1 word2 word3 word4 word5 word6 ...",
+                                        AppLocalizations.of(context)?.wallet_import_placeholder ?? '',
                                     onChange: (text) {
                                       _validateInput(text);
                                       cubit.updateMnimonic(text);
@@ -157,7 +158,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                       }
                                     },
                                     iconPath: "icons/ic_copy.svg",
-                                    title: 'Paste',
+                                    title: AppLocalizations.of(context)?.wallet_import_paste ?? '',
                                   ),
                                 ],
                               ),
@@ -167,7 +168,11 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
                             // 단어 수 표시
                             Text(
-                              'Number of words entered: ${_controller.text.trim().isEmpty ? 0 : _controller.text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length}',
+                              AppLocalizations.of(context)?.wallet_import_word_count(
+                                      _controller.text.trim().isEmpty
+                                          ? 0
+                                          : _controller.text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length) ??
+                                  '',
                               style: fontR(14, color: C.current.sub01),
                             ),
 
@@ -196,7 +201,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        '복구 문구는 12개 또는 24개의 단어로 구성되어야 합니다.',
+                                        AppLocalizations.of(context)?.recovery_phrase_requirement ?? '',
                                         style: fontR(14,
                                             color: C.current.primary,
                                             height: 1.4),
@@ -220,7 +225,7 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                       children: [
                         // 버튼
                         DefaultButton(
-                          title: "Restore Wallet",
+                          title: AppLocalizations.of(context)?.wallet_import_restore ?? '',
                           onTap: _isValidInput
                               ? () async {
                                   var planet =

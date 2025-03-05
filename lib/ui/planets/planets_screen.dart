@@ -7,6 +7,7 @@ import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../custom_theme.dart';
@@ -59,7 +60,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: hPadding),
                     child: BoldMsgGenerator.toRichText(
-                      text: "Explore your\n*Friends' planets!*",
+                      text: AppLocalizations.of(context)?.explore_friends_planets ?? '',
                       boldStyle:
                           fontB(28, color: C.current.mainText, height: 2),
                       style: fontL(28, color: C.current.mainText),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
@@ -69,7 +70,8 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
                             PlanetAddressBottomSheet.show(context,
                                 planet: state.planet);
                           },
-                          title: "Address",
+                          title: AppLocalizations.of(context)?.planet_address ??
+                              '',
                           subText: AppUtil.shortenWalletAddress(
                               state.planet.address),
                           showArrow: false,
@@ -79,14 +81,18 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
                             BackupMnemonicScreen.push(context,
                                 planet: state.planet);
                           },
-                          title: "Backup Mnemonic Phrase",
+                          title: AppLocalizations.of(context)
+                                  ?.planet_backup_mnemonic ??
+                              '',
                         ),
                         SettingRowTile(
                           onTap: () {
                             BackupPrivateKeyScreen.push(context,
                                 planet: state.planet);
                           },
-                          title: "Backup Private Key",
+                          title: AppLocalizations.of(context)
+                                  ?.planet_backup_private_key ??
+                              '',
                         ),
                       ],
                     ),
@@ -112,7 +118,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "ETHERIUM",
+                  planet.networkType?.title ?? "",
                   style: fontR(16, color: C.current.sub01),
                 ),
                 const SizedBox(height: 8),

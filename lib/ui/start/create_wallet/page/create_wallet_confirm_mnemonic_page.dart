@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/default_dialog.dart';
@@ -117,7 +118,7 @@ class _CreateWalletConfirmMnemonicPageState
     } else {
       // 오답일 경우
       DefaultDialog.showTimerDialog(context,
-              description: "Incorrect word. Please try again.")
+              description: AppLocalizations.of(context)?.wallet_create_incorrect ?? '')
           .then((_) {
         setState(() {
           isVerifying = false;
@@ -165,8 +166,8 @@ class _CreateWalletConfirmMnemonicPageState
 
         // 안내 메시지
         Text(
-          "Select the ${challengeIndices[currentStep] + 1}th word\nof your mnemonic phrase.",
-          // '니모닉의 ${challengeIndices[currentStep] + 1}번째 단어를 선택해주세요',
+          AppLocalizations.of(context)?.wallet_create_select_word(   challengeIndices[currentStep] + 1) ??
+              '',
           style: fontR(18, color: C.current.mainText, height: 1.5),
           textAlign: TextAlign.center,
         ),

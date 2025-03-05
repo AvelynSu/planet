@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
-import 'package:planet/ui/change_curreny_bottom_sheet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/generate_planet.dart';
+import 'package:planet/ui/my/change_curreny_bottom_sheet.dart';
+import 'package:planet/ui/my/change_locale_bottom_sheet.dart';
 import 'package:planet/ui/my/planet_setting/planet_setting/planet_setting_screen.dart';
 import 'package:planet/ui/my/security/security_screen.dart';
 import 'package:planet/util/app_constant.dart';
 
 import '../../../../enum/screen_status.dart';
+import '../../../service/global_service.dart';
 import '../../../util/app_ui.dart';
 import '../../../util/bold_generator.dart';
 import '../../common/setting_row_tile.dart';
@@ -55,7 +58,7 @@ class _MyScreenState extends State<MyScreen> {
         child: BlocBuilder<MyCubit, MyState>(
           builder: (context, state) {
             var appState = context.read<AppBloc>().state as AppLoaded;
-
+            context.watch<GlobalService>();
             return Container(
               width: double.infinity,
               child: Column(
@@ -67,7 +70,8 @@ class _MyScreenState extends State<MyScreen> {
                   BounceButton(
                     onTap: () {},
                     child: BoldMsgGenerator.toRichText(
-                      text: "You're on\n*${appState.current.name}*",
+                      text:
+                          "${AppLocalizations.of(context)?.you_are_on}\n*${appState.current.name}*",
                       textAlign: TextAlign.center,
                       style: fontR(28,
                           color: C.current.mainText,
@@ -93,7 +97,9 @@ class _MyScreenState extends State<MyScreen> {
                           onTap: () {
                             SecurityScreen.push(context);
                           },
-                          title: "Security",
+                          title: AppLocalizations.of(context)
+                                  ?.planet_setting_title ??
+                              '',
                           iconPath: "icons/ic_lock.svg",
                         ),
                       ),
@@ -111,11 +117,28 @@ class _MyScreenState extends State<MyScreen> {
                       // SettingRowTile(onTap: () {}, title: "FAQ"),
                       SettingRowTile(
                         onTap: () async {
+                          await ChangeLocaleBottomSheet.show(context);
+                          setState(() {});
+                          print(AppLocalizations.of(context)
+                              ?.settings_localization);
+                        },
+                        showArrow: false,
+                        title: AppLocalizations.of(context)
+                                ?.settings_localization ??
+                            '',
+                        subText:
+                            SharedPrefsUtil.getString(AppConstant.locale) ??
+                                "en",
+                      ),
+                      SettingRowTile(
+                        onTap: () async {
                           await ChangeCurrencyBottomSheet.show(context);
                           setState(() {});
                         },
                         showArrow: false,
-                        title: "Currency",
+                        title:
+                            AppLocalizations.of(context)?.settings_currency ??
+                                '',
                         subText:
                             SharedPrefsUtil.getString(AppConstant.currency) ??
                                 "USD",
@@ -125,7 +148,8 @@ class _MyScreenState extends State<MyScreen> {
                           setThemeTheme();
                         },
                         showArrow: false,
-                        title: "Theme Setting",
+                        title:
+                            AppLocalizations.of(context)?.settings_theme ?? '',
                         child: Row(
                           children: [
                             ...[ThemeMode.dark, ThemeMode.light].map((e) {
@@ -155,7 +179,8 @@ class _MyScreenState extends State<MyScreen> {
                       ),
                       SettingRowTile(
                         onTap: () {},
-                        title: "Version",
+                        title: AppLocalizations.of(context)?.settings_version ??
+                            '',
                         showArrow: false,
                         subText: AppConstant.appVersion,
                       ),
@@ -167,7 +192,9 @@ class _MyScreenState extends State<MyScreen> {
                             setThemeTheme(mode: ThemeMode.dark);
                           }
                         },
-                        title: "Sign Out",
+                        title:
+                            AppLocalizations.of(context)?.settings_sign_out ??
+                                '',
                       ),
                     ],
                   )

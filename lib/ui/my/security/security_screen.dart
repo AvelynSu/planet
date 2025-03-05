@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/pin_screen.dart';
 
@@ -23,7 +24,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
       onBack: () {
         Navigator.pop(context);
       },
-      title: "Security",
+      title: AppLocalizations.of(context)?.settings_currency ?? '',
       body: Column(
         children: [
           SettingRowTile(
@@ -51,7 +52,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 mode: PinMode.validate,
               );
             },
-            title: "Change pincode",
+            title: AppLocalizations.of(context)?.change_pincode ?? '',
           ),
         ],
       ),

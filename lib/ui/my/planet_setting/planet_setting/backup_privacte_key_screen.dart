@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
@@ -51,7 +52,7 @@ class _BackupPrivacyKeyScreenState extends State<BackupPrivateKeyScreen> {
       onBack: () {
         Navigator.pop(context);
       },
-      title: 'Backup Private Key',
+      title: AppLocalizations.of(context)?.planet_backup_private_key ?? '',
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: hPadding),
         child: Column(
@@ -93,11 +94,13 @@ class _BackupPrivacyKeyScreenState extends State<BackupPrivateKeyScreen> {
                 onTap: () async {
                   await Clipboard.setData(ClipboardData(text: key));
                   DefaultDialog.showTimerDialog(context,
-                      description: "*Success copy*\n${key}",
+                      description: AppLocalizations.of(context)
+                              ?.success_copy_private_key(key) ??
+                          "",
                       duration: Duration(seconds: 1));
                 },
                 iconPath: "icons/ic_copy.svg",
-                title: "Copy Private Key"),
+                title: AppLocalizations.of(context)?.copy_private_key ?? ''),
           ],
         ),
       ),

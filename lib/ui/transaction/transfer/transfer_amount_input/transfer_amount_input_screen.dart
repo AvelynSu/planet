@@ -10,6 +10,7 @@ import 'package:planet/model/token_info.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
@@ -140,7 +141,7 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 12),
                                   child: Text(
-                                    'You don’t have enough amount to send',
+                                    AppLocalizations.of(context)?.transfer_not_enough ?? '',
                                     style: fontR(14, color: C.current.primary),
                                   ),
                                 ),
@@ -172,7 +173,7 @@ class _TransferAmountInputScreenState extends State<TransferAmountInputScreen> {
                       bottom: AppUi.bottomPadding(context),
                     ),
                     child: DefaultButton(
-                      title: "Submit",
+                      title: AppLocalizations.of(context)?.transfer_submit ?? '',
                       onTap: state.isValidateAmount
                           ? () {
                               widget.onSelect(state.amount);

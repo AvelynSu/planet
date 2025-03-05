@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -54,7 +55,9 @@ class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
 
             return state.status != ScreenStatus.initial
                 ? PlanetNicknameFrame(
-                    title: "Change Planet Name",
+                    title: AppLocalizations.of(context)
+                            ?.change_planet_name_title ??
+                        '',
                     status: state.status,
                     exception: state.exception,
                     nickname: state.nickname,

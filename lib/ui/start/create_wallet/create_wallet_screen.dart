@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -73,7 +74,9 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                         padding: EdgeInsets.symmetric(horizontal: hPadding),
                         child: DefaultButton(
                           showBottomPadding: true,
-                          title: "Next",
+                          title: AppLocalizations.of(context)
+                                  ?.wallet_create_next ??
+                              '',
                           onTap: () {
                             if (state.page == 0) {
                               cubit.updatePage(state.page + 1);

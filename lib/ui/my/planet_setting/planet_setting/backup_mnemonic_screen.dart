@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
@@ -31,7 +32,7 @@ class BackupMnemonicScreen extends StatelessWidget {
       onBack: () {
         Navigator.pop(context);
       },
-      title: 'Mnemonic Phrase',
+      title: AppLocalizations.of(context)?.mnemonic_phrase_title ?? '',
       body: Column(
         children: [
           const SizedBox(height: 48),
@@ -39,9 +40,9 @@ class BackupMnemonicScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Container(
             padding: EdgeInsets.symmetric(horizontal: hPadding),
-            child: const CustomErrorCard(
+            child: CustomErrorCard(
               iconPath: "",
-              title: "Save the Mnemonic Phrase safely.",
+              title: AppLocalizations.of(context)?.mnemonic_save_safely ?? '',
             ),
           ),
           const SizedBox(height: 48),
@@ -49,11 +50,13 @@ class BackupMnemonicScreen extends StatelessWidget {
               onTap: () async {
                 await Clipboard.setData(ClipboardData(text: planet.mnemonic));
                 DefaultDialog.showTimerDialog(context,
-                    description: "*Success copy*\n${planet.mnemonic}",
+                    description: AppLocalizations.of(context)
+                            ?.success_copy_mnemonic(planet.mnemonic) ??
+                        "",
                     duration: Duration(seconds: 1));
               },
               iconPath: "icons/ic_copy.svg",
-              title: "Copy Mnemonic"),
+              title: AppLocalizations.of(context)?.copy_mnemonic ?? ''),
         ],
       ),
     );

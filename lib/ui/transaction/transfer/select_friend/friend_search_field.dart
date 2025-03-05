@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class FriendSearchField extends StatefulWidget {
   final TextEditingController controller;
   final Function(String) onChange;
@@ -64,7 +64,7 @@ class _FriendSearchFieldState extends State<FriendSearchField> {
                 // fillColor: widget.backgroundColor,
                 // filled: widget.backgroundColor != null,
                 counterText: '',
-                hintText: 'Enter Address or Planet name',
+                hintText: AppLocalizations.of(context)?.search_address_hint ?? '',
                 hintStyle: fontR(16, color: C.current.sub01),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 0, horizontal: 12),

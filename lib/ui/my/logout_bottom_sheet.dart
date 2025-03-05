@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_frame.dart';
@@ -50,7 +51,7 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
             CustomErrorCard(
               iconPath: "",
               title:
-                  "If you do not remember your mnemonic words, you will not be able to log in again. Save them appropriately and make sure to remember them.",
+                  AppLocalizations.of(context)?.mnemonic_logout_warning ?? '',
             ),
             SizedBox(height: 24),
             MnemonicPharseComponent(
@@ -62,11 +63,13 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
               onTap: () async {
                 await Clipboard.setData(ClipboardData(text: mnemonic));
                 DefaultDialog.showTimerDialog(context,
-                    description: "Success copy",
+                    description:
+                        AppLocalizations.of(context)?.success_copy ?? "",
                     duration: Duration(seconds: 1));
               },
               iconPath: "icons/ic_copy.svg",
-              title: "Copy Words",
+              title:
+                  AppLocalizations.of(context)?.wallet_create_copy_words ?? '',
             ),
             SizedBox(height: 24),
 
@@ -76,7 +79,9 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    "I understand the logout process and have saved my mnemonics.",
+                    AppLocalizations.of(context)
+                            ?.mnemonic_logout_confirmation ??
+                        '',
                     style: fontR(
                       14,
                       color: C.current.mainText,
@@ -98,7 +103,7 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
 
             /// 로그아웃 버튼
             DefaultButton(
-              title: "Sign out",
+              title: AppLocalizations.of(context)?.settings_sign_out ?? '',
               onTap: isCheck
                   ? () {
                       Navigator.pop(context, true);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/enum/gas_priority.dart';
 import 'package:planet/model/transfer_fee.dart';
@@ -102,7 +103,7 @@ class _AdvancedGasSettingsBottomSheetState
       backgroundColor: C.current.background,
       barColor: C.current.sub01,
       titleColor: C.current.mainText,
-      title: "Advanced Gas Settings",
+      title: AppLocalizations.of(context)?.gas_settings_advanced ?? '',
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: hPadding),
         child: Column(
@@ -113,7 +114,7 @@ class _AdvancedGasSettingsBottomSheetState
 
             // Preset Gas Options
             Text(
-              'Gas Price Presets',
+              AppLocalizations.of(context)?.gas_settings_presets ?? '',
               style: fontR(16, color: C.current.mainText),
             ),
             const SizedBox(height: 12),
@@ -134,7 +135,7 @@ class _AdvancedGasSettingsBottomSheetState
             Row(
               children: [
                 Text(
-                  'Custom Gas Settings',
+                  AppLocalizations.of(context)?.gas_settings_custom ?? '',
                   style: fontR(16, color: C.current.mainText),
                 ),
                 const SizedBox(width: 8),
@@ -158,7 +159,8 @@ class _AdvancedGasSettingsBottomSheetState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Gas Price (Wei)',
+                        "${AppLocalizations.of(context)?.gas_settings_gas_price ?? ''}" +
+                            " (Wei)",
                         style: fontR(14, color: C.current.mainText),
                       ),
                       const SizedBox(height: 8),
@@ -189,7 +191,8 @@ class _AdvancedGasSettingsBottomSheetState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Gas Limit',
+                        AppLocalizations.of(context)?.gas_settings_gas_limit ??
+                            '',
                         style: fontR(14, color: C.current.mainText),
                       ),
                       const SizedBox(height: 8),
@@ -234,7 +237,8 @@ class _AdvancedGasSettingsBottomSheetState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Estimated Network Fee',
+                    AppLocalizations.of(context)?.gas_settings_estimated_fee ??
+                        '',
                     style: fontSB(14, color: C.current.mainText),
                   ),
                   const SizedBox(height: 8),
@@ -250,7 +254,7 @@ class _AdvancedGasSettingsBottomSheetState
 
             // Apply Button
             DefaultButton(
-              title: 'Apply',
+              title: AppLocalizations.of(context)?.gas_settings_apply ?? '',
               onTap: () {
                 if (_useCustomGas && widget.onCustomGasSet != null) {
                   try {
@@ -261,9 +265,12 @@ class _AdvancedGasSettingsBottomSheetState
                     // Show error dialog
 
                     DefaultDialog.show(context,
-                        title: "Invalid Gas Settings",
-                        description:
-                            'Please enter valid gas price and gas limit values.');
+                        title: AppLocalizations.of(context)
+                                ?.gas_settings_invalid ??
+                            '',
+                        description: AppLocalizations.of(context)
+                                ?.gas_settings_invalid_values ??
+                            '');
 
                     return;
                   }

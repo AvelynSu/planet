@@ -10,7 +10,7 @@ import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/transaction/transfer/select_friend/qr_scanner_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
 import '../../../../util/app_util.dart';
@@ -77,7 +77,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                   }
                 },
               ),
-              title: "Transer",
+              title: AppLocalizations.of(context)?.transaction_transfer ?? '',
               body: Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
@@ -101,7 +101,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _listGroupTitle("Address"),
+                              _listGroupTitle(AppLocalizations.of(context)?.transfer_address ?? ''),
                               _unregisteredPlanetTile(
                                 Planet(address: state.searchText),
                                 () {
@@ -112,7 +112,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                                   } else {
                                     DefaultDialog.showTimerDialog(context,
                                         description:
-                                            "Please enter a valid wallet address.");
+                                            AppLocalizations.of(context)?.transfer_invalid_address ?? '');
                                   }
                                 },
                               ),
@@ -125,7 +125,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _listGroupTitle("Planets"),
+                                _listGroupTitle(AppLocalizations.of(context)?.transfer_planets_list ?? ''),
                                 Expanded(
                                   child: ListView(
                                     padding: EdgeInsets.zero,
@@ -164,7 +164,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                         // }
                       },
                       iconPath: "icons/ic_copy.svg",
-                      title: 'Paste',
+                      title: AppLocalizations.of(context)?.wallet_import_paste ?? '',
                     ),
                   ),
                 ],

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
@@ -88,7 +89,9 @@ class _TransferScreenState extends State<TransferScreen> {
             var currentFee = state.gasFees[state.selectedGasPriority];
             return BaseScaffold(
               onLoading: state.status == ScreenStatus.loading,
-              title: "Send ${state.balance.info.symbol}",
+              title: AppLocalizations.of(context)
+                      ?.transfer_token_send(state.balance.info.symbol) ??
+                  '',
               onBack: () => Navigator.pop(context),
               body: Column(
                 children: [
@@ -134,7 +137,9 @@ class _TransferScreenState extends State<TransferScreen> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 12),
                                   child: Text(
-                                    'You don’t have enough amount to send',
+                                    AppLocalizations.of(context)
+                                            ?.transfer_not_enough ??
+                                        '',
                                     style: fontR(14, color: C.current.primary),
                                   ),
                                 ),
@@ -158,12 +163,16 @@ class _TransferScreenState extends State<TransferScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TransferLabel(
-                                title: "To",
+                                title: AppLocalizations.of(context)
+                                        ?.transfer_label_to ??
+                                    '',
                                 value: appState.current.name,
                                 description: AppUtil.shortenWalletAddress(
                                     appState.current.address)),
                             TransferLabel(
-                                title: "From",
+                                title: AppLocalizations.of(context)
+                                        ?.transfer_label_from ??
+                                    '',
                                 value: state.toPlanet.name.isEmpty
                                     ? AppUtil.shortenWalletAddress(
                                         appState.current.address)
@@ -171,11 +180,15 @@ class _TransferScreenState extends State<TransferScreen> {
                                 description: AppUtil.shortenWalletAddress(
                                     state.toPlanet.address)),
                             TransferLabel(
-                              title: "Fee",
+                              title: AppLocalizations.of(context)
+                                      ?.transfer_label_fee ??
+                                  '',
                               value:
                                   '${currentFee?.feeToUiValue(widget.info.networkType)} ${widget.info.networkType.symbol}',
-                              description:
-                                  'Gas: ${currentFee?.gasPrice.toRadixString(10)}',
+                              description: AppLocalizations.of(context)
+                                      ?.gas_settings_gas_price_title(
+                                          "${currentFee?.gasPrice.toRadixString(10)}") ??
+                                  '',
                             ),
 
                             if (state.gasFees.isNotEmpty)
@@ -210,7 +223,9 @@ class _TransferScreenState extends State<TransferScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Using Custom Gas Settings',
+                                      AppLocalizations.of(context)
+                                              ?.using_custom_gas_settings ??
+                                          '',
                                       style:
                                           fontSB(14, color: C.current.mainText),
                                     ),
@@ -219,14 +234,22 @@ class _TransferScreenState extends State<TransferScreen> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            'Gas Price: ${state.customGasFee!.gasPrice} Wei',
+                                            AppLocalizations.of(context)
+                                                    ?.gas_settings_gas_price_title(
+                                                        state.customGasFee!
+                                                            .gasPrice) ??
+                                                '' + "Wei",
                                             style: fontR(12,
                                                 color: C.current.sub01),
                                           ),
                                         ),
                                         Expanded(
                                           child: Text(
-                                            'Gas Limit: ${state.customGasFee!.gasLimit}',
+                                            AppLocalizations.of(context)
+                                                    ?.gas_settings_gas_limit_value(
+                                                        state.customGasFee!
+                                                            .gasLimit) ??
+                                                '',
                                             style: fontR(12,
                                                 color: C.current.sub01),
                                           ),
@@ -239,9 +262,11 @@ class _TransferScreenState extends State<TransferScreen> {
 
                             if (!state.isValidateAmount &&
                                 state.status != ScreenStatus.loading)
-                              const CustomErrorCard(
+                              CustomErrorCard(
                                   iconPath: "",
-                                  title: "Please enter a valid amount"),
+                                  title: AppLocalizations.of(context)
+                                          ?.transfer_invalid_amount ??
+                                      ''),
                           ],
                         ),
                       ),
@@ -254,7 +279,7 @@ class _TransferScreenState extends State<TransferScreen> {
                         EdgeInsets.only(bottom: AppUi.bottomPadding(context)),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: DefaultButton(
-                      title: "Send",
+                      title: AppLocalizations.of(context)?.transfer_send ?? '',
                       onTap: state.isFormValid
                           ? () async {
                               _confirmAndExecuteTransfer(context, cubit);
@@ -277,9 +302,15 @@ class _TransferScreenState extends State<TransferScreen> {
 
     final confirmed = await DefaultDialog.show(
           context,
-          title: "Confirm Transfer",
-          description:
-              "Are you sure you want to send *${appState.current.name}*\n${cubit.state.balance.info.symbol} to\n*${cubit.state.toPlanet.name.isEmpty ? AppUtil.shortenWalletAddress(cubit.state.toPlanet.address) : cubit.state.toPlanet.name}* ?",
+          title: AppLocalizations.of(context)?.transfer_confirm ?? '',
+          description: AppLocalizations.of(context)?.transfer_confirm_message(
+                  appState.current.name,
+                  cubit.state.balance.info.symbol,
+                  cubit.state.toPlanet.name.isEmpty
+                      ? AppUtil.shortenWalletAddress(
+                          cubit.state.toPlanet.address)
+                      : cubit.state.toPlanet.name) ??
+              '',
           onSecondAction: () {},
         ) ??
         false;
@@ -341,8 +372,9 @@ class _TransferScreenState extends State<TransferScreen> {
           Navigator.pop(context);
           await DefaultDialog.show(
             context,
-            title: "Error",
-            description: "An error occurred: ${e.toString()}",
+            title: AppLocalizations.of(context)?.error_title ?? '',
+            description:
+                AppLocalizations.of(context)?.error_message(e.toString()) ?? '',
             // confirmText: "OK",
           );
         }

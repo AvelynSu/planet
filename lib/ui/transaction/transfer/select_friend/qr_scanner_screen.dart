@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_image.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../util/app_ui.dart';
 
