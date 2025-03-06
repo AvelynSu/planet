@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../custom_theme.dart';
 import '../../util/bold_generator.dart';
@@ -208,8 +209,8 @@ class _DefaultDialogState extends State<DefaultDialog> {
                           },
                           title: widget.firstButtonLabel ??
                               (widget.onSecondAction != null
-                                  ? "Cancel"
-                                  : "Confirm"),
+                                  ? AppLocalizations.of(context)!.cancel
+                                  : AppLocalizations.of(context)!.confirm),
                           textColor: b5,
                         ),
                       ),
@@ -224,7 +225,8 @@ class _DefaultDialogState extends State<DefaultDialog> {
                               Navigator.pop(context, true);
                               widget.onSecondAction!();
                             },
-                            title: widget.secondButtonLabel ?? "Confirm",
+                            title: widget.secondButtonLabel ??
+                                AppLocalizations.of(context)!.confirm,
                             textColor: widget.secondButtonColor ?? Colors.white,
                           ),
                         ),

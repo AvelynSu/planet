@@ -7,6 +7,8 @@ enum ExceptionType {
   invalidMnemonicPhrase,
 
   failTransferInitailize,
+
+  planetNameDuplicate,
 }
 
 class CustomException extends Equatable {

@@ -45,6 +45,8 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeLocaleBottomSheet> {
         children: [
           _row(title: "English", key: "en"),
           _row(title: "한국어", key: "ko"),
+          _row(title: "中文", key: "zh"),
+          _row(title: "日本語", key: "jp"),
           SizedBox(height: AppUi.bottomPadding(context)),
         ],
       ),

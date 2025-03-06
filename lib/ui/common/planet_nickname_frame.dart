@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/enum/screen_status.dart';
 import 'package:planet/model/custom_exception.dart';
@@ -51,6 +52,12 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
 
   @override
   Widget build(BuildContext context) {
+    var errorMsg = "";
+
+    if (widget.exception.errType == ExceptionType.planetNameDuplicate) {
+      errorMsg = AppLocalizations.of(context)!.planet_name_duplicate;
+    }
+
     return BaseScaffold(
       isTransparentAppbar: true,
       title: widget.title,
@@ -99,7 +106,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                     children: [
                       const SizedBox(height: 150),
                       Text(
-                        'My Planet is',
+                        AppLocalizations.of(context)!.planet_name_display,
                         style:
                             fontB(28, color: C.current.mainText, isIalic: true),
                       ),
@@ -122,7 +129,8 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                         ],
                         controller: _controller,
                         initialValue: widget.nickname,
-                        hintText: "Enter Planet Name",
+                        hintText:
+                            AppLocalizations.of(context)!.planet_name_enter,
                         align: TextAlign.center,
                         style: fontR(22, color: primary),
                         onChange: (value) {
@@ -133,7 +141,8 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           child: Text(
-                            "You can change your planet name",
+                            AppLocalizations.of(context)!
+                                .planet_name_change_info,
                             style: fontR(14, color: C.current.sub01),
                           ),
                         ),
@@ -141,7 +150,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                         Container(
                           margin: const EdgeInsets.only(top: 12),
                           child: Text(
-                            widget.exception.errMsg ?? "",
+                            errorMsg,
                             style: fontR(14, color: primary),
                           ),
                         ),

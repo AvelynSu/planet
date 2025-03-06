@@ -112,7 +112,7 @@ class _AppScreenState extends State<AppScreen> {
 
           if (state is AppLoading) {
           } else if (state is AppRequiredVersionUpdate) {
-            screen = ForceUpdateScreen();
+            screen = const ForceUpdateScreen();
           } else if (state is AppUnInitialized) {
             if (state.requiredSign) {
               screen = const StartScreen();

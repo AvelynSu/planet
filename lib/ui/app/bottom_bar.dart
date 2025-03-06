@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:planet/ui/common/bounce_button.dart';
+import 'package:provider/provider.dart';
 
 import '../../custom_theme.dart';
 import '../../enum/menu_type.dart';
+import '../../service/global_service.dart';
 import '../../util/app_ui.dart';
 import '../common/custom_image.dart';
 
@@ -23,6 +25,7 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
+    context.watch<GlobalService>();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(

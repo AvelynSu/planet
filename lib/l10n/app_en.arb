@@ -30,7 +30,7 @@
   "copy_private_key": "Copy Private Key",
   "private_key_title": "Private Key",
   "you_are_on": "You're on",
-  "change_pincode":"Change pincode",
+  "change_pincode":"Change Pin Code",
   "modify_currency_daily_limit": "You can modify up to 3 times per day",
   "mnemonic_logout_warning": "If you do not remember your mnemonic words, you will not be able to log in again. Save them appropriately and make sure to remember them.",
   "mnemonic_logout_confirmation": "I understand the logout process and have saved my mnemonics.",
@@ -119,5 +119,16 @@
 
   "menu_type_home": "Home",
   "menu_type_planets": "Planets",
-  "menu_type_my": "My"
+  "menu_type_my": "My",
+
+  "planet_name_duplicate": "This planet name is already in use.",
+  "planet_name_change_info": "You can change your planet name",
+  "planet_name_enter": "Enter Planet Name",
+  "planet_name_display": "My Planet is",
+
+  "cancel" : "Cancel",
+  "confirm" : "Confirm"
+
+
+
 }
