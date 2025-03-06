@@ -36,8 +36,8 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    var mnemonic =
-        (context.read<AppBloc>().state as AppLoaded).current.mnemonic;
+    var appState = context.read<AppBloc>().state;
+    var mnemonic = (appState is AppLoaded) ? appState.current.mnemonic : "";
     return CustomBottomSheetFrame(
       title: "Sign out",
       topPadding: 0,

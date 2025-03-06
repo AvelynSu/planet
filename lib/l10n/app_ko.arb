@@ -36,10 +36,10 @@
   "mnemonic_logout_confirmation": "로그아웃 과정을 이해했으며 니모닉을 저장했습니다.",
 
   "wallet_create_next": "다음",
-  "wallet_create_store_mnemonic": "이 12개의 단어를 순서대로 안전하게 저장하세요.",
+  "wallet_create_store_mnemonic": "12개의 단어를 순서대로 안전하게 저장하세요.",
   "wallet_create_remember_note": "다음 단계에서 이 단어들 중 일부를 선택하여 확인할 것입니다. 잘 기억해 두세요!",
   "wallet_create_copy_words": "단어 복사",
-  "wallet_create_warning": "이 니모닉 단어들은 지갑을 복구하는 데 사용됩니다. 절대 다른 사람과 공유하지 마세요.",
+  "wallet_create_warning": "단어들은 지갑을 복구하는 데 사용됩니다. 절대 다른 사람과 공유하지 마세요.",
   "wallet_create_select_word": "니모닉 단어의\n{index}번째 단어를 선택하세요.",
   "wallet_create_incorrect": "잘못된 단어입니다. 다시 시도해 주세요.",
 

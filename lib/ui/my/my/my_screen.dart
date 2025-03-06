@@ -14,6 +14,7 @@ import 'package:planet/ui/my/change_locale_bottom_sheet.dart';
 import 'package:planet/ui/my/planet_setting/planet_setting/planet_setting_screen.dart';
 import 'package:planet/ui/my/security/security_screen.dart';
 import 'package:planet/util/app_constant.dart';
+import 'package:planet/util/data/planet_name_data.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../service/global_service.dart';
@@ -58,7 +59,14 @@ class _MyScreenState extends State<MyScreen> {
         child: BlocBuilder<MyCubit, MyState>(
           builder: (context, state) {
             var appState = context.read<AppBloc>().state as AppLoaded;
-            context.watch<GlobalService>();
+            var setting = context.watch<GlobalService>();
+
+            var localeKey =
+                SharedPrefsUtil.getString(AppConstant.locale) ?? "en";
+
+            var locale =
+                Data.locale.where((e) => e.key == localeKey).firstOrNull;
+
             return Container(
               width: double.infinity,
               child: Column(
@@ -119,16 +127,12 @@ class _MyScreenState extends State<MyScreen> {
                         onTap: () async {
                           await ChangeLocaleBottomSheet.show(context);
                           setState(() {});
-                          print(AppLocalizations.of(context)
-                              ?.settings_localization);
                         },
                         showArrow: false,
                         title: AppLocalizations.of(context)
                                 ?.settings_localization ??
                             '',
-                        subText:
-                            SharedPrefsUtil.getString(AppConstant.locale) ??
-                                "en",
+                        subText: locale?.title ?? "",
                       ),
                       SettingRowTile(
                         onTap: () async {
@@ -189,6 +193,9 @@ class _MyScreenState extends State<MyScreen> {
                           var result = await LogoutBottomSheet.show(context);
                           if (result ?? false) {
                             context.read<AppBloc>().add(AppSignOut());
+                            await SharedPrefsUtil.setString(
+                                AppConstant.locale, "en");
+                            setting.onUpdateLocale(Locale("en"));
                             setThemeTheme(mode: ThemeMode.dark);
                           }
                         },

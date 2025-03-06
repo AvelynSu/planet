@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/transaction/transfer/transfer_amount_input/custom_number_keypad.dart';
 import 'package:planet/util/app_constant.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../custom_theme.dart';
 import '../util/app_ui.dart';
 
@@ -56,22 +57,6 @@ class _PinScreenState extends State<PinScreen> {
     super.initState();
     correctPin = SharedPrefsUtil.getString(AppConstant.pinCode) ?? "";
     currentMode = widget.mode;
-    _updateGuideText();
-  }
-
-  void _updateGuideText() {
-    switch (currentMode) {
-      case PinMode.setup:
-        guideText = AppLocalizations.of(context)?.pin_new ?? '';
-        break;
-      case PinMode.confirm:
-        guideText = AppLocalizations.of(context)?.pin_reenter ?? '';
-        break;
-      case PinMode.validate:
-        guideText = AppLocalizations.of(context)?.pin_enter ?? '';
-        break;
-    }
-    setState(() {});
   }
 
   void _handlePinComplete() async {
@@ -82,7 +67,6 @@ class _PinScreenState extends State<PinScreen> {
           firstPin = value;
           value = "";
           currentMode = PinMode.confirm;
-          _updateGuideText();
           setState(() {});
           break;
 
@@ -98,10 +82,10 @@ class _PinScreenState extends State<PinScreen> {
               value = "";
               firstPin = null;
               currentMode = PinMode.setup;
-              _updateGuideText();
               // 오류 메시지 표시
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppLocalizations.of(context)?.pin_not_match ?? '')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content:
+                      Text(AppLocalizations.of(context)?.pin_not_match ?? '')));
             });
           }
           break;
@@ -114,8 +98,9 @@ class _PinScreenState extends State<PinScreen> {
             setState(() {
               value = "";
               // 오류 메시지 표시
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppLocalizations.of(context)?.pin_incorrect ?? '')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content:
+                      Text(AppLocalizations.of(context)?.pin_incorrect ?? '')));
             });
           }
           break;
@@ -125,6 +110,18 @@ class _PinScreenState extends State<PinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    switch (currentMode) {
+      case PinMode.setup:
+        guideText = AppLocalizations.of(context)?.pin_new ?? '';
+        break;
+      case PinMode.confirm:
+        guideText = AppLocalizations.of(context)?.pin_reenter ?? '';
+        break;
+      case PinMode.validate:
+        guideText = AppLocalizations.of(context)?.pin_enter ?? '';
+        break;
+    }
+
     return BaseScaffold(
       onBack: widget.onBack != null
           ? () {

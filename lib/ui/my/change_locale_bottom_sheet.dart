@@ -5,6 +5,7 @@ import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_frame.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/app_ui.dart';
+import 'package:planet/util/data/planet_name_data.dart';
 
 import '../../service/global_service.dart';
 
@@ -43,10 +44,9 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeLocaleBottomSheet> {
       topPadding: 0,
       child: Column(
         children: [
-          _row(title: "English", key: "en"),
-          _row(title: "한국어", key: "ko"),
-          _row(title: "中文", key: "zh"),
-          _row(title: "日本語", key: "jp"),
+          ...Data.locale.map(
+            (e) => _row(title: e.title, key: e.key),
+          ),
           SizedBox(height: AppUi.bottomPadding(context)),
         ],
       ),

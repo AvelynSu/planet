@@ -1,4 +1,13 @@
+import 'package:planet/model/custom_locale.dart';
+
 class Data {
+  static final List<CustomLocale> locale = [
+    CustomLocale(key: "en", title: "English"),
+    CustomLocale(key: "ko", title: "한국어"),
+    CustomLocale(key: "zh", title: "中文"),
+    CustomLocale(key: "ja", title: "日本語"),
+  ];
+
   static final List<String> planetNames = [
     'AChiltarIII',
     'Achernon',

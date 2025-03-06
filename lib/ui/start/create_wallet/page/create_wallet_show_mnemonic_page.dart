@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/mnemonic_pharse_component.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../common/default_dialog.dart';
 import '../cubit/create_wallet_cubit.dart';
 
@@ -29,7 +30,7 @@ class _CreateWalletShowMnemonicPageState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "Securely store these 12 words in order.",
+            AppLocalizations.of(context)?.wallet_create_store_mnemonic ?? "",
             //  '아래 12개의 단어를 순서대로 안전하게 저장하세요',
             style: fontSB(16, color: C.current.mainText),
             textAlign: TextAlign.center,
