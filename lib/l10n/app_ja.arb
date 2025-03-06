@@ -55,7 +55,7 @@
 
   "start_create_planet": "プラネットを作成",
   "start_import_planet": "他のプラネットをインポート",
-  "start_tagline": "あなた自身の\nプラネットを作ろう",
+  "start_tagline": "Make Your\nOwn Planet",
 
   "transaction_transfer": "送金",
   "transaction_empty_list": "リストが空です",

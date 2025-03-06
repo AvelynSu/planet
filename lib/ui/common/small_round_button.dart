@@ -6,16 +6,24 @@ import 'custom_image.dart';
 
 class SmallRoundButton extends StatefulWidget {
   final Function onTap;
-  final String iconPath;
+  final String? iconPath;
   final String title;
   final Color? backgroundColor;
+  final Color? iconColor;
+  final double iconSize;
+  final double? iconRotate;
+  final bool isIconLeft; // 아이콘 왼쪽에 위치
 
   const SmallRoundButton({
     super.key,
     required this.onTap,
-    required this.iconPath,
+    this.iconPath,
     required this.title,
     this.backgroundColor,
+    this.iconSize = 24,
+    this.isIconLeft = true,
+    this.iconRotate,
+    this.iconColor,
   });
 
   @override
@@ -43,8 +51,18 @@ class _SmallRoundButtonState extends State<SmallRoundButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CustomImage(path: widget.iconPath),
-                const SizedBox(width: 4),
+                if (widget.iconPath != null)
+                  widget.isIconLeft
+                      ? Container(
+                          margin: const EdgeInsets.only(right: 4),
+                          child: CustomImage(
+                            path: widget.iconPath!,
+                            width: widget.iconSize,
+                            rotate: widget.iconRotate,
+                            color: widget.iconColor,
+                          ),
+                        )
+                      : Container(),
                 Text(
                   widget.title,
                   style: fontM(
@@ -52,6 +70,18 @@ class _SmallRoundButtonState extends State<SmallRoundButton> {
                     color: C.current.mainText.withValues(alpha: 0.8),
                   ),
                 ),
+                if (widget.iconPath != null)
+                  widget.isIconLeft
+                      ? Container()
+                      : Container(
+                          margin: const EdgeInsets.only(right: 4),
+                          child: CustomImage(
+                            path: widget.iconPath!,
+                            width: widget.iconSize,
+                            rotate: widget.iconRotate,
+                            color: widget.iconColor,
+                          ),
+                        ),
               ],
             ),
           ),

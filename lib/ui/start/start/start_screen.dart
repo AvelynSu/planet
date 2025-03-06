@@ -1,15 +1,24 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/small_round_button.dart';
 import 'package:planet/ui/start/start/cubit/start_cubit.dart';
 
 import '../../../../enum/screen_status.dart';
+import '../../../service/global_service.dart';
+import '../../../service/local_storage_service.dart';
+import '../../../util/app_constant.dart';
 import '../../../util/app_ui.dart';
+import '../../../util/data/planet_name_data.dart';
+import '../../my/change_locale_bottom_sheet.dart';
 import '../create_wallet/create_wallet_screen.dart';
 import '../import_wallet/import_wallet_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
 
@@ -24,6 +33,7 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
+    var setting = context.watch<GlobalService>();
     return BlocProvider(
       create: (BuildContext context) => StartCubit(),
       child: BlocListener<StartCubit, StartState>(
@@ -35,6 +45,12 @@ class _StartScreenState extends State<StartScreen> {
         listenWhen: (pre, cur) => pre.status != cur.status,
         child: BlocBuilder<StartCubit, StartState>(
           builder: (context, state) {
+            var localeKey =
+                SharedPrefsUtil.getString(AppConstant.locale) ?? "en";
+
+            var locale =
+                Data.locale.where((e) => e.key == localeKey).firstOrNull;
+
             return Scaffold(
               backgroundColor: C.current.background,
               body: Container(
@@ -53,11 +69,6 @@ class _StartScreenState extends State<StartScreen> {
                               duration: const Duration(seconds: 3),
                               autostart: Autostart.loop,
                             ),
-
-                            // CustomImage(
-                            //   path: "icons/ic_planet_logo.png",
-                            //   width: 180,
-                            // ),
                             Text(
                               AppLocalizations.of(context)?.start_tagline ?? '',
                               textAlign: TextAlign.center,
@@ -66,6 +77,23 @@ class _StartScreenState extends State<StartScreen> {
                                   height: 1.4,
                                   isIalic: true),
                             ),
+                            Container(
+                              height: 36,
+                              margin: EdgeInsets.only(top: 24),
+                              child: SmallRoundButton(
+                                onTap: () async {
+                                  await ChangeLocaleBottomSheet.show(context);
+                                  setState(() {});
+                                },
+                                isIconLeft: false,
+                                iconRotate: pi / 2,
+                                iconSize: 16,
+                                iconColor:
+                                    C.current.mainText.withValues(alpha: 0.5),
+                                iconPath: "icons/ic_small_arrow.svg",
+                                title: " ${locale?.title ?? ""} ",
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -73,7 +101,9 @@ class _StartScreenState extends State<StartScreen> {
                     Column(
                       children: [
                         DefaultButton(
-                          title: AppLocalizations.of(context)?.start_create_planet ?? '',
+                          title: AppLocalizations.of(context)
+                                  ?.start_create_planet ??
+                              '',
                           onTap: () {
                             CreateWalletScreen.push(context);
                           },
@@ -81,7 +111,9 @@ class _StartScreenState extends State<StartScreen> {
                         const SizedBox(height: 12),
                         DefaultButton(
                           isReverse: true,
-                          title: AppLocalizations.of(context)?.start_import_planet ?? '',
+                          title: AppLocalizations.of(context)
+                                  ?.start_import_planet ??
+                              '',
                           onTap: () {
                             ImportWalletScreen.push(context);
                           },

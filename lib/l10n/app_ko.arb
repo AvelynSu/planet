@@ -54,8 +54,8 @@
   "explore_friends_planets": "친구들의\n*행성을 탐험하세요!*",
 
   "start_create_planet": "행성 만들기",
-  "start_import_planet": "다른 행성 가져오기",
-  "start_tagline": "나만의\n행성을 만드세요",
+  "start_import_planet": "기존 행성 가져오기",
+  "start_tagline": "Make Your\nOwn Planet",
 
   "transaction_transfer": "전송",
   "transaction_empty_list": "목록이 비어있습니다",
