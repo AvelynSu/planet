@@ -79,7 +79,7 @@ class _StartScreenState extends State<StartScreen> {
                             ),
                             Container(
                               height: 36,
-                              margin: EdgeInsets.only(top: 24),
+                              margin: const EdgeInsets.only(top: 18),
                               child: SmallRoundButton(
                                 onTap: () async {
                                   await ChangeLocaleBottomSheet.show(context);
@@ -121,7 +121,7 @@ class _StartScreenState extends State<StartScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: AppUi.bottomPadding(context) + 100,
+                      height: AppUi.bottomPadding(context) + 80,
                     ),
                   ],
                 ),

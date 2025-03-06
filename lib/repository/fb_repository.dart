@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/wallet_config.dart';
@@ -17,6 +21,47 @@ class ApiRepository {
 
   final _commonCol =
       FirebaseFirestore.instance.collection(AppConstant.fbCommon);
+
+  Future<List<TokenInfo>> fetchCoinPrices(List<TokenInfo> infos) async {
+    List<TokenInfo> updatedInfos = [];
+    try {
+      var currency = SharedPrefsUtil.getString(AppConstant.currency) ?? "USD";
+      var items = infos.map((e) => e.coingeckoKey ?? "").join(",");
+      final response = await http.get(Uri.parse(
+          'https://api.coingecko.com/api/v3/simple/price?ids=${items}&vs_currencies=${currency}&include_24hr_change=true'));
+
+      currency = currency.toLowerCase();
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> priceData = json.decode(response.body);
+
+        // 각 토큰 정보 업데이트
+        for (var token in infos) {
+          // coingeckoKey가 있고 API 응답에 해당 키가 있는 경우
+          if (priceData.containsKey(token.coingeckoKey)) {
+            final tokenPriceData = priceData[token.coingeckoKey];
+
+            // copyWith를 사용하여 새 TokenInfo 객체 생성
+            final updatedToken = token.copyWith(
+              tokenPrice: (tokenPriceData[currency] ?? 0) * 1.0,
+              priceChangePercentage24h:
+                  (tokenPriceData['${currency}_24h_change'] ?? 0) * 1.0,
+            );
+
+            updatedInfos.add(updatedToken);
+          } else {
+            // API 응답에 없는 경우 원본 토큰 추가
+            updatedInfos.add(token);
+          }
+        }
+      } else {
+        print('Failed to load prices: ${response.statusCode}');
+      }
+      return updatedInfos;
+    } catch (e) {
+      rethrow;
+      print('Error fetching coin data: $e');
+    }
+  }
 
   /// 현재 앱 버전 가져오기
   /// 행성 전부 불러오기

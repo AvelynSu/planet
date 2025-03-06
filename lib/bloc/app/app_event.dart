@@ -19,11 +19,13 @@ class AppUpdate extends AppEvent {
   final bool updateBalance;
   final TokenInfo updateBalanceToken;
   final bool updatePlanets;
+  final bool updatePrice;
 
   AppUpdate({
     this.updateBalance = false,
     this.updateBalanceToken = TokenInfo.empty,
     this.updatePlanets = true,
+    this.updatePrice = false,
   });
 
   @override
@@ -31,6 +33,7 @@ class AppUpdate extends AppEvent {
         updateBalance,
         updateBalanceToken,
         updatePlanets,
+        updatePrice,
       ];
 }
 

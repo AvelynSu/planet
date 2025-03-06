@@ -71,11 +71,22 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         updateAllBalance: true,
       );
 
+      var tokens = updateBalance.map((e) => e.info).toList();
+      var priceInfo = await apiRepository.fetchCoinPrices(tokens);
+
+      List<TokenBalance> newBalance = [];
+      for (var item in updateBalance) {
+        var priceItem =
+            priceInfo.where((e) => e.symbol == item.info.symbol).firstOrNull;
+        item = item.copyWith(info: priceItem);
+        newBalance.add(item);
+      }
+
       // 심볼 보여주기 위한 딜레이
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       yield AppLoaded(
         planets: planets,
-        balances: updateBalance,
+        balances: newBalance,
         current: current,
       );
     }
@@ -104,12 +115,28 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         );
       }
 
+      // if (event.updatePrice) {
+      var tokens = updateBalance.map((e) => e.info).toList();
+      var priceInfo = await apiRepository.fetchCoinPrices(tokens);
+
+      List<TokenBalance> newBalance = [];
+      for (var item in updateBalance) {
+        var priceItem =
+            priceInfo.where((e) => e.symbol == item.info.symbol).firstOrNull;
+        item = item.copyWith(info: priceItem);
+        newBalance.add(item);
+      }
+      updateBalance = [...newBalance];
+      // }
+
       yield AppLoaded(
         planets: planets,
         balances: updateBalance,
         current: current,
       );
-    } catch (_) {}
+    } catch (err) {
+      print(err);
+    }
   }
 
   Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {

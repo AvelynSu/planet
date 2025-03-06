@@ -24,4 +24,16 @@ class TokenBalance {
       balance: balance,
     );
   }
+
+  TokenBalance copyWith({
+    TokenInfo? info,
+    String? address,
+    double? balance,
+  }) {
+    return TokenBalance(
+      info: info ?? this.info,
+      address: address ?? this.address,
+      balance: balance ?? this.balance,
+    );
+  }
 }
