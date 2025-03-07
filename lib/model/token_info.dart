@@ -25,6 +25,31 @@ class TokenInfo {
     this.priceChangePercentage24h = 0.0,
   });
 
+  // toJson 메서드 추가
+  Map<String, dynamic> toJson() {
+    return {
+      'symbol': symbol,
+      'name': name,
+      'address': address,
+      'decimals': decimals,
+      'logoUrl': logoUrl,
+      'networkType': networkType.name,
+      'coingeckoKey': coingeckoKey,
+    };
+  }
+
+  factory TokenInfo.fromJson(Map<String, dynamic> json) {
+    return TokenInfo(
+      symbol: json['symbol'] ?? '',
+      name: json['name'] ?? '',
+      address: json['address'] ?? '',
+      decimals: json['decimals'] ?? 0,
+      logoUrl: json['logoUrl'],
+      networkType: NetworkType.fromJson(json["networkType"]),
+      coingeckoKey: json['coingeckoKey'],
+    );
+  }
+
   // copyWith 메서드 추가
   TokenInfo copyWith({
     String? symbol,

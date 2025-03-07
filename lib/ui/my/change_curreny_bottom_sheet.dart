@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_frame.dart';
@@ -69,6 +72,8 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeCurrencyBottomSheet> {
                   AppLocalizations.of(context)?.modify_currency_daily_limit ??
                       '');
         }
+      } else {
+        update(newValue, 1);
       }
     }
   }
@@ -94,6 +99,11 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeCurrencyBottomSheet> {
     await SharedPrefsUtil.setString(AppConstant.currency, title);
     setState(() {});
     Navigator.pop(context);
+    context.read<AppBloc>().add(AppUpdate(
+          updateBalance: false,
+          updatePlanets: false,
+          updatePrice: true,
+        ));
   }
 
   _row({required String title}) {

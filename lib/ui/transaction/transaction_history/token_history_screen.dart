@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/token_balance.dart';
@@ -7,9 +8,10 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
 import 'package:planet/ui/transaction/transaction_history/token_history_tile.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
+import '../../../util/app_util.dart';
 import '../../common/skeleton.dart';
 import '../transfer/select_friend/select_friend_screen.dart';
 import '../transfer/transfer/transfer_screen.dart';
@@ -78,7 +80,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            margin: EdgeInsets.symmetric(vertical: 52),
+                            margin: const EdgeInsets.symmetric(vertical: 52),
                             child: Column(
                               children: [
                                 Text(
@@ -87,7 +89,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  "0.0 USD",
+                                  AppUtil.tokenToCurrency(
+                                      state.balance.balance *
+                                          state.balance.info.tokenPrice),
                                   style: fontR(16, color: C.current.sub01),
                                 ),
                               ],
@@ -98,7 +102,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                               Expanded(
                                 child: DefaultButton(
                                   isReverse: true,
-                                  title: AppLocalizations.of(context)?.transfer_address ?? '',
+                                  title: AppLocalizations.of(context)
+                                          ?.transfer_address ??
+                                      '',
                                   onTap: () {
                                     PlanetAddressBottomSheet.show(context,
                                         planet: state.planet);
@@ -108,7 +114,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DefaultButton(
-                                  title: AppLocalizations.of(context)?.transaction_transfer ?? '',
+                                  title: AppLocalizations.of(context)
+                                          ?.transaction_transfer ??
+                                      '',
                                   onTap: () {
                                     if (state.status != ScreenStatus.loaded) {
                                       return;
@@ -150,14 +158,18 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                           if (state.status == ScreenStatus.loading &&
                               state.items.isEmpty)
                             ...List.generate(5, (e) => Skeleton.historyTile),
-                          ...state.items
-                              .map((e) => TransactionHistoryTile(item: e)),
+                          ...state.items.map((e) => TransactionHistoryTile(
+                                item: e,
+                                info: state.balance.info,
+                              )),
                           if (state.items.isEmpty &&
                               state.status == ScreenStatus.loaded)
                             Container(
                               margin: EdgeInsets.symmetric(vertical: 50),
                               child: Text(
-                                AppLocalizations.of(context)?.transaction_empty_list ?? '',
+                                AppLocalizations.of(context)
+                                        ?.transaction_empty_list ??
+                                    '',
                                 style: fontR(16, color: C.current.sub01),
                               ),
                             ),

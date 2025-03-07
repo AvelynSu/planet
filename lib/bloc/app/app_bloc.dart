@@ -9,6 +9,7 @@ import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/app_util.dart';
+import 'package:planet/util/data/token_data.dart';
 
 import '../../service/wallet/wallet_balance/wallet_balance_service.dart';
 import 'bloc.dart';
@@ -32,6 +33,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
+    TokenData.ethTokens = await apiRepository.getCustomEthToken();
+
     // await apiRepository.signOut();
     yield AppLoading();
     FirebaseAnalytics.instance.logAppOpen();
@@ -93,6 +96,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppUpdateToState(AppUpdate event) async* {
+    yield (state as AppLoaded).copyWith(isLoading: true);
+
     try {
       // 로컬에서 플래닛 가져오기
       var planets = event.updatePlanets
@@ -130,6 +135,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // }
 
       yield AppLoaded(
+        isLoading: false,
         planets: planets,
         balances: updateBalance,
         current: current,

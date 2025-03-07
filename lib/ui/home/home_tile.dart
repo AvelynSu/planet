@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/token_balance.dart';
-import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_image.dart';
+import 'package:planet/util/app_util.dart';
 
 class HomeTile extends StatelessWidget {
   final TokenBalance item;
@@ -41,7 +42,7 @@ class HomeTile extends StatelessWidget {
               color: C.color(C.current.sub01.withValues(alpha: 0.18),
                   C.current.onBackground.withValues(alpha: 0.1)),
             ),
-            child: CustomImage(path: item.info.logoUrl ?? ""),
+            child: CachedNetworkImage(imageUrl: item.info.logoUrl ?? ""),
           ),
           Expanded(
             child: Text(
@@ -53,13 +54,12 @@ class HomeTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "${item.balance}" + " ${item.info.symbol}",
+                "${item.balance}" " ${item.info.symbol}",
                 style: fontM(14, color: C.current.mainText),
               ),
               const SizedBox(height: 6),
               Text(
-                "${item.balance}"
-                "${SharedPrefsUtil.currency}",
+                AppUtil.tokenToCurrency(item.price),
                 style: fontM(12, color: C.current.sub01),
               ),
             ],

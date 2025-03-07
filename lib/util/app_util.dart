@@ -4,10 +4,23 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 import 'package:planet/enum/network_type.dart';
+import 'package:planet/util/app_constant.dart';
 
+import '../service/local_storage_service.dart';
 import 'data/planet_name_data.dart';
 
 class AppUtil {
+  static String tokenToCurrency(double tokenPrice) {
+    String curreny = SharedPrefsUtil.getString(AppConstant.currency) ?? "usd";
+    curreny = curreny.toLowerCase();
+    if (curreny == "krw") {
+      return "${(tokenPrice.round())} 원";
+    } else if (curreny == "usd") {
+      return "\$${tokenPrice.toStringAsFixed(2)}";
+    }
+    return "";
+  }
+
   static bool isUpdateRequired(String currentVersion, String latestVersion) {
     // 버전 문자열에서 숫자 부분만 추출
     List<int> currentParts = currentVersion

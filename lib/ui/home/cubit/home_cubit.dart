@@ -26,10 +26,13 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _subscription;
 
   _update(AppLoaded appState) {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         balances: appState.balances,
         planet: appState.current,
-        status: ScreenStatus.loaded));
+        status: appState.isLoading ? ScreenStatus.loading : ScreenStatus.loaded,
+      ),
+    );
   }
 
   initialize() async {

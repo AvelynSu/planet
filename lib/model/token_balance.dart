@@ -13,6 +13,10 @@ class TokenBalance {
 
   static const empty = TokenBalance();
 
+  double get price {
+    return (info.tokenPrice * balance);
+  }
+
   factory TokenBalance.fromInfo(
     TokenInfo info,
     String address,

@@ -128,7 +128,7 @@ class _MyScreenState extends State<MyScreen> {
                           await ChangeLocaleBottomSheet.show(context);
                           setState(() {});
                         },
-                        showArrow: false,
+                        showArrow: true,
                         title: AppLocalizations.of(context)
                                 ?.settings_localization ??
                             '',
@@ -139,7 +139,7 @@ class _MyScreenState extends State<MyScreen> {
                           await ChangeCurrencyBottomSheet.show(context);
                           setState(() {});
                         },
-                        showArrow: false,
+                        showArrow: true,
                         title:
                             AppLocalizations.of(context)?.settings_currency ??
                                 '',
