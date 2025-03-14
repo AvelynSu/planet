@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
-import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
 import 'package:solana/solana.dart';
 import 'package:web3dart/crypto.dart';
@@ -174,102 +171,7 @@ class WalletService {
       ));
     }
 
-    // int emptyAddressCount = 0; // 연속으로 발견된 빈 주소의 수
-    // int index = 0; // 주소 생성 인덱스
-    // // 연속으로 20개의 빈 주소가 나올 때까지 주소 탐색
-    // // - HD 월렛 표준에서 권장하는 방식
-    // // - 사용자가 20개의 주소를 건너뛰고 사용할 가능성은 매우 낮다고 가정 (HD월렛 관행)
-    // while (emptyAddressCount < 20) {
-    //   // 현재 인덱스로 주소 생성
-    //   final address = await generateHDAddress(network, mnemonic, index);
-    //
-    //   // 생성된 주소의 블록체인 활동 내역 확인
-    //   // - 잔액이 있거나
-    //   // - 트랜잭션 내역이 있는 경우
-    //   final hasActivity = await checkAddressActivity(network, address);
-    //
-    //   if (hasActivity) {
-    //     foundAddresses.add(address); // 활동 내역이 있는 주소 저장
-    //     emptyAddressCount = 0; // 빈 주소 카운터 리셋
-    //   } else {
-    //     emptyAddressCount++; // 빈 주소 카운트 증가
-    //   }
-    //
-    //   index++; // 다음 인덱스로 이동
-    // }
-
     // 발견된 모든 활성 주소 반환
     return foundPlanets;
-  }
-
-  // 블록체인 상태 확인
-  Future<bool> checkAddressActivity(NetworkType network, String address) async {
-    switch (network) {
-      case NetworkType.ethereum:
-        return _checkEthereumActivity(address);
-      case NetworkType.bitcoin:
-        return _checkBitcoinActivity(address);
-      case NetworkType.solana:
-        return _checkSolanaActivity(address);
-    }
-  }
-
-  // 이더리움 활동 확인
-  Future<bool> _checkEthereumActivity(String address) async {
-    // Web3Client 설정 필요
-    final client = Web3Client(WalletConfig().rpcUrl, http.Client());
-
-    try {
-      // 잔액 확인
-      final balance = await client.getBalance(EthereumAddress.fromHex(address));
-      // 트랜잭션 수 확인
-      final transactionCount =
-          await client.getTransactionCount(EthereumAddress.fromHex(address));
-
-      return balance.getInWei > BigInt.zero || transactionCount > 0;
-    } catch (e) {
-      debugPrint('Error checking Ethereum activity: $e');
-      return false;
-    } finally {
-      client.dispose();
-    }
-  }
-
-  // 비트코인 활동 확인
-  Future<bool> _checkBitcoinActivity(String address) async {
-    try {
-      // Blockstream API 사용
-      final response = await http
-          .get(Uri.parse('https://blockstream.info/api/address/$address'));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // chain_stats.tx_count로 트랜잭션 수 확인
-        return data['chain_stats']['tx_count'] > 0;
-      }
-      return false;
-    } catch (e) {
-      debugPrint('Error checking Bitcoin activity: $e');
-      return false;
-    }
-  }
-
-  // 솔라나 활동 확인
-  Future<bool> _checkSolanaActivity(String address) async {
-    try {
-      final client = SolanaClient(
-        rpcUrl: Uri.parse('YOUR_SOLANA_RPC_URL'),
-        websocketUrl: Uri.parse('YOUR_SOLANA_WS_URL'),
-      );
-
-      final balance = await client.rpcClient.getBalance(address);
-      final transactions =
-          await client.rpcClient.getSignaturesForAddress(address);
-
-      return balance.value > 0 || transactions.isNotEmpty;
-    } catch (e) {
-      debugPrint('Error checking Solana activity: $e');
-      return false;
-    }
   }
 }
