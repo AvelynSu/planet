@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/custom_bottom_sheet_frame.dart';
@@ -40,7 +41,7 @@ class _ChangeCurrenyBottomSheetState extends State<ChangeLocaleBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return CustomBottomSheetFrame(
-      title: "Localization",
+      title: AppLocalizations.of(context)!.settings_localization,
       topPadding: 0,
       child: Column(
         children: [

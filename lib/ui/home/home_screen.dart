@@ -114,17 +114,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (state.status == ScreenStatus.loading)
                             Column(
                               children: [
-                                ...List.generate(5, (e) => Skeleton.homeTile),
+                                ...List.generate(10, (e) => Skeleton.homeTile),
                               ],
                             ),
-                          ...state.balances.map(
-                            (e) => BounceButton(
-                              onTap: () {
-                                TransactionHistoryScreen.push(context, info: e);
-                              },
-                              child: HomeTile(item: e),
+                          if (state.status != ScreenStatus.loading)
+                            ...state.balances.map(
+                              (e) => BounceButton(
+                                onTap: () {
+                                  TransactionHistoryScreen.push(context,
+                                      info: e);
+                                },
+                                child: HomeTile(item: e),
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),

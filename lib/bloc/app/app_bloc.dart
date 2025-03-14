@@ -11,13 +11,16 @@ import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/app_util.dart';
 import 'package:planet/util/data/token_data.dart';
 
+import '../../service/global_service.dart';
 import '../../service/wallet/wallet_balance/wallet_balance_service.dart';
 import 'bloc.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
+  final GlobalService globalService;
   final ApiRepository apiRepository;
 
   AppBloc({
+    required this.globalService,
     required this.apiRepository,
   }) : super(AppLoading());
 
@@ -34,6 +37,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
     TokenData.ethTokens = await apiRepository.getCustomEthToken();
+
+    globalService.initialize();
 
     // await apiRepository.signOut();
     yield AppLoading();

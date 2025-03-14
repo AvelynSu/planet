@@ -24,7 +24,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
       onBack: () {
         Navigator.pop(context);
       },
-      title: AppLocalizations.of(context)?.settings_currency ?? '',
+      title: AppLocalizations.of(context)?.planet_setting_title ?? '',
       body: Column(
         children: [
           SettingRowTile(

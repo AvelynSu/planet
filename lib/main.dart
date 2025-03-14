@@ -60,6 +60,7 @@ class _AppState extends State<App> {
     return BlocProvider<AppBloc>(
       create: (context) => AppBloc(
         apiRepository: context.read<ApiRepository>(),
+        globalService: context.read<GlobalService>(),
       )..add(AppInitialize()),
       child: ValueListenableBuilder<ThemeMode>(
           valueListenable: CustomThemeMode.themeMode,
