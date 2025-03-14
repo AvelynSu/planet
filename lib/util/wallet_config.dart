@@ -14,10 +14,11 @@ enum Environment {
 }
 
 class WalletConfig {
-  static Environment env = Environment.prod; // 개발 환경으로 변경
+  static Environment env = Environment.prod;
 
   final String rpcUrl;
-  final int chainId; // 1: mainnet, 5: goerli testnet
+  final String alchemyApiKey; // Alchemy API 키 추가
+  final int chainId;
   final String etherscanApiKey;
   final String bitcoinApiUrl;
   final String blockCypherToken;
@@ -28,18 +29,16 @@ class WalletConfig {
 
   WalletConfig._internal()
       : rpcUrl = env == Environment.prod
-            ? 'https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba'
-            : "https://mainnet.infura.io/v3/e2e92d65ad42465e880c01edc6969cba",
-        // Goerli 테스트넷
+            ? 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
+            : 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
+        alchemyApiKey = 'AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
         chainId = env == Environment.prod ? 1 : 1,
-        // Goerli는 chainId 5
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"
             : "https://api.blockcypher.com/v1/bcy/test",
         blockCypherToken = env == Environment.prod
             ? "b0bce5d62dba4e308ec307c1f9b92f78"
             : "b0bce5d62dba4e308ec307c1f9b92f78",
-        // 이더스캔 키
         etherscanApiKey = env == Environment.prod
             ? '1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF'
             : "1YJEHHTZGD5I3I8IMI4TG8AJD8Z6NCGABF",

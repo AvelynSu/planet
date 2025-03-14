@@ -72,6 +72,7 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
   }
 
   /// 서비스 종료 시 리소스 해제
+  @override
   void dispose() {
     web3client.dispose();
   }
