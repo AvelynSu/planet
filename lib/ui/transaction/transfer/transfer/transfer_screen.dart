@@ -145,7 +145,7 @@ class _TransferScreenState extends State<TransferScreen> {
                                 ),
                               const SizedBox(height: 12),
                               Text(
-                                "0.0 USD",
+                                AppUtil.tokenToCurrency(state.balance.price),
                                 style: fontR(14, color: C.current.sub01),
                               ),
                             ],

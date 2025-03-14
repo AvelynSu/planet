@@ -69,11 +69,11 @@ class _EthereumTransferService implements _BlockchainTransferService {
       // 1. 현재 가스 기본 수수료 가져오기
       final baseGasPrice = (await web3client.getGasPrice()).getInWei;
 
-// 2. 선택된 우선순위에 따른 가스 가격 계산
+      // 2. 선택된 우선순위에 따른 가스 가격 계산
       final multiplier = _gasPriorityMultipliers[gasPriority] ?? 1.0;
       final gasPrice = _applyMultiplier(baseGasPrice, multiplier);
 
-// 3. EIP-1559 트랜잭션 생성
+      // 3. EIP-1559 트랜잭션 생성
       final transaction = Transaction(
         to: EthereumAddress.fromHex(toAddress),
         value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
@@ -107,7 +107,6 @@ class _EthereumTransferService implements _BlockchainTransferService {
     }
   }
 
-  @override
   Future<String> sendTransactionWithCustomFee({
     required String fromAddress,
     required String toAddress,
@@ -118,18 +117,34 @@ class _EthereumTransferService implements _BlockchainTransferService {
     try {
       final credentials = _getCredentials(privateKey);
 
-      // fee를 이더리움에서는 gasPrice로 사용
-      final gasPrice = fee ~/ BigInt.from(21000); // 기본 가스 한도로 나눔
+      // 1. 현재 대기 중인 트랜잭션의 논스 및 가스 가격 확인
+      // fromAddress의 현재 논스 가져오기
+      final currentNonce = await web3client.getTransactionCount(
+        EthereumAddress.fromHex(fromAddress),
+      );
 
-      // 트랜잭션 생성
+      // 2. 현재 네트워크의 기본 가스 가격 가져오기
+      final currentGasPrice = (await web3client.getGasPrice()).getInWei;
+
+      // 3. 제공된 fee를 기반으로 가스 가격 계산하되, 최소한 현재 가스 가격보다 10% 높게 설정
+      final calculatedGasPrice = fee ~/ BigInt.from(21000); // 기본 가스 한도로 나눔
+      final minGasPrice = (currentGasPrice * BigInt.from(110)) ~/
+          BigInt.from(100); // 현재 가스 가격의 110%
+
+      // 계산된 가스 가격과 최소 가스 가격 중 더 큰 값 사용
+      final gasPrice =
+          calculatedGasPrice > minGasPrice ? calculatedGasPrice : minGasPrice;
+
+      // 4. 트랜잭션 생성
       final transaction = Transaction(
         to: EthereumAddress.fromHex(toAddress),
         value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
         maxGas: 21000,
         gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
+        nonce: currentNonce, // 명시적 논스 설정
       );
 
-      // 트랜잭션 전송
+      // 5. 트랜잭션 전송
       final txHash = await web3client.sendTransaction(
         credentials,
         transaction,
@@ -138,6 +153,9 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
       return txHash;
     } catch (e) {
+      if (e.toString().contains("replacement transaction underpriced")) {
+        throw Exception('트랜잭션 수수료가 너무 낮습니다. 더 높은 수수료를 설정해주세요.');
+      }
       throw Exception('Transaction failed: $e');
     }
   }
