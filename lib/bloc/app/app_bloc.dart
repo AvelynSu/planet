@@ -36,7 +36,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
-    TokenData.ethTokens = await apiRepository.getCustomEthToken();
+    /// 이더 커스텀 토큰에 넣기
+    var customTokens = await apiRepository.getCustomToken();
+
+    TokenData.ethTokens = customTokens.etherium;
+    TokenData.solanaTokens = customTokens.solana;
 
     globalService.initialize();
 
@@ -90,8 +94,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         newBalance.add(item);
       }
 
-      // 심볼 보여주기 위한 딜레이
-      await Future.delayed(const Duration(seconds: 1));
       yield AppLoaded(
         planets: planets,
         balances: newBalance,

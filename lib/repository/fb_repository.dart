@@ -11,6 +11,7 @@ import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/wallet_config.dart';
 
 import '../service/local_storage_service.dart';
+import '../util/data/token_data.dart';
 
 class ApiRepository {
   final _planetNameDoc = FirebaseFirestore.instance
@@ -66,12 +67,9 @@ class ApiRepository {
   }
 
   /// 커스텀 토큰 가져오기
-  Future<List<TokenInfo>> getCustomEthToken() async {
+  Future<TokenDataSet> getCustomToken() async {
     var res = await _customTokenCol.doc("tokens").get();
-
-    return (res.data()?['ethereum'] as List<dynamic>)
-        .map((e) => TokenInfo.fromJson(e))
-        .toList();
+    return TokenDataSet.fromJson(res.data()!);
   }
 
   /// 현재 앱 버전 가져오기
@@ -241,120 +239,154 @@ class ApiRepository {
 
   /// 커스텀 토큰 업데이트
   Future<void> updateCustomtoken() async {
-    await _customTokenCol.doc("tokens").set({
-      "ethereum": [
+    await _customTokenCol.doc("tokens").update({
+      "solana": [
         ...[
           TokenInfo(
-            symbol: 'ETH',
-            name: 'Ethereum',
-            address: '0x0000000000000000000000000000000000000000',
-            // ETH는 네이티브 토큰이라 주소가 0 주소
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "ethereum",
-          ),
-          TokenInfo(
-            symbol: 'USDT',
-            name: 'Tether USD',
-            address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-            decimals: 6,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "tether",
-          ),
-          TokenInfo(
-            symbol: 'TON',
-            name: 'Toncoin',
-            address:
-                '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1', // Wrapped TON on Ethereum
+            symbol: 'SOL',
+            name: 'Solana',
+            address: '11111111111111111111111111111111',
+            // SOL은 네이티브 토큰이라 시스템 주소 사용
             decimals: 9,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "the-open-network",
+            logoUrl:
+                "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_ethereum.png?alt=media&token=05f26182-cf5c-4521-aac6-f1bdf7279e94",
+            coingeckoKey: "solana",
           ),
           TokenInfo(
-            symbol: 'OM',
-            name: 'MANTRA',
-            address: '0x3593D125a4f7849a1B059E64F4517A86Dd60c95d',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "mantra",
-          ),
-          // TokenInfo(
-          //   symbol: 'BGT',
-          //   name: 'Bitget Token',
-          //   address:
-          //       '0x44070d4d84fb3fd53E99cA43Fdc3DAD4F6D7C7B5', // ERC-20 version
-          //   decimals: 18,
-          //   logoUrl: "icons/ic_bitget.png",
-          //   coingeckoKey: "bitget-token",
-          // ),
-          TokenInfo(
-            symbol: 'USde',
-            name: 'Ethena USDe',
-            address: '0x4c9EDD5852cd905f086C759E8383e09bff1E68B3',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "ethena-usde",
+            symbol: 'USDC',
+            name: 'USD Coin',
+            address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+            decimals: 6,
+            logoUrl:
+                "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_ethereum.png?alt=media&token=05f26182-cf5c-4521-aac6-f1bdf7279e94",
+            coingeckoKey: "usd-coin",
           ),
           TokenInfo(
-            symbol: 'DAI',
-            name: 'Dai Stablecoin',
-            address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "dai",
-          ),
-          TokenInfo(
-            symbol: 'UNI',
-            name: 'Uniswap',
-            address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "uniswap",
-          ),
-          TokenInfo(
-            symbol: 'ONDO',
-            name: 'Ondo',
-            address: '0xfaba6f8e4a5e8ab82f62fe7c39859fa577269be3',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "ondo-finance",
-          ),
-          TokenInfo(
-            symbol: 'AAVE',
-            name: 'Aave',
-            address: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "aave",
-          ),
-          TokenInfo(
-            symbol: 'PEPE',
-            name: 'Pepe',
-            address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "pepe",
-          ),
-          TokenInfo(
-            symbol: 'OKB',
-            name: 'OKB',
-            address:
-                '0x75231F58b43240C9718Dd58B4967c5114342a86c', // ERC-20 version
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "okb",
-          ),
-          TokenInfo(
-            symbol: 'MNT',
-            name: 'Mantle',
-            address:
-                '0x3c3a81e81dc49A522A592e7622A7E711c06bf354', // ERC-20 version
-            decimals: 18,
-            logoUrl: "icons/ic_ethereum.png",
-            coingeckoKey: "mantle",
+            symbol: 'BONK',
+            name: 'BONK',
+            address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+            decimals: 5,
+            logoUrl:
+                "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_ethereum.png?alt=media&token=05f26182-cf5c-4521-aac6-f1bdf7279e94",
+            coingeckoKey: "bonk",
           ),
         ].map((e) => e.toJson()),
       ],
     });
+    // await _customTokenCol.doc("tokens").set({
+    //   "ethereum": [
+    //     ...[
+    //       TokenInfo(
+    //         symbol: 'ETH',
+    //         name: 'Ethereum',
+    //         address: '0x0000000000000000000000000000000000000000',
+    //         // ETH는 네이티브 토큰이라 주소가 0 주소
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "ethereum",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'USDT',
+    //         name: 'Tether USD',
+    //         address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    //         decimals: 6,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "tether",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'TON',
+    //         name: 'Toncoin',
+    //         address:
+    //             '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1', // Wrapped TON on Ethereum
+    //         decimals: 9,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "the-open-network",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'OM',
+    //         name: 'MANTRA',
+    //         address: '0x3593D125a4f7849a1B059E64F4517A86Dd60c95d',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "mantra",
+    //       ),
+    //       // TokenInfo(
+    //       //   symbol: 'BGT',
+    //       //   name: 'Bitget Token',
+    //       //   address:
+    //       //       '0x44070d4d84fb3fd53E99cA43Fdc3DAD4F6D7C7B5', // ERC-20 version
+    //       //   decimals: 18,
+    //       //   logoUrl: "icons/ic_bitget.png",
+    //       //   coingeckoKey: "bitget-token",
+    //       // ),
+    //       TokenInfo(
+    //         symbol: 'USde',
+    //         name: 'Ethena USDe',
+    //         address: '0x4c9EDD5852cd905f086C759E8383e09bff1E68B3',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "ethena-usde",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'DAI',
+    //         name: 'Dai Stablecoin',
+    //         address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "dai",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'UNI',
+    //         name: 'Uniswap',
+    //         address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "uniswap",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'ONDO',
+    //         name: 'Ondo',
+    //         address: '0xfaba6f8e4a5e8ab82f62fe7c39859fa577269be3',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "ondo-finance",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'AAVE',
+    //         name: 'Aave',
+    //         address: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "aave",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'PEPE',
+    //         name: 'Pepe',
+    //         address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "pepe",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'OKB',
+    //         name: 'OKB',
+    //         address:
+    //             '0x75231F58b43240C9718Dd58B4967c5114342a86c', // ERC-20 version
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "okb",
+    //       ),
+    //       TokenInfo(
+    //         symbol: 'MNT',
+    //         name: 'Mantle',
+    //         address:
+    //             '0x3c3a81e81dc49A522A592e7622A7E711c06bf354', // ERC-20 version
+    //         decimals: 18,
+    //         logoUrl: "icons/ic_ethereum.png",
+    //         coingeckoKey: "mantle",
+    //       ),
+    //     ].map((e) => e.toJson()),
+    //   ],
+    // });
   }
 }

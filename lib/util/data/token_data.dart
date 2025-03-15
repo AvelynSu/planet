@@ -15,6 +15,27 @@ class TokenData {
     coingeckoKey: "bitcoin",
   );
 
-  // 메인넷 토큰 리스트 (ETH)
+  // 이더리움 토큰 리스트
   static List<TokenInfo> ethTokens = [];
+
+  // 솔라나 토큰 리스트
+  static List<TokenInfo> solanaTokens = [];
+}
+
+class TokenDataSet {
+  final List<TokenInfo> etherium;
+  final List<TokenInfo> solana;
+
+  TokenDataSet({required this.etherium, required this.solana});
+
+  factory TokenDataSet.fromJson(Map<String, dynamic> json) {
+    return TokenDataSet(
+      etherium: (json["ethereum"] as List<dynamic>)
+          .map((e) => TokenInfo.fromJson(e))
+          .toList(),
+      solana: (json["solana"] as List<dynamic>)
+          .map((e) => TokenInfo.fromJson(e))
+          .toList(),
+    );
+  }
 }
