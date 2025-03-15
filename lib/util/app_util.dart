@@ -84,6 +84,12 @@ class AppUtil {
     return lamports / _LAMPORTS_PER_SOL;
   }
 
+  /// satoshi를 BTC로 변환
+  static double satoshiToBtc(int satoshi) {
+    const int _SATOSHI_PER_BTC = 100000000; // 8 decimals for BTC
+    return satoshi / _SATOSHI_PER_BTC;
+  }
+
   // wei or satoshi
   static BigInt valueToRaw(String amount, NetworkType network) {
     // Handle empty input
