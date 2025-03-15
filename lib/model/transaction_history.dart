@@ -1,3 +1,5 @@
+import 'package:planet/model/token_info.dart';
+
 import '../util/data/token_data.dart';
 
 enum TransactionHistoryStatus {
@@ -369,45 +371,128 @@ class TransactionHistory {
   }
 }
 
-// 이더리움 트랜잭션 필드 예시 (Etherscan API 응답)
-// 0 = {map entry} "blockNumber" -> "21864720"
-// 1 = {map entry} "timeStamp" -> "1739778611"
-// 2 = {map entry} "hash" -> "0x337e68af3519f6623baf00a11ed55d94761ca3ebfdcdfd583b75b2fd9de604bd"
-// 3 = {map entry} "nonce" -> "4"
-// 4 = {map entry} "blockHash" -> "0x499256338649c67fa59ada001deafd412b05afe30c05a5000a4dddfc7fcc9a86"
-// 5 = {map entry} "transactionIndex" -> "121"
-// 6 = {map entry} "from" -> "0x5a7094f64e580a73051e4f6171a77025ffaa92e8"
-// 7 = {map entry} "to" -> "0x2f01fc81c1c54a9d73edd126b45510926ef4099a"
-// 8 = {map entry} "value" -> "100000000000000"
-// 9 = {map entry} "gas" -> "21000"
-// 10 = {map entry} "gasPrice" -> "1175420853"
-// 11 = {map entry} "isError" -> "0"
-// 12 = {map entry} "txreceipt_status" -> "1"
-// 13 = {map entry} "input" -> "0x"
-// 14 = {map entry} "contractAddress" -> ""
-// 15 = {map entry} "cumulativeGasUsed" -> "10115515"
-// 16 = {map entry} "gasUsed" -> "21000"
-// 17 = {map entry} "confirmations" -> "25932"
-// 18 = {map entry} "methodId" -> "0x"
-// 19 = {map entry} "functionName" -> ""
+/// 솔라나 트랜잭션 파싱을 위한 헬퍼 클래스
+class SolanaTransactionHistoryParser {
+  /// 솔라나 트랜잭션 정보로부터 TransactionHistory 객체 생성
+  static TransactionHistory fromSolanaTransaction(
+    Map<String, dynamic> tx,
+    String userAddress,
+  ) {
+    try {
+      final String txHash = tx['signature'] ?? '';
+      final DateTime? timestamp = tx['blockTime'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(tx['blockTime'] * 1000)
+          : null;
 
-// 비트코인 트랜잭션 필드 예시 (BlockCypher API 응답)
-// {
-//   "hash": "09a228c6cf72989d81cbcd3a906dcb1d4b4a4c1d796537c34925feea1da2af35",
-//   "received": "2023-08-12T15:42:31Z",
-//   "confirmations": 120,
-//   "inputs": [
-//     {
-//       "addresses": ["1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"],
-//       "output_value": 5000000
-//     }
-//   ],
-//   "outputs": [
-//     {
-//       "addresses": ["1QENmP2UPQ99peUukfdc6spJFSNh9yk8TS"],
-//       "value": 4900000
-//     }
-//   ],
-//   "total": 4900000,
-//   "fees": 100000
-// }
+      // 송신자와 수신자 주소
+      String from = 'Unknown';
+      String to = 'Unknown';
+
+      // 거래 유형과 금액
+      bool isIncoming = false;
+      double amount = 0;
+      String tokenSymbol = 'SOL';
+      String? tokenAddress;
+      int decimals = 9; // SOL 기본
+
+      // 토큰 유형 및 금액 처리
+      if (tx['tokenTransfers'] != null && tx['tokenTransfers'].isNotEmpty) {
+        // SPL 토큰 트랜잭션
+        final tokenTransfer = tx['tokenTransfers'][0];
+        from = tokenTransfer['fromUserAccount'] ?? 'Unknown';
+        to = tokenTransfer['toUserAccount'] ?? 'Unknown';
+
+        // 토큰 정보
+        tokenAddress = tokenTransfer['mint'];
+
+        // 토큰 심볼과 데시멀 찾기
+        if (tokenAddress != null) {
+          final tokenInfo = TokenData.solanaTokens.firstWhere(
+            (t) => t.address.toLowerCase() == tokenAddress!.toLowerCase(),
+            orElse: () => TokenInfo(
+              symbol: 'Unknown',
+              name: 'Unknown Token',
+              address: tokenAddress!,
+              decimals: 0,
+              logoUrl: '',
+              coingeckoKey: '',
+            ),
+          );
+
+          tokenSymbol = tokenInfo.symbol;
+          decimals = tokenInfo.decimals;
+        }
+
+        // 금액 처리
+        amount = tokenTransfer['tokenAmount'] != null
+            ? (tokenTransfer['tokenAmount']['uiAmount'] ?? 0).toDouble()
+            : 0;
+
+        // 거래 방향
+        isIncoming = to.toLowerCase() == userAddress.toLowerCase();
+      } else {
+        // SOL 네이티브 트랜잭션
+        final List<dynamic> instructions = tx['instructions'] ?? [];
+
+        if (instructions.isNotEmpty) {
+          from = instructions[0]['accounts'][0] ?? 'Unknown';
+          to = instructions[0]['accounts'][1] ?? 'Unknown';
+
+          // SOL 전송 금액 (lamports를 SOL로 변환)
+          if (tx['meta'] != null &&
+              tx['meta']['postBalances'] != null &&
+              tx['meta']['preBalances'] != null) {
+            // 복잡한 솔라나 트랜잭션에서 금액 계산은 어려울 수 있음
+            // 간단한 추정: 송신자 계정의 잔액 변화
+            final List<dynamic> preBalances = tx['meta']['preBalances'];
+            final List<dynamic> postBalances = tx['meta']['postBalances'];
+
+            if (preBalances.length > 0 && postBalances.length > 0) {
+              final double preBalance =
+                  preBalances[0] / 1000000000; // lamports to SOL
+              final double postBalance = postBalances[0] / 1000000000;
+              amount = (preBalance - postBalance).abs();
+            }
+          }
+
+          // 거래 방향
+          isIncoming = to.toLowerCase() == userAddress.toLowerCase();
+        }
+      }
+
+      // 수수료
+      double? fee;
+      if (tx['meta'] != null && tx['meta']['fee'] != null) {
+        fee = tx['meta']['fee'] / 1000000000; // lamports to SOL
+      }
+
+      // 트랜잭션 상태
+      TransactionHistoryStatus status;
+      if (tx['confirmations'] != null && tx['confirmations'] == 0) {
+        status = TransactionHistoryStatus.isPending;
+      } else {
+        status = isIncoming
+            ? TransactionHistoryStatus.isReceived
+            : TransactionHistoryStatus.isSent;
+      }
+
+      return TransactionHistory(
+        hash: txHash,
+        from: from,
+        to: to,
+        timestamp: timestamp,
+        tokenSymbol: tokenSymbol,
+        amount: amount,
+        confirmations: tx['confirmations'] ?? 1,
+        isSuccess: tx['err'] == null, // err가 null이면 성공
+        decimals: decimals,
+        tokenAddress: tokenAddress,
+        fee: fee,
+        status: status,
+      );
+    } catch (e) {
+      print('Error parsing Solana transaction: $e');
+      return TransactionHistory.empty;
+    }
+  }
+}

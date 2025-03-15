@@ -5,10 +5,12 @@ import 'package:planet/model/token_info.dart';
 
 import '../../../enum/network_type.dart';
 import '../../../model/transaction_history.dart';
+import '../../../util/data/token_data.dart';
 import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';
 part 'ethurium.dart';
+part 'solana.dart';
 
 class WalletHistoryService {
   final config = WalletConfig();
@@ -17,6 +19,7 @@ class WalletHistoryService {
   WalletHistoryService() {
     _services[NetworkType.ethereum] = _EthereumHistoryService();
     _services[NetworkType.bitcoin] = _BitcoinHistoryService();
+    _services[NetworkType.solana] = _SolanaHistoryService();
   }
 
   /// 통합 거래 내역 조회 (모든 유형)
