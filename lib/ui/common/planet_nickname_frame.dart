@@ -94,6 +94,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
       },
       onLoading: widget.status == ScreenStatus.loading,
       body: PlanetBackgroundFrame(
+        network: widget.network,
         data: widget.nickname,
         scale: 3.8,
         topPadding: 80,
@@ -156,6 +157,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                         ),
                       const SizedBox(height: 100),
                       PlanetComponent(
+                        network: widget.network,
                         data: widget.nickname,
                         size: 200,
                       ),

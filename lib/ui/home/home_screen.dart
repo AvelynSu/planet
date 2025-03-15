@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             return PlanetBackgroundFrame(
+              network: state.planet.networkType,
               scale: 3.2,
               topPadding: 50,
               data: state.data,
@@ -81,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     margin: const EdgeInsets.all(20),
                                     child: PlanetComponent(
+                                      network: state.planet.networkType,
                                       data: state.data,
                                       size: 160,
                                     ),
@@ -156,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         PlanetComponent(
+          network: planet.networkType,
           data: planet.name,
           size: 20,
         ),

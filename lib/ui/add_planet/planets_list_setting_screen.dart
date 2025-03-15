@@ -132,6 +132,7 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
           Row(
             children: [
               PlanetComponent(
+                network: planet.networkType,
                 data: planet.name,
                 size: 30,
               ),

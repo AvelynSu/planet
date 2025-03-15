@@ -219,6 +219,7 @@ class _MyScreenState extends State<MyScreen> {
       alignment: Alignment.bottomRight,
       children: [
         PlanetComponent(
+          network: appState.current.networkType,
           data: appState.current.name,
           size: 36,
         ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:planet/enum/network_type.dart';
 
 import '../../custom_theme.dart';
 import 'generate_planet.dart';
 
 class PlanetBackgroundFrame extends StatefulWidget {
+  final NetworkType? network;
   final String? data;
   final Widget body;
   final double topPadding;
@@ -11,6 +13,7 @@ class PlanetBackgroundFrame extends StatefulWidget {
 
   const PlanetBackgroundFrame({
     super.key,
+    required this.network,
     required this.data,
     required this.body,
     this.scale = 3.3,
@@ -51,6 +54,7 @@ class _PlanetBackgroundFrameState extends State<PlanetBackgroundFrame> {
                                   opacity: animation, child: child);
                             },
                             child: PlanetComponent(
+                              network: widget.network,
                               key: ValueKey(widget.data), // 변경될 때 애니메이션 적용
                               data: widget.data ?? "",
                               size: 172,

@@ -101,6 +101,7 @@ class TransferSuccessScreen extends StatelessWidget {
                     body: Container(
                       margin: const EdgeInsets.only(right: 12),
                       child: PlanetComponent(
+                        network: appState.current.networkType,
                         data: appState.current.name,
                         size: 24,
                       ),
@@ -118,6 +119,7 @@ class TransferSuccessScreen extends StatelessWidget {
                         child: recipient.name.isEmpty
                             ? null
                             : PlanetComponent(
+                                network: recipient.networkType,
                                 data: recipient.name,
                                 size: 24,
                               ),

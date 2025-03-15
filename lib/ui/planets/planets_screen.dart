@@ -1,13 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/common/plannet_background_frame.dart';
 import 'package:planet/ui/common/skeleton.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../custom_theme.dart';
@@ -46,6 +46,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
           builder: (context, state) {
             return PlanetBackgroundFrame(
               scale: 3.2,
+              network: state.planet.networkType,
               topPadding: 60,
               data: state.planet.name.isEmpty
                   ? "shift.function"
@@ -60,7 +61,9 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: hPadding),
                     child: BoldMsgGenerator.toRichText(
-                      text: AppLocalizations.of(context)?.explore_friends_planets ?? '',
+                      text: AppLocalizations.of(context)
+                              ?.explore_friends_planets ??
+                          '',
                       boldStyle:
                           fontB(28, color: C.current.mainText, height: 2),
                       style: fontL(28, color: C.current.mainText),
@@ -129,7 +132,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            PlanetComponent(data: e.name, size: 180),
+            PlanetComponent(network: e.networkType, data: e.name, size: 180),
             Container(
               padding: const EdgeInsets.only(top: 20, bottom: 8),
               child: Text(

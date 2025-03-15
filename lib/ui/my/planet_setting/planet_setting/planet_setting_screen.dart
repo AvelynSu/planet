@@ -139,6 +139,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
             ),
           ),
           PlanetComponent(
+            network: planet.networkType,
             data: planet.name,
             size: 40,
           ),

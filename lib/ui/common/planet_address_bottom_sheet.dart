@@ -103,6 +103,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
               borderRadius: BorderRadius.circular(100),
             ),
             child: PlanetComponent(
+              network: widget.planet.networkType,
               data: widget.planet.name,
               size: 60, // 원하는 크기
             ),

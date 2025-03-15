@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
@@ -10,7 +11,7 @@ import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/transaction/transfer/select_friend/qr_scanner_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
 import '../../../../util/app_util.dart';
@@ -101,7 +102,9 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _listGroupTitle(AppLocalizations.of(context)?.transfer_address ?? ''),
+                              _listGroupTitle(AppLocalizations.of(context)
+                                      ?.transfer_address ??
+                                  ''),
                               _unregisteredPlanetTile(
                                 Planet(address: state.searchText),
                                 () {
@@ -111,8 +114,10 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                                         Planet(address: state.searchText));
                                   } else {
                                     DefaultDialog.showTimerDialog(context,
-                                        description:
-                                            AppLocalizations.of(context)?.transfer_invalid_address ?? '');
+                                        description: AppLocalizations.of(
+                                                    context)
+                                                ?.transfer_invalid_address ??
+                                            '');
                                   }
                                 },
                               ),
@@ -125,7 +130,9 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _listGroupTitle(AppLocalizations.of(context)?.transfer_planets_list ?? ''),
+                                _listGroupTitle(AppLocalizations.of(context)
+                                        ?.transfer_planets_list ??
+                                    ''),
                                 Expanded(
                                   child: ListView(
                                     padding: EdgeInsets.zero,
@@ -164,7 +171,9 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                         // }
                       },
                       iconPath: "icons/ic_copy.svg",
-                      title: AppLocalizations.of(context)?.wallet_import_paste ?? '',
+                      title:
+                          AppLocalizations.of(context)?.wallet_import_paste ??
+                              '',
                     ),
                   ),
                 ],
@@ -202,6 +211,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                 children: [
                   Stack(alignment: Alignment.center, children: [
                     PlanetComponent(
+                      network: planet.networkType,
                       data: "planetWallet",
                       size: 40,
                     ),
@@ -254,6 +264,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
               child: Row(
                 children: [
                   PlanetComponent(
+                    network: planet.networkType,
                     data: planet.name,
                     size: 40,
                   ),

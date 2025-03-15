@@ -4,112 +4,25 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:planet/enum/network_type.dart';
+import 'package:planet/util/planet_color.dart';
 
 class PlanetComponent extends StatelessWidget {
   final String data;
   final double size;
-  late final Uint8List hash;
+  final NetworkType? network;
 
-  static const List<Color> colors = [
-    Color(0xFFFFFD00),
-    Color(0xFFFEB900),
-    Color(0xFFEFA288),
-    Color(0xFFEEA5B0),
-    Color(0xFFFF99D6),
-    Color(0xFFDD9278),
-    Color(0xFFFC8F79),
-    Color(0xFFE45641),
-    Color(0xFFE62D38),
-    Color(0xFFF94A62),
-    Color(0xFFEB526F),
-    Color(0xFFFF54B0),
-    Color(0xFFFA198C),
-    Color(0xFFC5147D),
-    Color(0xFFE1A9E8),
-    Color(0xFF9B5FE5),
-    Color(0xFF7C00C7),
-    Color(0xFF531CB3),
-    Color(0xFFCCFF66),
-    Color(0xFF00E291),
-    Color(0xFF35D1BF),
-    Color(0xFF028A81),
-    Color(0xFF0A3748),
-    Color(0xFF4F51B3),
-    Color(0xFF1D00FF),
-    Color(0xFF090080),
-    Color(0xFF0A104D),
-    Color(0xFF575756),
-  ];
-  static const List<Color> bitcoinColors = [
-    Color(0xFFF7931A), // 비트코인 오렌지
-    Color(0xFFFFAB2E), // 밝은 오렌지
-    Color(0xFFFFD700), // 골드
-    Color(0xFFFFE55C), // 밝은 골드
-    Color(0xFFCC9900), // 어두운 골드
-    Color(0xFFEFD8A4), // 밝은 황갈색
-    Color(0xFFD1A75C), // 황동색
-    Color(0xFFAB8428), // 브론즈
-    Color(0xFF8B6914), // 어두운 황금색
-    Color(0xFF7E5109), // 앰버
-    Color(0xFF654321), // 어두운 브라운
-    Color(0xFFAD6F33), // 구리색
-    Color(0xFFCF7F00), // 황갈색
-    Color(0xFFB34700), // 구릿빛 오렌지
-    Color(0xFFDAAA00), // 사파이어 옐로우
-    Color(0xFFDAA520), // 골든로드
-    Color(0xFFCD853F), // 페루
-    Color(0xFFD2B48C), // 탄
-    Color(0xFFBDB76B), // 다크카키
-    Color(0xFF8B4513), // 새들 브라운
-    Color(0xFF493424), // 다크 브라운
-    Color(0xFF332211), // 짙은 갈색
-    Color(0xFF211A0E), // 거의 검은색
-    Color(0xFF554433), // 중간 갈색
-    Color(0xFF473826), // 푸른빛 갈색
-    Color(0xFF2D2011), // 초콜릿
-    Color(0xFF513F32), // 호두색
-    Color(0xFF664228), // 시에나
-  ];
-
-  static const List<Color> solanaColors = [
-    Color(0xFF00FFBD), // 솔라나 그린
-    Color(0xFF00C2FF), // 솔라나 블루
-    Color(0xFF9945FF), // 솔라나 퍼플
-    Color(0xFF14F195), // 밝은 민트
-    Color(0xFF00E4C5), // 아쿠아마린
-    Color(0xFF00D2FF), // 밝은 시안
-    Color(0xFF19B6FF), // 스카이 블루
-    Color(0xFF0072FF), // 브라이트 블루
-    Color(0xFF7B61FF), // 연보라
-    Color(0xFFAB71FF), // 라일락
-    Color(0xFF7957FB), // 중간 퍼플
-    Color(0xFF6647D7), // 라벤더
-    Color(0xFF5636C5), // 인디고
-    Color(0xFF4C26B6), // 바이올렛
-    Color(0xFF3A1D8C), // 다크 퍼플
-    Color(0xFF2C1675), // 진한 자주색
-    Color(0xFF05C2BD), // 터키 청록색
-    Color(0xFF08A5D1), // 페리윙클
-    Color(0xFF0090EA), // 코발트 블루
-    Color(0xFF2B77E5), // 로얄 블루
-    Color(0xFF00BDAC), // 비취색
-    Color(0xFF29B4A4), // 열대 청록색
-    Color(0xFF287AB8), // 스틸 블루
-    Color(0xFF21113A), // 딥 퍼플
-    Color(0xFF1A0A46), // 어두운 자주색
-    Color(0xFF142339), // 네이비 블루
-    Color(0xFF001F3F), // 미드나이트
-    Color(0xFF0F172A), // 진한 네이비
-  ];
   static const List<int> patterns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   PlanetComponent({
     super.key,
     required this.data,
+    required this.network,
     this.size = 700,
   }) {
     hash = _generateHash(data);
   }
+  late final Uint8List hash;
 
   Uint8List _generateHash(String input) {
     final bytes = utf8.encode(input);
@@ -124,6 +37,7 @@ class PlanetComponent extends StatelessWidget {
       height: size,
       child: CustomPaint(
         painter: _PlanetPainter(
+          network: network,
           hash: hash,
           size: size,
         ),
@@ -135,11 +49,17 @@ class PlanetComponent extends StatelessWidget {
 class _PlanetPainter extends CustomPainter {
   final Uint8List hash;
   final double size;
+  final NetworkType? network;
 
   _PlanetPainter({
     required this.hash,
     required this.size,
-  });
+    required this.network,
+  }) {
+    colors = PlanetColor.colors(network);
+  }
+
+  List<Color> colors = [];
 
   int _getValueFromByte(int input, int range) {
     if (range == 0) return 0;
@@ -176,8 +96,7 @@ class _PlanetPainter extends CustomPainter {
     // Main Pattern
     final pattern = PlanetComponent
         .patterns[_getValueFromByte(hash[0], PlanetComponent.patterns.length)];
-    final colorCode = PlanetComponent
-        .colors[_getValueFromByte(hash[1], PlanetComponent.colors.length)];
+    final colorCode = colors[_getValueFromByte(hash[1], colors.length)];
     _drawMain(canvas, size, pattern, colorCode);
 
     // Circle 1
@@ -186,8 +105,7 @@ class _PlanetPainter extends CustomPainter {
       final outlineRadius = 90.0 + _getValueFromByte(hash[9], 40) * 0.5;
       final degree = _getValueFromByte(hash[10], 360);
       final scale = 90.0 + _getValueFromByte(hash[11], 40) * 0.5;
-      final colorCode = PlanetComponent
-          .colors[_getValueFromByte(hash[12], PlanetComponent.colors.length)];
+      final colorCode = colors[_getValueFromByte(hash[12], colors.length)];
       _drawCircle(canvas, size, outlineRadius, degree * 1.0, scale, colorCode);
     }
 
@@ -197,8 +115,7 @@ class _PlanetPainter extends CustomPainter {
       final outlineRadius = 90.0 + _getValueFromByte(hash[17], 40) * 0.5;
       final degree = _getValueFromByte(hash[18], 360);
       final scale = 90.0 + _getValueFromByte(hash[19], 40) * 0.5;
-      final colorCode = PlanetComponent
-          .colors[_getValueFromByte(hash[20], PlanetComponent.colors.length)];
+      final colorCode = colors[_getValueFromByte(hash[20], colors.length)];
       _drawCircle(canvas, size, outlineRadius, degree * 1.0, scale, colorCode);
     }
   }
