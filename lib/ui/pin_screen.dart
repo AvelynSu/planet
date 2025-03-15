@@ -16,12 +16,14 @@ enum PinMode {
 
 class PinScreen extends StatefulWidget {
   final Function(bool) onSuccess;
+  final bool enableSuccessPop;
   final PinMode mode;
   final Function? onBack;
 
   const PinScreen({
     super.key,
     required this.onSuccess,
+    this.enableSuccessPop = false,
     this.mode = PinMode.validate,
     this.onBack,
   });
@@ -29,6 +31,7 @@ class PinScreen extends StatefulWidget {
   static Future<bool?> push(
     BuildContext context, {
     required Function(bool) onSuccess,
+    bool enableSuccessPop = false,
     required PinMode mode,
     Function? onBack,
   }) async {
@@ -36,6 +39,7 @@ class PinScreen extends StatefulWidget {
         context,
         PinScreen(
           onSuccess: onSuccess,
+          enableSuccessPop: enableSuccessPop,
           onBack: onBack,
           mode: mode,
         ));
@@ -76,6 +80,9 @@ class _PinScreenState extends State<PinScreen> {
             // 일치하면 성공 콜백 호출
             await SharedPrefsUtil.setString(AppConstant.pinCode, value);
             widget.onSuccess(true);
+            if (widget.enableSuccessPop) {
+              Navigator.pop(context, true);
+            }
           } else {
             // 불일치하면 처음부터 다시
             setState(() {
@@ -94,6 +101,9 @@ class _PinScreenState extends State<PinScreen> {
           // 입력값과 정답 비교
           if (correctPin == value) {
             widget.onSuccess(true);
+            if (widget.enableSuccessPop) {
+              Navigator.pop(context, true);
+            }
           } else {
             setState(() {
               value = "";

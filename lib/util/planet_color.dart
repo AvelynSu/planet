@@ -8,7 +8,7 @@ class PlanetColor {
       case NetworkType.ethereum:
         return baseColors;
       case NetworkType.bitcoin:
-        return bitcoinColors;
+        return baseColors;
       case NetworkType.solana:
         return solanaColors;
       default:

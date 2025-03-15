@@ -211,7 +211,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
     while (!isConfirmed && attempts < maxAttempts) {
       isConfirmed = await checkTransactionStatus(txHash);
       if (!isConfirmed) {
-        await Future.delayed(const Duration(seconds: 2)); // 2초마다 확인
+        await Future.delayed(const Duration(seconds: 4)); // 2초마다 확인
         attempts++;
       }
     }

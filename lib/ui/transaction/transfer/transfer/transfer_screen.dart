@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
-import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/custom_exception.dart';
@@ -16,6 +15,7 @@ import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/pin_screen.dart';
 import 'package:planet/ui/transaction/transfer/transfer/trasnfer_success_screen.dart';
 
+import '../../../../bloc/app/app_event.dart';
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
 import '../../../../util/app_util.dart';
@@ -299,6 +299,8 @@ class _TransferScreenState extends State<TransferScreen> {
   Future<void> _confirmAndExecuteTransfer(
       BuildContext context, TokenTransferCubit cubit) async {
     var appState = (context.read<AppBloc>().state as AppLoaded);
+    // 로딩 다이얼로그가 취소되었는지 확인하는 플래그
+    bool isCancelled = false;
 
     final confirmed = await DefaultDialog.show(
           context,
@@ -321,62 +323,82 @@ class _TransferScreenState extends State<TransferScreen> {
         onBack: () {
           Navigator.pop(context);
         },
-        onSuccess: (val) {
-          if (val) {
-            Navigator.pop(context, true);
-          }
-        },
+        enableSuccessPop: true,
+        onSuccess: (val) {},
         mode: PinMode.validate,
       );
 
+      setState(() {});
+      await Future.delayed(Duration(milliseconds: 100));
       if (enablePin ?? false) {
-        final loadingDialog = TransferLoadingDialog.show(context,
-            gasPriority: cubit.state.selectedGasPriority);
+        final loadingDialog = TransferLoadingDialog.show(
+          context,
+          gasPriority: cubit.state.selectedGasPriority,
+          onCancel: () {
+            // 취소 플래그 설정
+            isCancelled = true;
 
-        try {
-          final success = await cubit.executeTransfer();
-
-          // Hide loading dialog
-          Navigator.pop(context);
-
-          /// 최종 확인 화면
-          Navigator.pop(context);
-          if (success) {
             /// 금액 확인 부분
             Navigator.pop(context);
 
             /// 친구 선택 확인 부분
             Navigator.pop(context);
+          },
+        );
 
-            var currentFee =
-                cubit.state.gasFees[cubit.state.selectedGasPriority];
-            TransferSuccessScreen.push(
-              context,
-              transactionId: "",
-              amount: cubit.state.amount,
-              tokenInfo: cubit.state.balance.info,
-              fee: currentFee!,
-              recipient: cubit.state.toPlanet,
-            );
+        try {
+          await Future.delayed(Duration(milliseconds: 50));
+          final success = await cubit.executeTransfer();
 
-            context.read<AppBloc>().add(AppUpdate(
-                  updatePlanets: false,
-                  updateBalanceToken: widget.info,
-                ));
+          // isCancelled가 true면 이미 다이얼로그가 닫혔으므로 추가 pop을 하지 않음
+          if (!isCancelled) {
+            // Hide loading dialog
+            Navigator.pop(context);
+
+            /// 최종 확인 화면
+            Navigator.pop(context);
+
+            if (success) {
+              /// 금액 확인 부분
+              Navigator.pop(context);
+
+              /// 친구 선택 확인 부분
+              Navigator.pop(context);
+
+              var currentFee =
+                  cubit.state.gasFees[cubit.state.selectedGasPriority];
+              TransferSuccessScreen.push(
+                context,
+                transactionId: "",
+                amount: cubit.state.amount,
+                tokenInfo: cubit.state.balance.info,
+                fee: currentFee!,
+                recipient: cubit.state.toPlanet,
+              );
+
+              context.read<AppBloc>().add(AppUpdate(
+                    updatePlanets: false,
+                    updateBalanceToken: widget.info,
+                  ));
+            }
           }
         } catch (e) {
-          // Hide loading dialog
-          Navigator.pop(context);
+          // isCancelled가 true면 이미 다이얼로그가 닫혔으므로 추가 pop을 하지 않음
+          if (!isCancelled) {
+            // Hide loading dialog
+            Navigator.pop(context);
 
-          // amount 입력 페이지로 이동
-          Navigator.pop(context);
-          await DefaultDialog.show(
-            context,
-            title: AppLocalizations.of(context)?.error_title ?? '',
-            description:
-                AppLocalizations.of(context)?.error_message(e.toString()) ?? '',
-            // confirmText: "OK",
-          );
+            // amount 입력 페이지로 이동
+            Navigator.pop(context);
+            await DefaultDialog.show(
+              context,
+              title: AppLocalizations.of(context)?.error_title ?? '',
+              description:
+                  AppLocalizations.of(context)?.error_message(e.toString()) ??
+                      '',
+              // confirmText: "OK",
+            );
+          }
         }
       }
     }

@@ -93,7 +93,8 @@ class _GasPrioritySelectorState extends State<GasPrioritySelector> {
         children: [
           // 예상 시간 표시
           Text(
-            'Estimated confirmation time: ${currentPriority.getEstimatedTime(context)}',
+            AppLocalizations.of(context)!.gas_priority_estimated_time(
+                currentPriority.getEstimatedTime(context)),
             style: fontR(12, color: C.current.sub01),
           ),
 

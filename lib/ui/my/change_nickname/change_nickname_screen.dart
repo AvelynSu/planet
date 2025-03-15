@@ -58,6 +58,7 @@ class _ChangeNicknameScreenState extends State<ChangeNicknameScreen> {
                     title: AppLocalizations.of(context)
                             ?.change_planet_name_title ??
                         '',
+                    network: widget.planet.networkType,
                     status: state.status,
                     exception: state.exception,
                     nickname: state.nickname,

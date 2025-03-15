@@ -47,6 +47,9 @@ class _SolanaHistoryService implements _BlockchainHistoryService {
 
       final uri = Uri.parse(config.solanaRpcUrl);
 
+      // API 요청 바디 로깅
+      print('Request body: ${json.encode(requestBody)}');
+
       // 첫 번째 요청 (보낸 트랜잭션)
       final response = await httpClient
           .post(
@@ -70,6 +73,9 @@ class _SolanaHistoryService implements _BlockchainHistoryService {
             const Duration(seconds: 15),
             onTimeout: () => throw Exception('Request timed out'),
           );
+
+      // 두 번째 요청 응답 로깅
+      print('Second response: ${responseReceived.body}');
 
       final data = jsonDecode(response.body);
       final dataReceived = jsonDecode(responseReceived.body);
@@ -181,7 +187,7 @@ class _SolanaHistoryService implements _BlockchainHistoryService {
         decimals: decimals,
         tokenAddress: tokenAddress,
         fee: null,
-        // 수수료 정보는 별도로 조회 필요
+        // 수수료 정별로 조회 필요
         gas: null,
         gasPrice: null,
         gasUsed: null,

@@ -68,68 +68,78 @@ class _HomeScreenState extends State<HomeScreen> {
                       constraints: BoxConstraints(
                         minHeight: MediaQuery.of(context).size.height,
                       ),
-                      child: ListView(
+                      child: ListView.builder(
                         padding: const EdgeInsets.all(0),
-                        children: [
-                          SizedBox(height: 52 + AppUi.statusBarHeight(context)),
-
-                          /// 플래닛 이름
-                          Column(
-                            children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.all(20),
-                                    child: PlanetComponent(
-                                      network: state.planet.networkType,
-                                      data: state.data,
-                                      size: 160,
-                                    ),
-                                  ),
-                                  Lottie.asset("assets/sparkle.json",
-                                      width: 200),
-                                ],
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.only(top: 16, bottom: 8),
-                                child: Text(
-                                  state.planet.name,
-                                  style: fontR(
-                                    24,
-                                    color: C.current.mainText,
-                                  ),
-                                ),
-                              ),
-                              CopyComponent(
-                                planet: state.planet,
-                                onSuccess: () {
-                                  PlanetAddressBottomSheet.show(context,
-                                      planet: state.planet);
-                                },
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 28),
-                          if (state.status == ScreenStatus.loading)
-                            Column(
+                        itemCount: 1 + // 상단 고정 위젯
+                            (state.status == ScreenStatus.loading
+                                ? 10
+                                : state.balances.length), // 로딩 또는 실제 데이터
+                        itemBuilder: (context, index) {
+                          // 상단 고정 위젯 (인덱스 0)
+                          if (index == 0) {
+                            return Column(
                               children: [
-                                ...List.generate(10, (e) => Skeleton.homeTile),
+                                SizedBox(
+                                    height:
+                                        52 + AppUi.statusBarHeight(context)),
+
+                                // 플래닛 이름 섹션
+                                Column(
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.all(20),
+                                          child: PlanetComponent(
+                                            network: state.planet.networkType,
+                                            data: state.data,
+                                            size: 160,
+                                          ),
+                                        ),
+                                        Lottie.asset("assets/sparkle.json",
+                                            width: 200),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 16, bottom: 8),
+                                      child: Text(
+                                        state.planet.name,
+                                        style: fontR(
+                                          24,
+                                          color: C.current.mainText,
+                                        ),
+                                      ),
+                                    ),
+                                    CopyComponent(
+                                      planet: state.planet,
+                                      onSuccess: () {
+                                        PlanetAddressBottomSheet.show(context,
+                                            planet: state.planet);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 28),
                               ],
-                            ),
-                          if (state.status != ScreenStatus.loading)
-                            ...state.balances.map(
-                              (e) => BounceButton(
-                                onTap: () {
-                                  TransactionHistoryScreen.push(context,
-                                      info: e);
-                                },
-                                child: HomeTile(item: e),
-                              ),
-                            ),
-                        ],
+                            );
+                          }
+
+                          // 실제 리스트 아이템 (인덱스 1부터)
+                          final itemIndex = index - 1;
+                          if (state.status == ScreenStatus.loading) {
+                            return Skeleton.homeTile;
+                          } else {
+                            return BounceButton(
+                              onTap: () {
+                                TransactionHistoryScreen.push(context,
+                                    info: state.balances[itemIndex]);
+                              },
+                              child: HomeTile(item: state.balances[itemIndex]),
+                            );
+                          }
+                        },
                       ),
                     ),
 

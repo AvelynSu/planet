@@ -8,7 +8,7 @@ class AppConstant {
 
   static String pinCode = "";
 
-  static String appVersion = "1.08";
+  static String appVersion = "1.09";
 
   static String currency = "currency"; // KRW
   static String currencyCount = "currencyCount";

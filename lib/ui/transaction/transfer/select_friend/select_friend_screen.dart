@@ -134,20 +134,27 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                                         ?.transfer_planets_list ??
                                     ''),
                                 Expanded(
-                                  child: ListView(
+                                  child: ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    children: [
-                                      ...state.filtered.map(
-                                        (e) => _planetTile(
-                                          e,
-                                          () {
-                                            widget.onSelect(e);
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          height: AppUi.bottomPadding(context)),
-                                    ],
+                                    // 리스트 아이템 + 하단 패딩을 위한 추가 항목
+                                    itemCount: state.filtered.length + 1,
+                                    itemBuilder: (context, index) {
+                                      // 마지막 인덱스는 하단 패딩
+                                      if (index == state.filtered.length) {
+                                        return SizedBox(
+                                            height:
+                                                AppUi.bottomPadding(context));
+                                      }
+
+                                      // 일반 리스트 아이템
+                                      return _planetTile(
+                                        state.filtered[index],
+                                        () {
+                                          widget
+                                              .onSelect(state.filtered[index]);
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
