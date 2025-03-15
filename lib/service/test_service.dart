@@ -39,4 +39,23 @@ class TestService {
     }
     //
   }
+
+  /// 비트코인 충전
+// final response = await http.Client().post(
+//   Uri.parse(
+//       'https://api.blockcypher.com/v1/bcy/test/faucet?token=${WalletConfig().blockCypherToken}'),
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   body: jsonEncode({
+//     'address': 'C1JCxVzgKoAcp4uEqDvPTreEDWVpzcqZ64', // 여기에 테스트넷 주소 입력
+//     'amount': 1000000 // 요청할 금액 (사토시 단위, 최대 1,000,000)
+//   }),
+// );
+//
+// if (response.statusCode != 200) {
+//   throw Exception(
+//       'Failed to request testnet coins: ${response.statusCode}, ${response.body}');
+// }
+// return;
 }

@@ -79,6 +79,11 @@ class AppUtil {
     return wei / BigInt.from(10).pow(decimals);
   }
 
+  static double lamportsToSol(int lamports) {
+    const int _LAMPORTS_PER_SOL = 1000000000; // 9 decimals for SOL
+    return lamports / _LAMPORTS_PER_SOL;
+  }
+
   // wei or satoshi
   static BigInt valueToRaw(String amount, NetworkType network) {
     // Handle empty input
