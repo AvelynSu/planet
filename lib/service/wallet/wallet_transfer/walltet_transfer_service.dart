@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data' show ByteData, Endian, Uint8List;
 
-import 'package:bs58/bs58.dart';
 import 'package:convert/convert.dart' show hex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
@@ -15,6 +14,7 @@ import 'package:web3dart/web3dart.dart';
 import '../../../enum/gas_priority.dart';
 import '../../../enum/network_type.dart';
 import '../../../model/transfer_fee.dart';
+import '../../../util/app_util.dart';
 import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';

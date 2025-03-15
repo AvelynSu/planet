@@ -138,7 +138,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
           mnemonic, networkType, currentPlanet.pathIdx);
 
       // Parse amount
-      final amountInWei = AppUtil.convertToRawValue(state.amount, networkType);
+      final amountInWei = AppUtil.valueToRaw(state.amount, networkType);
 
       bool success;
 

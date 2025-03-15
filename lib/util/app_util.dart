@@ -1,15 +1,20 @@
-import 'dart:convert';
 import 'dart:math';
 
-import 'package:crypto/crypto.dart';
-import 'package:intl/intl.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/util/app_constant.dart';
+import 'package:web3dart/credentials.dart';
 
 import '../service/local_storage_service.dart';
 import 'data/planet_name_data.dart';
 
 class AppUtil {
+  static EthereumAddress hexToEthereumAddress(String address) {
+    if (!isValidEthereumAddress(address)) {
+      throw Exception('Invalid Ethereum address format');
+    }
+    return EthereumAddress.fromHex(address);
+  }
+
   static String tokenToCurrency(double tokenPrice) {
     String curreny = SharedPrefsUtil.getString(AppConstant.currency) ?? "usd";
     curreny = curreny.toLowerCase();
@@ -70,13 +75,40 @@ class AppUtil {
   }
 
   /// Wei 단위를 ETH 단위로 변환 (1 ETH = 10^18 Wei)
-  static double weiToEth(BigInt wei) {
-    return wei / BigInt.from(10).pow(18);
+  static double weiToEth(BigInt wei, {int decimals = 18}) {
+    return wei / BigInt.from(10).pow(decimals);
   }
 
-  /// 토큰 단위 변환 (decimals에 따라)
-  static double rawToActual(BigInt raw, int decimals) {
-    return raw / BigInt.from(10).pow(decimals);
+  // wei or satoshi
+  static BigInt valueToRaw(String amount, NetworkType network) {
+    // Handle empty input
+    if (amount.isEmpty) {
+      return BigInt.zero;
+    }
+
+    try {
+      // Parse the amount to double first
+      final double parsedAmount = double.parse(amount);
+
+      switch (network) {
+        case NetworkType.bitcoin:
+          // Convert to Satoshi (1 BTC = 10^8 Satoshi)
+          return BigInt.from(parsedAmount * 1e8);
+
+        case NetworkType.solana:
+          // Convert to Lamports (1 SOL = 10^9 Lamports)
+          return BigInt.from(parsedAmount * 1e9);
+
+        case NetworkType.ethereum:
+          // Convert to Wei (1 ETH = 10^18 Wei)
+          return BigInt.from(parsedAmount * 1e18);
+
+        default:
+          return BigInt.zero;
+      }
+    } catch (e) {
+      return BigInt.zero;
+    }
   }
 
   static bool isValidEthereumAddress(String address) {
@@ -129,38 +161,6 @@ class AppUtil {
     }
   }
 
-  // wei or satoshi
-  static BigInt convertToRawValue(String amount, NetworkType network) {
-    // Handle empty input
-    if (amount.isEmpty) {
-      return BigInt.zero;
-    }
-
-    try {
-      // Parse the amount to double first
-      final double parsedAmount = double.parse(amount);
-
-      switch (network) {
-        case NetworkType.bitcoin:
-          // Convert to Satoshi (1 BTC = 10^8 Satoshi)
-          return BigInt.from(parsedAmount * 1e8);
-
-        case NetworkType.solana:
-          // Convert to Lamports (1 SOL = 10^9 Lamports)
-          return BigInt.from(parsedAmount * 1e9);
-
-        case NetworkType.ethereum:
-          // Convert to Wei (1 ETH = 10^18 Wei)
-          return BigInt.from(parsedAmount * 1e18);
-
-        default:
-          return BigInt.zero;
-      }
-    } catch (e) {
-      return BigInt.zero;
-    }
-  }
-
   static String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -183,38 +183,6 @@ class AppUtil {
     return '$firstPart...$lastPart';
   }
 
-  static List<dynamic> aDifferenceB({
-    required List<dynamic> a,
-    required List<dynamic> b,
-  }) {
-    var aSet = a.toSet();
-    var bSet = b.toSet();
-
-    return aSet.difference(bSet).toList();
-  }
-
-  static String formatTime(DateTime? createdTime,
-      {bool enableMultiline = true}) {
-    if (createdTime == null) return "";
-    final now = DateTime.now();
-    final difference = now.difference(createdTime);
-
-    if (difference.inHours < 12) {
-      // 12시간 이하로 차이날 경우
-      return '${difference.inHours}h';
-    } else if (difference.inHours < 24) {
-      // 24시간 이내일 경우
-      final formattedTime = DateFormat.Hm().format(createdTime);
-      return formattedTime; // "14:44" 형식
-    } else {
-      // 24시간 이후일 경우
-      final formattedDateTime =
-          DateFormat('yy.MM.dd${enableMultiline ? "\n" : " "}HH:mm')
-              .format(createdTime);
-      return formattedDateTime; // "yy-MM-dd HH:mm" 형식
-    }
-  }
-
   static String formatNumberWithComma(int number) {
     String formattedNumber = number.toString();
     String result = '';
@@ -228,23 +196,6 @@ class AppUtil {
 
     result = formattedNumber + result;
     return result;
-  }
-
-  static String sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
-
-  static List<T> getRandomNumbers<T>(List<T> list, int count) {
-    if (count > list.length) {
-      return [];
-    }
-
-    List<T> randomList = List.from(list);
-    randomList.shuffle();
-
-    return randomList.sublist(0, count);
   }
 
   static int getTextLine(String text) {

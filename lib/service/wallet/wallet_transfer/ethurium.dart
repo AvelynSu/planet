@@ -75,7 +75,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
       // 3. EIP-1559 트랜잭션 생성
       final transaction = Transaction(
-        to: EthereumAddress.fromHex(toAddress),
+        to: AppUtil.hexToEthereumAddress(toAddress),
         value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
         maxGas: 21000,
         maxPriorityFeePerGas:
@@ -120,7 +120,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
       // 1. 현재 대기 중인 트랜잭션의 논스 및 가스 가격 확인
       // fromAddress의 현재 논스 가져오기
       final currentNonce = await web3client.getTransactionCount(
-        EthereumAddress.fromHex(fromAddress),
+        AppUtil.hexToEthereumAddress(fromAddress),
       );
 
       // 2. 현재 네트워크의 기본 가스 가격 가져오기
@@ -137,7 +137,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
       // 4. 트랜잭션 생성
       final transaction = Transaction(
-        to: EthereumAddress.fromHex(toAddress),
+        to: AppUtil.hexToEthereumAddress(toAddress),
         value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
         maxGas: 21000,
         gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
