@@ -70,15 +70,12 @@ class _SelectNetworkModalState extends State<SelectNetworkModal> {
                 style: fontR(16, color: C.current.mainText),
               ),
               const SizedBox(height: 24),
-              _tile(
-                networkType: NetworkType.ethereum,
-                iconPath: "icons/ic_ethereum.png",
-                title: "ETHEREUM",
-              ),
-              _tile(
-                networkType: NetworkType.bitcoin,
-                iconPath: "icons/ic_bitcoin.png",
-                title: "BITCOIN",
+              ...NetworkType.values.map(
+                (e) => _tile(
+                  networkType: e,
+                  iconPath: e.icon,
+                  title: e.title,
+                ),
               ),
               const SizedBox(height: 24),
               DefaultButton(

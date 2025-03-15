@@ -81,6 +81,8 @@ class ApiRepository {
     return result;
   }
 
+  /// 0이 없는 경우 닉네임 설정하라고 반환
+  /// 네트워크 관계없이 다 불러와서 있으면 그거 보여주고, 없으면 이더리움으로 1개 생성
   Future<Planet?> getRequiredNicknamePlanet({
     required String mnemonic,
     required Function onAppInitialize,
@@ -104,6 +106,7 @@ class ApiRepository {
       await LocalStorageService.saveMnemonics(planets);
       onAppInitialize();
     }
+    return null;
   }
 
   /// 부모의 하위 행성들 모두 가져오기
@@ -115,10 +118,13 @@ class ApiRepository {
         .generateHDAddress(NetworkType.ethereum, mnemonic, 0);
     var btc = await WalletService()
         .generateHDAddress(NetworkType.bitcoin, mnemonic, 0);
+    var sol = await WalletService()
+        .generateHDAddress(NetworkType.solana, mnemonic, 0);
 
     var parents = [
       Planet(networkType: NetworkType.ethereum, parentsAddress: eth),
-      Planet(networkType: NetworkType.bitcoin, parentsAddress: btc)
+      Planet(networkType: NetworkType.bitcoin, parentsAddress: btc),
+      Planet(networkType: NetworkType.solana, parentsAddress: sol)
     ];
 
     var res = await _planetCol.where("parentsAddress",
@@ -137,6 +143,7 @@ class ApiRepository {
           parent.networkType == planet.networkType);
     }).toList();
 
+    /// 네트워크 있으면 네트워크에 해당하는것만 반환해줌
     if (network != null) {
       result = result.where((e) => e.networkType == network).toList();
     }

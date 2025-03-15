@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:crypto/crypto.dart';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:planet/model/custom_exception.dart';
@@ -119,13 +118,6 @@ class WalletService {
         .address;
 
     return address ?? "";
-  }
-
-  // RIPEMD160(SHA256(input)) 해시 생성
-  List<int> _hash160(Uint8List input) {
-    final sha256Hash = sha256.convert(input).bytes;
-    final hash160 = sha256.convert(sha256Hash).bytes;
-    return hash160.sublist(0, 20); // 앞의 20바이트만 사용
   }
 
   // 솔라나 주소 생성

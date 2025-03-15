@@ -7,6 +7,8 @@ import 'package:planet/model/token_balance.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/util/app_util.dart';
 import 'package:planet/util/data/token_abi.dart';
+import 'package:solana/dto.dart' as sol_dto;
+import 'package:solana/solana.dart' as sol;
 import 'package:web3dart/web3dart.dart';
 
 import '../../../enum/network_type.dart';
@@ -15,6 +17,7 @@ import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';
 part 'ethurium.dart';
+part 'solana.dart';
 
 class WalletBalanceService {
   final Map<NetworkType, _BlockchainBalanceService> _services = {};
@@ -22,6 +25,7 @@ class WalletBalanceService {
   WalletBalanceService() {
     _services[NetworkType.ethereum] = _EthereumBalanceService();
     _services[NetworkType.bitcoin] = _BitcoinBalanceService();
+    _services[NetworkType.solana] = _SolanaBalanceService();
   }
 
   Future<TokenBalance> getTokenBalance({

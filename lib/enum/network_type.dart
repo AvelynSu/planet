@@ -48,7 +48,7 @@ enum NetworkType {
       case NetworkType.bitcoin:
         return "icons/ic_bitcoin.png";
       case NetworkType.solana:
-        return "SOL";
+        return "icons/ic_solana.png";
     }
   }
 
