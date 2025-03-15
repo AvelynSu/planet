@@ -353,21 +353,79 @@ class TransactionHistory {
         to: to,
         timestamp: timestamp,
         tokenSymbol: 'BTC',
-        amount: amount.abs(), // 절대값 사용
+        amount: amount.abs(),
+        // 절대값 사용
         confirmations: confirmations,
-        isSuccess: true, // BlockCypher API는 성공한 트랜잭션만 반환
-        decimals: 8, // BTC는 항상 8 소수점
-        tokenAddress: null, // BTC는 토큰 주소가 없음
+        isSuccess: true,
+        // BlockCypher API는 성공한 트랜잭션만 반환
+        decimals: 8,
+        // BTC는 항상 8 소수점
+        tokenAddress: null,
+        // BTC는 토큰 주소가 없음
         fee: fee,
-        gas: 0, // Bitcoin에는 해당 없음
-        gasPrice: 0, // Bitcoin에는 해당 없음
-        gasUsed: 0, // Bitcoin에는 해당 없음
+        gas: 0,
+        // Bitcoin에는 해당 없음
+        gasPrice: 0,
+        // Bitcoin에는 해당 없음
+        gasUsed: 0,
+        // Bitcoin에는 해당 없음
         status: transactionStatus,
       );
     } catch (e) {
       print('Error parsing Bitcoin transaction: $e');
       return TransactionHistory.empty;
     }
+  }
+
+  // ETH 트랜잭션 생성을 위한 factory 생성자
+  factory TransactionHistory.createEthTransaction(
+      CommonTransactionData data, double value) {
+    return TransactionHistory(
+      hash: data.hash,
+      from: data.from,
+      to: data.to,
+      timestamp: data.timestamp,
+      tokenSymbol: 'ETH',
+      amount: value,
+      confirmations: data.confirmations,
+      isSuccess: true,
+      decimals: 18,
+      // ETH의 기본 decimals
+      tokenAddress: null,
+      fee: null,
+      gas: null,
+      gasPrice: null,
+      gasUsed: null,
+      status: data.status,
+    );
+  }
+
+  // 토큰 트랜잭션 생성을 위한 factory 생성자
+  factory TransactionHistory.createTokenTransaction(
+      CommonTransactionData data, Map<String, dynamic> tx, double value) {
+    final tokenAddress = tx['rawContract']?['address']?.toString();
+    final decimal = tx['rawContract']?['decimal'] != null
+        ? int.tryParse(tx['rawContract']['decimal'].toString()) ?? 18
+        : 18;
+    final tokenSymbol = tx['asset']?.toString();
+
+    return TransactionHistory(
+      hash: data.hash,
+      from: data.from,
+      to: data.to,
+      timestamp: data.timestamp,
+      tokenSymbol: tokenSymbol,
+      amount: value,
+      confirmations: data.confirmations,
+      isSuccess: true,
+      decimals: decimal,
+      tokenAddress: tokenAddress,
+      fee: null,
+      gas: null,
+      gasPrice: null,
+      gasUsed: null,
+      status: data.status,
+    );
   }
 }
 
@@ -484,7 +542,8 @@ class SolanaTransactionHistoryParser {
         tokenSymbol: tokenSymbol,
         amount: amount,
         confirmations: tx['confirmations'] ?? 1,
-        isSuccess: tx['err'] == null, // err가 null이면 성공
+        isSuccess: tx['err'] == null,
+        // err가 null이면 성공
         decimals: decimals,
         tokenAddress: tokenAddress,
         fee: fee,
@@ -495,4 +554,23 @@ class SolanaTransactionHistoryParser {
       return TransactionHistory.empty;
     }
   }
+}
+
+// 공통 데이터를 위한 클래스 (일단 이더리움에서 만들어짐)
+class CommonTransactionData {
+  final String hash;
+  final String from;
+  final String to;
+  final DateTime? timestamp;
+  final int confirmations;
+  final TransactionHistoryStatus status;
+
+  CommonTransactionData({
+    required this.hash,
+    required this.from,
+    required this.to,
+    required this.timestamp,
+    required this.confirmations,
+    required this.status,
+  });
 }
