@@ -136,28 +136,28 @@ class AppUtil {
       return BigInt.zero;
     }
 
-    if (network == NetworkType.bitcoin) {
-      try {
-        // Parse the amount to double first
-        final double btcAmount = double.parse(amount);
+    try {
+      // Parse the amount to double first
+      final double parsedAmount = double.parse(amount);
 
-        // Convert to Satoshi (1 BTC = 10^8 Satoshi)
-        final BigInt satoshiAmount = BigInt.from(btcAmount * 1e8);
-        return satoshiAmount;
-      } catch (e) {
-        return BigInt.zero;
-      }
-    } else {
-      try {
-        // Parse the amount to double first
-        final double ethAmount = double.parse(amount);
+      switch (network) {
+        case NetworkType.bitcoin:
+          // Convert to Satoshi (1 BTC = 10^8 Satoshi)
+          return BigInt.from(parsedAmount * 1e8);
 
-        // Convert to Wei (1 ETH = 10^18 Wei)
-        final BigInt weiAmount = BigInt.from(ethAmount * 1e18);
-        return weiAmount;
-      } catch (e) {
-        return BigInt.zero;
+        case NetworkType.solana:
+          // Convert to Lamports (1 SOL = 10^9 Lamports)
+          return BigInt.from(parsedAmount * 1e9);
+
+        case NetworkType.ethereum:
+          // Convert to Wei (1 ETH = 10^18 Wei)
+          return BigInt.from(parsedAmount * 1e18);
+
+        default:
+          return BigInt.zero;
       }
+    } catch (e) {
+      return BigInt.zero;
     }
   }
 

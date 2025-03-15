@@ -31,7 +31,8 @@ class TransferFee {
         final btcValue = estimatedFee.toDouble() / 100000000;
         return btcValue.toStringAsFixed(8);
       case NetworkType.solana:
-        return "";
+        final solValue = estimatedFee.toDouble() / 1000000000;
+        return solValue.toStringAsFixed(8);
     }
   }
 }

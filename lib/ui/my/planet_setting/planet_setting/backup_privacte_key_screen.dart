@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -41,7 +40,10 @@ class _BackupPrivacyKeyScreenState extends State<BackupPrivateKeyScreen> {
 
   initialize() async {
     key = await WalletService().getPrivateKeyFromMnemonic(
-        widget.planet.mnemonic, NetworkType.ethereum, 0);
+      widget.planet.mnemonic,
+      widget.planet.networkType!,
+      widget.planet.pathIdx,
+    );
 
     setState(() {});
   }

@@ -6,7 +6,6 @@ import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:planet/model/custom_exception.dart';
 import 'package:solana/solana.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../enum/network_type.dart';
@@ -50,21 +49,45 @@ class WalletService {
       throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
     }
 
+    if (type == NetworkType.solana) {
+      var privateKey = await getSolanaPrivateKey(mnemonic, idx);
+      return privateKey;
+    }
+
     final seed = bip39.mnemonicToSeed(mnemonic);
     final path = type.getDerivationPath(idx);
     final node = bip32.BIP32.fromSeed(seed);
     final child = node.derivePath(path);
 
     if (type == NetworkType.bitcoin) {
-      // 비트코인의 경우 raw 개인 키를 16진수 문자열로 반환
-      return bytesToHex(child.privateKey!);
+      return bytesToHex(child.privateKey!); // 비트코인 16진수 개인키 반환
     }
 
-    // 다른 네트워크는 기존 로직 유지
+    // 이더리움 및 기타 네트워크 처리
     final privateKeyHex = bytesToHex(child.privateKey!);
     String prefix = type == NetworkType.ethereum ? "0x" : "";
 
     return "$prefix$privateKeyHex";
+  }
+
+  Future<String> getSolanaPrivateKey(String mnemonic, int idx) async {
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw ArgumentError('Invalid mnemonic phrase');
+    }
+
+    final seed = bip39.mnemonicToSeed(mnemonic);
+
+    // ED25519_HD_KEY를 직접 사용하여 개인키 생성
+    final keyData = await ED25519_HD_KEY.derivePath(
+        NetworkType.solana.getDerivationPath(idx), seed);
+
+    // keyData.key가 개인키입니다
+    return bytesToHex(Uint8List.fromList(keyData.key));
+  }
+
+// 헬퍼 함수: Uint8List를 16진수 문자열로 변환
+  String bytesToHex(Uint8List bytes) {
+    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
   }
 
   /// 주소 생성 ----------------------------------------------------------------------

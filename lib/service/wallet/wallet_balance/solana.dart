@@ -8,10 +8,8 @@ class _SolanaBalanceService implements _BlockchainBalanceService {
 
   _SolanaBalanceService()
       : _solanaClient = sol.SolanaClient(
-          rpcUrl: Uri.parse(
-              'https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'),
-          websocketUrl: Uri.parse(
-              'wss://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'),
+          rpcUrl: Uri.parse(WalletConfig().solanaRpcUrl),
+          websocketUrl: Uri.parse(WalletConfig().getWsUrlForNetwork("solana")),
         );
 
   /// SOL 잔액을 lamports에서 SOL로 변환하는 유틸리티 메서드

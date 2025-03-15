@@ -1,10 +1,15 @@
 import 'dart:convert';
-import 'dart:typed_data' show Uint8List;
+import 'dart:typed_data' show ByteData, Endian, Uint8List;
 
+import 'package:bs58/bs58.dart';
+import 'package:convert/convert.dart' show hex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
+import 'package:solana/dto.dart' as sol_dto;
+import 'package:solana/encoder.dart' as sol_encoder;
+import 'package:solana/solana.dart' as sol;
 import 'package:web3dart/web3dart.dart';
 
 import '../../../enum/gas_priority.dart';
@@ -14,6 +19,7 @@ import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';
 part 'ethurium.dart';
+part 'solana.dart';
 
 class WalletTransferService {
   final Map<NetworkType, _BlockchainTransferService> _services = {};
@@ -21,6 +27,7 @@ class WalletTransferService {
   WalletTransferService() {
     _services[NetworkType.ethereum] = _EthereumTransferService();
     _services[NetworkType.bitcoin] = _BitcoinTransferService();
+    _services[NetworkType.solana] = _SolanaTransferService();
   }
 
   // 가스비 또는 수수료 예상
