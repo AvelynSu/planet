@@ -6,6 +6,7 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
+import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
 import 'package:planet/ui/transaction/transaction_history/token_history_tile.dart';
 
@@ -48,7 +49,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       )..initialize(),
       child: BlocListener<TransactionBalanceCubit, TransactionHistoryState>(
         listener: (context, state) async {
-          if (state.status == ScreenStatus.fail) {}
+          if (state.status == ScreenStatus.fail) {
+            DefaultDialog.show(context, description: state.exception.errMsg);
+          }
 
           if (state.status == ScreenStatus.success) {}
         },

@@ -171,7 +171,7 @@ class _EthereumHistoryService implements _BlockchainHistoryService {
   }
 
   // 공통 데이터 추출
-  CommonTransactionData? _extractCommonTransactionData(
+  AlchemyCommonTransactionData? _extractCommonTransactionData(
       Map<String, dynamic> tx, bool isSent) {
     final timestamp =
         DateTime.tryParse(tx['metadata']?['blockTimestamp']?.toString() ?? '');
@@ -187,7 +187,7 @@ class _EthereumHistoryService implements _BlockchainHistoryService {
             ? TransactionHistoryStatus.isSent
             : TransactionHistoryStatus.isReceived);
 
-    return CommonTransactionData(
+    return AlchemyCommonTransactionData(
       hash: tx['hash']?.toString() ?? '',
       from: tx['from']?.toString() ?? '',
       to: tx['to']?.toString() ?? '',

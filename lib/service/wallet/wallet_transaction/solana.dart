@@ -4,220 +4,13 @@ part of 'transaction_history_service.dart';
 class _SolanaHistoryService implements _BlockchainHistoryService {
   final config = WalletConfig();
   final httpClient = http.Client();
-
-  /// Alchemy API를 사용하여 트랜잭션 내역 조회
-  Future<List<TransactionHistory>> _fetchAlchemyTransactions({
-    required String address,
-    String? tokenMintAddress,
-    int maxCount = 100,
-  }) async {
-    try {
-      // 1. 일반 솔 트랜잭션과 SPL 토큰 트랜잭션을 구분하여 조회
-      final Map<String, dynamic> requestBody = {
-        'id': 1,
-        'jsonrpc': '2.0',
-        'method': 'alchemy_getAssetTransfers',
-        'params': [
-          {
-            'fromBlock': '0x0',
-            'toBlock': 'latest',
-            'category': ['solana'],
-            'withMetadata': true,
-            'maxCount': '0x${maxCount.toRadixString(16)}',
-            'order': 'desc',
-          }
-        ],
-      };
-
-      // 특정 토큰에 대한 조회인 경우
-      if (tokenMintAddress != null) {
-        requestBody['params'][0]['contractAddresses'] = [tokenMintAddress];
-      }
-
-      // 주소 필터링 (보내거나 받은 모든 트랜잭션)
-      requestBody['params'][0]['fromAddress'] = address;
-
-      // 다음 요청을 위해 참조에 null을 지우는 "두 번째" 요청 준비
-      final secondRequestBody = Map<String, dynamic>.from(requestBody);
-      secondRequestBody['params'] = List.from(requestBody['params']);
-      secondRequestBody['params'][0] =
-          Map<String, dynamic>.from(requestBody['params'][0]);
-      secondRequestBody['params'][0].remove('fromAddress');
-      secondRequestBody['params'][0]['toAddress'] = address;
-
-      final uri = Uri.parse(config.solanaRpcUrl);
-
-      // API 요청 바디 로깅
-      print('Request body: ${json.encode(requestBody)}');
-
-      // 첫 번째 요청 (보낸 트랜잭션)
-      final response = await httpClient
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode(requestBody),
-          )
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () => throw Exception('Request timed out'),
-          );
-
-      // 두 번째 요청 (받은 트랜잭션)
-      final responseReceived = await httpClient
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode(secondRequestBody),
-          )
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () => throw Exception('Request timed out'),
-          );
-
-      // 두 번째 요청 응답 로깅
-      print('Second response: ${responseReceived.body}');
-
-      final data = jsonDecode(response.body);
-      final dataReceived = jsonDecode(responseReceived.body);
-
-      List<TransactionHistory> result = [];
-
-      // 보낸 트랜잭션 처리
-      if (data['result'] != null && data['result']['transfers'] != null) {
-        final transfers = data['result']['transfers'] as List;
-        result.addAll(transfers
-            .map((tx) =>
-                _mapAlchemyTransactionToHistory(tx, address, isSent: true))
-            .where((tx) => tx != TransactionHistory.empty)
-            .toList());
-      }
-
-      // 받은 트랜잭션 처리
-      if (dataReceived['result'] != null &&
-          dataReceived['result']['transfers'] != null) {
-        final transfers = dataReceived['result']['transfers'] as List;
-        result.addAll(transfers
-            .map((tx) =>
-                _mapAlchemyTransactionToHistory(tx, address, isSent: false))
-            .where((tx) => tx != TransactionHistory.empty)
-            .toList());
-      }
-
-      return result;
-    } catch (e) {
-      print('Failed to get Solana transactions: $e');
-      throw Exception('Failed to get Solana transactions: $e');
-    }
-  }
-
-  /// Alchemy 트랜잭션 데이터를 TransactionHistory 객체로 변환
-  TransactionHistory _mapAlchemyTransactionToHistory(
-      Map<String, dynamic> tx, String userAddress,
-      {bool isSent = false}) {
-    try {
-      final timestamp =
-          tx['metadata'] != null && tx['metadata']['blockTimestamp'] != null
-              ? DateTime.parse(tx['metadata']['blockTimestamp'].toString())
-              : null;
-
-      final hash = tx['hash']?.toString() ?? '';
-      final from = tx['from']?.toString() ?? '';
-      final to = tx['to']?.toString() ?? '';
-
-      // 확인 수 계산
-      int confirmations = 1; // 기본값
-      if (tx['metadata'] != null && tx['metadata']['blockNumber'] != null) {
-        confirmations = 1;
-      }
-
-      // 트랜잭션 상태 판별
-      TransactionHistoryStatus status;
-      if (confirmations == 0) {
-        status = TransactionHistoryStatus.isPending;
-      } else {
-        status = isSent
-            ? TransactionHistoryStatus.isSent
-            : TransactionHistoryStatus.isReceived;
-      }
-
-      // SOL 또는 토큰 트랜잭션 처리
-      final asset = tx['asset']?.toString() ?? '';
-      final tokenAddress = tx['tokenAddress']?.toString();
-      final tokenSymbol = asset.isEmpty ? 'SOL' : asset;
-
-      // 토큰인지 SOL인지에 따라 데시멀 설정
-      int decimals = 9; // SOL은 9 데시멀 기본값
-      if (tokenAddress != null && tokenAddress.isNotEmpty) {
-        // 토큰인 경우 해당 토큰의 데시멀 찾기
-        final token = TokenData.solanaTokens.firstWhere(
-          (t) => t.address.toLowerCase() == tokenAddress.toLowerCase(),
-          orElse: () => TokenInfo(
-            symbol: tokenSymbol,
-            name: tokenSymbol,
-            address: tokenAddress,
-            decimals: 9,
-            // 기본값
-            logoUrl: '',
-            coingeckoKey: '',
-          ),
-        );
-        decimals = token.decimals;
-      }
-
-      // 금액 처리
-      double value = 0.0;
-      if (tx['value'] != null) {
-        // 문자열이나 숫자 모두 처리
-        if (tx['value'] is String) {
-          value = double.tryParse(tx['value']) ?? 0.0;
-        } else if (tx['value'] is num) {
-          value = (tx['value'] as num).toDouble();
-        }
-      }
-
-      return TransactionHistory(
-        hash: hash,
-        from: from,
-        to: to,
-        timestamp: timestamp,
-        tokenSymbol: tokenSymbol,
-        amount: value,
-        confirmations: confirmations,
-        isSuccess: true,
-        decimals: decimals,
-        tokenAddress: tokenAddress,
-        fee: null,
-        // 수수료 정별로 조회 필요
-        gas: null,
-        gasPrice: null,
-        gasUsed: null,
-        status: status,
-      );
-    } catch (e) {
-      print('Error mapping Solana transaction: $e');
-      return TransactionHistory.empty;
-    }
-  }
-
-  /// 솔라나 네이티브 트랜잭션 조회 (SOL)
-  Future<List<TransactionHistory>> getSolTransactions(String address) async {
-    return _fetchAlchemyTransactions(
-      address: address,
-    );
-  }
-
-  /// 특정 SPL 토큰 트랜잭션 조회
-  Future<List<TransactionHistory>> getTokenTransactions(
-      String address, String tokenMintAddress) async {
-    return _fetchAlchemyTransactions(
-      address: address,
-      tokenMintAddress: tokenMintAddress,
-    );
-  }
+  static const int _requestTimeout = 15;
 
   /// 솔라나 주소의 모든 트랜잭션 조회 (SOL + 모든 SPL 토큰)
   @override
   Future<List<TransactionHistory>> getAllTransactions(String address) async {
+    // 지금 안씀
+
     try {
       // 기본 SOL 트랜잭션만 조회 (SPL 토큰은 필요 시 개별 조회)
       final solTransactions = await getSolTransactions(address);
@@ -264,6 +57,145 @@ class _SolanaHistoryService implements _BlockchainHistoryService {
       print('Error fetching transactions for ${info.symbol}: $e');
       return []; // 빈 목록 반환하여 UI가 크래시되지 않도록 함
     }
+  }
+
+  /// Alchemy API를 사용하여 트랜잭션 내역 조회
+  Future<List<TransactionHistory>> _fetchAlchemyTransactions({
+    required String address,
+    String? tokenMintAddress,
+    int maxCount = 100,
+  }) async {
+    try {
+      var params = {
+        'fromBlock': '0x0',
+        'toBlock': 'latest',
+        'category': ['solana'],
+        'withMetadata': true,
+        'maxCount': '0x${maxCount.toRadixString(16)}',
+        'order': 'desc',
+        if (tokenMintAddress != null) 'contractAddresses': [tokenMintAddress],
+      };
+
+      // 보낸 트랜잭션 요청
+      var sentParams = {'fromAddress': address, ...params};
+      final sentTxRequestBody = {
+        'id': 1,
+        'jsonrpc': '2.0',
+        'method': 'alchemy_getAssetTransfers',
+        'params': [sentParams],
+      };
+
+      // 받은 트랜잭션 요청
+      var receivedParams = {'toAddress': address, ...params};
+      final receivedTxRequestBody = {
+        'id': 1,
+        'jsonrpc': '2.0',
+        'method': 'alchemy_getAssetTransfers',
+        'params': [receivedParams],
+      };
+
+      // 요청 실행
+      final sentData = await _makeRequest(sentTxRequestBody);
+      final receivedData = await _makeRequest(receivedTxRequestBody);
+
+      // 트랜잭션 처리 및 결과 합치기
+      return [
+        ..._transcationJsonToTransactionHistory(sentData, address, true),
+        ..._transcationJsonToTransactionHistory(receivedData, address, false),
+      ];
+    } catch (e) {
+      print('Failed to get Solana transactions: $e');
+      throw Exception('Failed to get Solana transactions: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> _makeRequest(Map<String, dynamic> body) async {
+    final response = await httpClient
+        .post(
+          Uri.parse(config.solanaRpcUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(body),
+        )
+        .timeout(
+          const Duration(seconds: _requestTimeout),
+          onTimeout: () => throw Exception('Request timed out'),
+        );
+
+    if (response.statusCode == 400) {
+      final errorData = jsonDecode(response.body);
+      throw Exception(errorData['error']?['message'] ?? '잘못된 요청입니다');
+    }
+
+    if (response.statusCode != 200) {
+      throw Exception('API 요청 실패: ${response.statusCode}');
+    }
+
+    return jsonDecode(response.body);
+  }
+
+  List<TransactionHistory> _transcationJsonToTransactionHistory(
+    Map<String, dynamic> data,
+    String address,
+    bool isSent,
+  ) {
+    if (data['result']?['transfers'] == null) return [];
+
+    return (data['result']['transfers'] as List)
+        .map((tx) =>
+            _mapAlchemyTransactionToHistory(tx, address, isSent: isSent))
+        .where((tx) => tx != TransactionHistory.empty)
+        .toList();
+  }
+
+  /// Alchemy 트랜잭션 데이터를 TransactionHistory 객체로 변환
+  TransactionHistory _mapAlchemyTransactionToHistory(
+      Map<String, dynamic> tx, String userAddress,
+      {bool isSent = false}) {
+    try {
+      final timestamp = DateTime.tryParse(
+          tx['metadata']?['blockTimestamp']?.toString() ?? '');
+
+      // timestamp 존재 여부로 confirmed 상태 확인
+      final isConfirmed = timestamp != null;
+      final confirmations = isConfirmed ? 1 : 0;
+
+      // 트랜잭션 상태 결정
+      final status = !isConfirmed
+          ? TransactionHistoryStatus.isPending
+          : (isSent
+              ? TransactionHistoryStatus.isSent
+              : TransactionHistoryStatus.isReceived);
+
+      final commonData = AlchemyCommonTransactionData(
+        hash: tx['hash']?.toString() ?? '',
+        from: tx['from']?.toString() ?? '',
+        to: tx['to']?.toString() ?? '',
+        timestamp: timestamp,
+        confirmations: confirmations,
+        status: status,
+      );
+
+      return TransactionHistory.createSolanaTransaction(commonData, tx);
+    } catch (e) {
+      print('Error mapping Solana transaction: $e');
+      return TransactionHistory.empty;
+    }
+  }
+
+  /// 솔라나 네이티브 트랜잭션 조회 (SOL)
+  Future<List<TransactionHistory>> getSolTransactions(String address) async {
+    return _fetchAlchemyTransactions(
+      address: address,
+    );
+  }
+
+  /// 특정 SPL 토큰 트랜잭션 조회
+  Future<List<TransactionHistory>> getTokenTransactions(
+      String address, String tokenMintAddress) async {
+    return _fetchAlchemyTransactions(
+      address: address,
+      tokenMintAddress: tokenMintAddress,
+    );
   }
 
   /// 서비스 종료 시 리소스 해제

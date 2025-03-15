@@ -379,7 +379,7 @@ class TransactionHistory {
 
   // ETH 트랜잭션 생성을 위한 factory 생성자
   factory TransactionHistory.createEthTransaction(
-      CommonTransactionData data, double value) {
+      AlchemyCommonTransactionData data, double value) {
     return TransactionHistory(
       hash: data.hash,
       from: data.from,
@@ -402,7 +402,9 @@ class TransactionHistory {
 
   // 토큰 트랜잭션 생성을 위한 factory 생성자
   factory TransactionHistory.createTokenTransaction(
-      CommonTransactionData data, Map<String, dynamic> tx, double value) {
+      AlchemyCommonTransactionData data,
+      Map<String, dynamic> tx,
+      double value) {
     final tokenAddress = tx['rawContract']?['address']?.toString();
     final decimal = tx['rawContract']?['decimal'] != null
         ? int.tryParse(tx['rawContract']['decimal'].toString()) ?? 18
@@ -426,6 +428,58 @@ class TransactionHistory {
       gasUsed: null,
       status: data.status,
     );
+  }
+
+  // 솔라나 트랜잭션 생성을 위한 factory 생성자
+  factory TransactionHistory.createSolanaTransaction(
+      AlchemyCommonTransactionData data, Map<String, dynamic> tx) {
+    try {
+      // SOL 또는 토큰 트랜잭션 처리
+      final asset = tx['asset']?.toString() ?? '';
+      final tokenAddress = tx['tokenAddress']?.toString();
+      final tokenSymbol = asset.isEmpty ? 'SOL' : asset;
+
+      // 토큰인지 SOL인지에 따라 데시멀 설정
+      final decimals = tokenAddress != null && tokenAddress.isNotEmpty
+          ? TokenData.solanaTokens
+              .firstWhere(
+                (t) => t.address.toLowerCase() == tokenAddress.toLowerCase(),
+                orElse: () => TokenInfo(
+                  symbol: tokenSymbol,
+                  name: tokenSymbol,
+                  address: tokenAddress,
+                  decimals: 9,
+                  logoUrl: '',
+                  coingeckoKey: '',
+                ),
+              )
+              .decimals
+          : 9; // SOL은 9 데시멀 기본값
+
+      // 금액 처리
+      final value = double.tryParse(tx['value']?.toString() ?? '0') ?? 0.0;
+
+      return TransactionHistory(
+        hash: data.hash,
+        from: data.from,
+        to: data.to,
+        timestamp: data.timestamp,
+        tokenSymbol: tokenSymbol,
+        amount: value,
+        confirmations: data.confirmations,
+        isSuccess: true,
+        decimals: decimals,
+        tokenAddress: tokenAddress,
+        fee: null,
+        gas: null,
+        gasPrice: null,
+        gasUsed: null,
+        status: data.status,
+      );
+    } catch (e) {
+      print('Error creating Solana transaction: $e');
+      return TransactionHistory.empty;
+    }
   }
 }
 
@@ -557,7 +611,7 @@ class SolanaTransactionHistoryParser {
 }
 
 // 공통 데이터를 위한 클래스 (일단 이더리움에서 만들어짐)
-class CommonTransactionData {
+class AlchemyCommonTransactionData {
   final String hash;
   final String from;
   final String to;
@@ -565,7 +619,7 @@ class CommonTransactionData {
   final int confirmations;
   final TransactionHistoryStatus status;
 
-  CommonTransactionData({
+  AlchemyCommonTransactionData({
     required this.hash,
     required this.from,
     required this.to,

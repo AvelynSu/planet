@@ -2,6 +2,8 @@ part of 'transaction_history_service.dart';
 
 /// 비트코인 거래 내역 서비스
 class _BitcoinHistoryService implements _BlockchainHistoryService {
+  static const int _requestTimeout = 15;
+
   final String _apiBaseUrl;
   final http.Client _httpClient;
 
@@ -9,15 +11,32 @@ class _BitcoinHistoryService implements _BlockchainHistoryService {
       : _apiBaseUrl = apiBaseUrl ?? WalletConfig().bitcoinApiUrl,
         _httpClient = http.Client();
 
+  String _buildTransactionUrl(String address) {
+    return '$_apiBaseUrl/addrs/$address/full?limit=50?token=${WalletConfig().blockCypherToken}';
+  }
+
+  List<TransactionHistory> _processTransactions(List txs, String address) {
+    return txs
+        .map((tx) {
+          try {
+            return TransactionHistory.fromBlockCypherTx(tx, address);
+          } catch (e) {
+            print('Error mapping Bitcoin transaction: $e');
+            return TransactionHistory.empty;
+          }
+        })
+        .where((tx) => tx != TransactionHistory.empty)
+        .toList();
+  }
+
   @override
   Future<List<TransactionHistory>> getAllTransactions(String address) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse(
-            '$_apiBaseUrl/addrs/$address/full?limit=50?token=${WalletConfig().blockCypherToken}'),
+        Uri.parse(_buildTransactionUrl(address)),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
-        const Duration(seconds: 15),
+        const Duration(seconds: _requestTimeout),
         onTimeout: () => throw Exception('Request timed out'),
       );
 
@@ -34,17 +53,7 @@ class _BitcoinHistoryService implements _BlockchainHistoryService {
       }
 
       // BlockCypher API 응답에서 트랜잭션 매핑
-      final transactions = txs
-          .map((tx) {
-            try {
-              return TransactionHistory.fromBlockCypherTx(tx, address);
-            } catch (e) {
-              print('Error mapping Bitcoin transaction: $e');
-              return TransactionHistory.empty;
-            }
-          })
-          .where((tx) => tx != TransactionHistory.empty)
-          .toList();
+      final transactions = _processTransactions(txs, address);
 
       // 시간순 정렬 (최신순)
       transactions.sort((a, b) =>
