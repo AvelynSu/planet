@@ -67,7 +67,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
   }
 
   @override
-  Future<bool> sendAndWaitForTransaction({
+  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -92,16 +92,17 @@ class _EthereumTransferService implements _BlockchainTransferService {
   }
 
   @override
-  Future<bool> checkTransactionStatus(String txHash) async {
+  Future<TransactionConfirmationStatus> checkTransactionStatus(
+      String txHash) async {
     try {
       // 트랜잭션 영수증 조회
       final receipt = await web3client.getTransactionReceipt(txHash);
 
       // null이면 아직 처리 중
-      if (receipt == null) return false;
+      if (receipt == null) return TransactionConfirmationStatus.unconfirmed;
 
-      // status가 1이면 성공
-      return receipt.status!;
+      // receipt.status가 1이면 성공
+      return TransactionConfirmationStatus.confirmed;
     } catch (e) {
       throw CustomException(errMsg: 'Failed to check transaction status: $e');
     }
@@ -135,22 +136,21 @@ class _EthereumTransferService implements _BlockchainTransferService {
   }
 
   // 트랜잭션 상태를 기다리는 공통 메서드
-  Future<bool> _waitForTransactionConfirmation(
-    String txHash, {
-    int maxAttempts = 30,
-  }) async {
-    bool isConfirmed = false;
+  Future<TransactionConfirmationStatus> _waitForTransactionConfirmation(
+      String txHash,
+      {int maxAttempts = 15}) async {
     int attempts = 0;
 
-    while (!isConfirmed && attempts < maxAttempts) {
-      isConfirmed = await checkTransactionStatus(txHash);
-      if (!isConfirmed) {
-        await Future.delayed(const Duration(seconds: 3)); // 3초마다 확인
-        attempts++;
+    while (attempts < maxAttempts) {
+      if (await checkTransactionStatus(txHash) ==
+          TransactionConfirmationStatus.confirmed) {
+        return TransactionConfirmationStatus.confirmed;
       }
+      await Future.delayed(const Duration(seconds: 3));
+      attempts++;
     }
 
-    return isConfirmed;
+    return TransactionConfirmationStatus.attemptsExceeded;
   }
 
   @override

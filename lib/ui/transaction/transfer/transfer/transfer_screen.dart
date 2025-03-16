@@ -8,6 +8,7 @@ import 'package:planet/custom_theme.dart';
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
+import 'package:planet/service/wallet/wallet_transfer/walltet_transfer_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_error_card.dart';
 import 'package:planet/ui/common/default_button.dart';
@@ -327,10 +328,9 @@ class _TransferScreenState extends State<TransferScreen> {
         onSuccess: (val) {},
         mode: PinMode.validate,
       );
-
-      setState(() {});
-      await Future.delayed(Duration(milliseconds: 100));
       if (enablePin ?? false) {
+        setState(() {});
+        await Future.delayed(Duration(milliseconds: 100));
         final loadingDialog = TransferLoadingDialog.show(
           context,
           gasPriority: cubit.state.selectedGasPriority,
@@ -358,7 +358,7 @@ class _TransferScreenState extends State<TransferScreen> {
             /// 최종 확인 화면
             Navigator.pop(context);
 
-            if (success) {
+            if (success != TransactionConfirmationStatus.unconfirmed) {
               /// 금액 확인 부분
               Navigator.pop(context);
 

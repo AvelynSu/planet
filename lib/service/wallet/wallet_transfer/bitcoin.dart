@@ -264,7 +264,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   }
 
   @override
-  Future<bool> checkTransactionStatus(String txHash) async {
+  Future<TransactionConfirmationStatus> checkTransactionStatus(
+      String txHash) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -284,15 +285,16 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       // confirmations가 1 이상이면 확인됨
       final confirmations = data['confirmations'] ?? 0;
+      return TransactionConfirmationStatus.confirmed;
       return confirmations >= 1;
     } catch (e) {
       debugPrint('Error checking Bitcoin transaction status: $e');
-      return false;
+      return TransactionConfirmationStatus.unconfirmed;
     }
   }
 
   @override
-  Future<bool> sendAndWaitForTransaction({
+  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -309,30 +311,29 @@ class _BitcoinTransferService implements _BlockchainTransferService {
         fee: fee,
       );
 
-      // 트랜잭션 확인 대기 (최대 20번 시도, 15초마다)
-      const maxAttempts = 20;
-      const pollInterval = Duration(seconds: 15);
-
-      for (int attempt = 0; attempt < maxAttempts; attempt++) {
-        // 첫 번째 시도가 아니면 잠시 대기
-        if (attempt > 0) {
-          await Future.delayed(pollInterval);
-        }
-
-        // 트랜잭션 상태 확인
-        final isConfirmed = await checkTransactionStatus(txHash);
-
-        if (isConfirmed) {
-          return true;
-        }
-      }
-
-      // 모든 폴링 시도 후에도 확인되지 않음
-      return false;
+      // 2. 트랜잭션 처리 완료 대기
+      return await _waitForTransactionConfirmation(txHash);
     } catch (e) {
       debugPrint('Error in sendAndWaitForTransaction: $e');
       throw Exception('Failed to send and wait for transaction: $e');
     }
+  }
+
+  Future<TransactionConfirmationStatus> _waitForTransactionConfirmation(
+      String txHash,
+      {int maxAttempts = 15}) async {
+    int attempts = 0;
+
+    while (attempts < maxAttempts) {
+      if (await checkTransactionStatus(txHash) ==
+          TransactionConfirmationStatus.confirmed) {
+        return TransactionConfirmationStatus.confirmed;
+      }
+      await Future.delayed(const Duration(seconds: 3));
+      attempts++;
+    }
+
+    return TransactionConfirmationStatus.attemptsExceeded;
   }
 
   @override

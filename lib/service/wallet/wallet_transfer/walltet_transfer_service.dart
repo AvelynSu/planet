@@ -63,7 +63,7 @@ class WalletTransferService {
   }
 
   // 트랜잭션 상태 확인
-  Future<bool> checkTransactionStatus({
+  Future<TransactionConfirmationStatus> checkTransactionStatus({
     required String txHash,
     required NetworkType networkType,
   }) {
@@ -71,7 +71,7 @@ class WalletTransferService {
   }
 
   // 트랜잭션을 전송하고 결과까지 기다림
-  Future<bool> sendAndWaitForTransaction({
+  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -111,9 +111,9 @@ abstract class _BlockchainTransferService {
     required BigInt fee,
   });
 
-  Future<bool> checkTransactionStatus(String txHash);
+  Future<TransactionConfirmationStatus> checkTransactionStatus(String txHash);
 
-  Future<bool> sendAndWaitForTransaction({
+  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -122,4 +122,10 @@ abstract class _BlockchainTransferService {
   });
 
   void dispose();
+}
+
+enum TransactionConfirmationStatus {
+  confirmed, // 트랜잭션 확인됨
+  unconfirmed, // 트랜잭션 미확인
+  attemptsExceeded, // 최대 시도 횟수 초과
 }

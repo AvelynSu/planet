@@ -124,7 +124,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
   }
 
   /// 실행
-  Future<bool> executeTransfer() async {
+  Future<TransactionConfirmationStatus> executeTransfer() async {
     emit(state.copyWith(status: ScreenStatus.loading));
 
     try {
@@ -140,7 +140,8 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       // Parse amount
       final amountInWei = AppUtil.valueToRaw(state.amount, networkType);
 
-      bool success;
+      TransactionConfirmationStatus success =
+          TransactionConfirmationStatus.unconfirmed;
 
       // Check if using custom gas settings
       if (state.useCustomGas && state.customGasFee != null) {
@@ -171,7 +172,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
         );
       }
 
-      if (success) {
+      if (success == TransactionConfirmationStatus.confirmed) {
         // Refresh balances
         appBloc.add(
             AppUpdate(updatePlanets: false, updateBalanceToken: tokenInfo));
@@ -184,7 +185,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
         status: ScreenStatus.fail,
         exception: e,
       ));
-      return false;
+      return TransactionConfirmationStatus.unconfirmed;
     }
   }
 
