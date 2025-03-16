@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/util/app_constant.dart';
@@ -25,12 +26,17 @@ class AppUtil {
           GasPriority.fast: 2.0, // 200% - 빠름
         };
       case NetworkType.solana:
+        // 고정됨
         return {
-          GasPriority.slow: 1.0, // 기본
-          GasPriority.medium: 1.5, // 중간
-          GasPriority.fast: 2.0, // 빠름
+          GasPriority.slow: 1, // 기본
+          GasPriority.medium: 1, // 중간
+          GasPriority.fast: 2, // 빠름
         };
     }
+  }
+
+  static String bytesToHex(Uint8List bytes) {
+    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
   }
 
   static Credentials getEthCredentials(String privateKey) {

@@ -8,62 +8,8 @@ class _SolanaTransferService implements _BlockchainTransferService {
   _SolanaTransferService()
       : _rpcClient = sol.RpcClient(WalletConfig().solanaRpcUrl),
         config = WalletConfig();
+
   @override
-  Future<Map<GasPriority, TransferFee>> estimateTransferFees({
-    String? fromAddress,
-    String? toAddress,
-    BigInt? amount,
-  }) async {
-    try {
-      // 솔라나 기본 전송 수수료 (lamports)
-      final baseFee = BigInt.from(5000);
-
-      // 각 우선순위별 수수료 계산
-      final Map<GasPriority, TransferFee> result = {};
-      for (final priority in AppUtil.feePriority(NetworkType.solana).entries) {
-        final feeMultiplier = priority.value;
-        final priorityFee =
-            BigInt.from((baseFee.toDouble() * feeMultiplier).toInt());
-
-        // 솔라나의 고정 수수료 구조에 맞게 설정
-        result[priority.key] = TransferFee(
-          gasPrice: BigInt.from(5000), // 솔라나의 기본 수수료
-          gasLimit: BigInt.from(1), // 솔라나는 가스 한도 개념이 없음
-          estimatedFee: priorityFee,
-        );
-      }
-
-      return result;
-    } catch (e) {
-      throw Exception('Failed to estimate Solana transfer fees: $e');
-    }
-  }
-
-  /// 개인키로부터 키페어 생성
-  Future<sol.Ed25519HDKeyPair> _getKeyPair(String privateKey) async {
-    try {
-      // Hex 형식이면 Hex 디코딩
-      if (RegExp(r'^[0-9a-fA-F]+$').hasMatch(privateKey)) {
-        final privateKeyBytes = Uint8List.fromList(hex.decode(privateKey));
-
-        // 32바이트 체크
-        if (privateKeyBytes.length != 32) {
-          throw CustomException(
-            errMsg: '개인키는 반드시 32바이트여야 합니다. (현재: ${privateKeyBytes.length}바이트)',
-          );
-        }
-
-        return await sol.Ed25519HDKeyPair.fromPrivateKeyBytes(
-          privateKey: privateKeyBytes,
-        );
-      }
-
-      throw CustomException(errMsg: "개인키는 16진수 형식이어야 합니다.");
-    } catch (e) {
-      throw CustomException(errMsg: '개인키 형식이 잘못되었습니다: $e');
-    }
-  }
-
   Future<String> sendTransaction({
     required String fromAddress,
     required String toAddress,
@@ -72,29 +18,36 @@ class _SolanaTransferService implements _BlockchainTransferService {
     required BigInt fee, // fee는 솔라나에서 무시됨
   }) async {
     try {
-      final keyPair = await _getKeyPair(privateKey);
+      // 프라이빗키 받아서 fromAddress 와 일치하는지 확인
+      final keyPair = await WalletService.getSolKeyPairByPrivacyKey(privateKey);
 
       if (keyPair.publicKey.toBase58() != fromAddress) {
         throw const CustomException(
-          errMsg: '개인키가 송금 주소와 일치하지 않습니다.',
+          errMsg: 'Private key does not match the sender address',
         );
       }
 
+      // 지금 월렛에 얼마 들어있는지 확인
       final balance = await _rpcClient.getBalance(fromAddress);
       final destinationPubkey = sol.Ed25519HDPublicKey.fromBase58(toAddress);
 
-      final minimumRent = BigInt.from(890880);
-      final minimumFee = BigInt.from(5000);
-      final amountWithRent = amount + minimumRent;
-      final totalRequired = amountWithRent + minimumFee;
+      final receiverAccount =
+          await _rpcClient.getAccountInfo(toAddress); // 새 계정 생성시 필요한 비용
+      final minimumRent =
+          receiverAccount.value == null ? BigInt.from(890880) : BigInt.zero;
+      final minimumFee = BigInt.from(5000); // 트렌젝션 수수료 (고정)
+      final amountWithRent = amount + minimumRent; // 전송금액 + 렌트비용
+      final totalRequired = amountWithRent + minimumFee; // 총 필요한 금액
 
       if (BigInt.from(balance.value) < totalRequired) {
         throw const CustomException(
-          errMsg: '잔액이 부족합니다. 전송 금액, 수수료, 그리고 계정 생성 비용을 확인해주세요.',
+          errMsg:
+              'Insufficient balance. Please check transfer amount, fee, and account creation cost',
         );
       }
 
-      final recentBlockhash = await _rpcClient.getLatestBlockhash();
+      final recentBlockhash =
+          await _rpcClient.getLatestBlockhash(); // 내부에서 이 값을 사용함
       final systemProgramId =
           sol.Ed25519HDPublicKey.fromBase58(sol.SystemProgram.programId);
 
@@ -104,7 +57,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
           sol_encoder.AccountMeta.writeable(
               pubKey: keyPair.publicKey, isSigner: true),
           sol_encoder.AccountMeta.writeable(
-              pubKey: destinationPubkey, isSigner: false),
+              pubKey: destinationPubkey, isSigner: false), // 받는 사람 서명은 불필요
         ],
         data: _createTransferData(amountWithRent),
       );
@@ -118,25 +71,23 @@ class _SolanaTransferService implements _BlockchainTransferService {
       if (e is CustomException) rethrow;
       if (e.toString().contains("AccountNotFound") ||
           e.toString().contains("Attempt to debit an account")) {
-        throw const CustomException(errMsg: '계정을 찾을 수 없거나 잔액이 부족합니다.');
+        throw const CustomException(
+            errMsg: 'Account not found or insufficient balance');
       }
-      throw CustomException(errMsg: '트랜잭션 실패: $e');
+      throw CustomException(errMsg: 'Transaction failed: $e');
     }
   }
 
   // SOL 전송 데이터 생성 헬퍼 메서드
   sol_encoder.ByteArray _createTransferData(BigInt amount) {
     // 1. 명령어 인덱스 (2 = transfer)
-    final instructionIndex = sol_encoder.ByteArray([2, 0, 0, 0]);
+    final instructionIndex = sol_encoder.ByteArray(const [2, 0, 0, 0]);
 
     // 2. 금액을 바이트 배열로 변환 (리틀 엔디안)
     final amountBytes = _uint64ToByteArray(amount.toInt());
 
     // 3. 데이터 합치기
-    return sol_encoder.ByteArray([
-      ...instructionIndex.toList(),
-      ...amountBytes.toList(),
-    ]);
+    return sol_encoder.ByteArray([...instructionIndex, ...amountBytes]);
   }
 
   // 64비트 정수를 리틀 엔디안 바이트 배열로 변환
@@ -147,60 +98,25 @@ class _SolanaTransferService implements _BlockchainTransferService {
     return buffer;
   }
 
-  Future<String> sendTransactionWithCustomFee({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-  }) async {
-    // 솔라나는 가스 가격을 직접 설정할 수 없으므로
-    // 일반 전송과 동일하게 처리
-    return sendTransaction(
-      fromAddress: fromAddress,
-      toAddress: toAddress,
-      amount: amount,
-      privateKey: privateKey,
-      fee: fee,
-    );
-  }
-
   @override
   Future<bool> checkTransactionStatus(String txHash) async {
     try {
       final status = await _rpcClient.getSignatureStatuses(
         [txHash],
-        searchTransactionHistory: true,
+        searchTransactionHistory:
+            true, // 오래된 트랜잭션도 확인 가능, 네트워크 지연이나 문제로 최근 블록에서 누락된 트랜잭션도 찾을 수 있음, 더 신뢰성 있는 상태 확인 가능
       );
 
       if (status.value.isEmpty || status.value[0] == null) {
         return false;
       }
 
-      return status.value[0]!.confirmationStatus ==
-              sol_dto.Commitment.finalized.name ||
-          status.value[0]!.confirmationStatus ==
-              sol_dto.Commitment.confirmed.name;
+      final confirmStatus = status.value[0]!.confirmationStatus;
+      return confirmStatus == sol_dto.Commitment.finalized ||
+          confirmStatus == sol_dto.Commitment.confirmed;
     } catch (e) {
-      throw Exception('Failed to check transaction status: $e');
+      throw CustomException(errMsg: 'Failed to check transaction status: $e');
     }
-  }
-
-  // 트랜잭션 상태를 기다리는 공통 메서드
-  Future<bool> _waitForTransactionConfirmation(String txHash,
-      {int maxAttempts = 30}) async {
-    bool isConfirmed = false;
-    int attempts = 0;
-
-    while (!isConfirmed && attempts < maxAttempts) {
-      isConfirmed = await checkTransactionStatus(txHash);
-      if (!isConfirmed) {
-        await Future.delayed(const Duration(seconds: 4)); // 2초마다 확인
-        attempts++;
-      }
-    }
-
-    return isConfirmed;
   }
 
   @override
@@ -213,7 +129,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
   }) async {
     try {
       // 1. 트랜잭션 전송
-      final txHash = await sendTransactionWithCustomFee(
+      final txHash = await sendTransaction(
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,
@@ -229,8 +145,46 @@ class _SolanaTransferService implements _BlockchainTransferService {
   }
 
   @override
-  void dispose() {
-    // 솔라나 클라이언트는 dispose 메서드가 없음
-    // 필요한 리소스 정리 코드 추가 가능
+  Future<Map<GasPriority, TransferFee>> estimateTransferFees({
+    String? fromAddress,
+    String? toAddress,
+    BigInt? amount,
+  }) async {
+    try {
+      final Map<GasPriority, TransferFee> result = {};
+
+      for (final priority in AppUtil.feePriority(NetworkType.solana).entries) {
+        result[priority.key] = TransferFee(
+          gasPrice: BigInt.from(5000), // 솔라나는 값이 고정 됨
+          gasLimit: BigInt.from(1),
+          estimatedFee: BigInt.from(5000),
+        );
+      }
+
+      return result;
+    } catch (e) {
+      throw CustomException(
+          errMsg: 'Failed to estimate Solana transfer fees: $e');
+    }
   }
+
+  // 트랜잭션 상태를 기다리는 공통 메서드
+  Future<bool> _waitForTransactionConfirmation(String txHash,
+      {int maxAttempts = 15}) async {
+    bool isConfirmed = false;
+    int attempts = 0;
+
+    while (!isConfirmed && attempts < maxAttempts) {
+      isConfirmed = await checkTransactionStatus(txHash);
+      if (!isConfirmed) {
+        await Future.delayed(const Duration(seconds: 3));
+        attempts++;
+      }
+    }
+
+    return isConfirmed;
+  }
+
+  @override
+  void dispose() {}
 }

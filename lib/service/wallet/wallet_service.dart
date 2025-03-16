@@ -2,23 +2,26 @@ import 'dart:typed_data';
 
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:convert/convert.dart' show hex;
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/util/app_util.dart';
+import 'package:planet/util/data/token_data.dart';
+import 'package:solana/solana.dart' as sol;
 import 'package:solana/solana.dart';
 
 import '../../enum/network_type.dart';
-import '../../model/planet.dart';
 import '../../util/wallet_config.dart';
 
-// 지갑을 만들고, 복구할때 사용하는 서비스
+// 지갑을 만들때 사용하는 클레스.=
 class WalletService {
-  // 니모닉 생성
+  /// 니모닉 생성
   String generateMnemonic() {
     return bip39.generateMnemonic();
   }
 
+  /// 지갑 주소 생성
   Future<String> generateHDAddress(
       NetworkType network, String mnemonic, int index) async {
     if (!bip39.validateMnemonic(mnemonic)) {
@@ -28,15 +31,15 @@ class WalletService {
     // 니모닉으로부터 시드 생성
     final seed = bip39.mnemonicToSeed(mnemonic);
     // index 로 경로 생성
-    final path = network.getDerivationPath(index);
+    final derivationPath = network.getDerivationPath(index);
 
     switch (network) {
       case NetworkType.ethereum:
-        return _generateEthereumAddress(seed, path);
+        return _generateEthereumAddress(seed, derivationPath);
       case NetworkType.bitcoin:
-        return _generateBitcoinAddress(seed, path);
+        return _generateBitcoinAddress(seed, derivationPath);
       case NetworkType.solana:
-        return _generateSolanaAddress(seed, path);
+        return _generateSolanaAddress(seed, derivationPath);
     }
   }
 
@@ -49,70 +52,53 @@ class WalletService {
       throw const CustomException(errType: ExceptionType.invalidMnemonicPhrase);
     }
 
-    if (type == NetworkType.solana) {
-      var privateKey = await getSolanaPrivateKey(mnemonic, idx);
-      return privateKey;
-    }
-
     final seed = bip39.mnemonicToSeed(mnemonic);
     final path = type.getDerivationPath(idx);
-    final node = bip32.BIP32.fromSeed(seed);
-    final child = node.derivePath(path);
 
-    if (type == NetworkType.bitcoin) {
-      return bytesToHex(child.privateKey!); // 비트코인 16진수 개인키 반환
+    switch (type) {
+      case NetworkType.solana:
+        final keyData = await ED25519_HD_KEY.derivePath(path, seed);
+        return AppUtil.bytesToHex(Uint8List.fromList(keyData.key));
+      case NetworkType.bitcoin:
+        final node = bip32.BIP32.fromSeed(seed);
+        final child = node.derivePath(path);
+        return AppUtil.bytesToHex(child.privateKey!);
+      case NetworkType.ethereum:
+        final node = bip32.BIP32.fromSeed(seed);
+        final child = node.derivePath(path);
+        final privateKeyHex = AppUtil.bytesToHex(child.privateKey!);
+        return "0x$privateKeyHex";
     }
-
-    // 이더리움 및 기타 네트워크 처리
-    final privateKeyHex = bytesToHex(child.privateKey!);
-    String prefix = type == NetworkType.ethereum ? "0x" : "";
-
-    return "$prefix$privateKeyHex";
   }
 
-  Future<String> getSolanaPrivateKey(String mnemonic, int idx) async {
-    if (!bip39.validateMnemonic(mnemonic)) {
-      throw ArgumentError('Invalid mnemonic phrase');
+  /// 개인키로부터 키페어 생성
+  static Future<sol.Ed25519HDKeyPair> getSolKeyPairByPrivacyKey(
+      String privateKey) async {
+    try {
+      final privateKeyBytes = Uint8List.fromList(hex.decode(privateKey));
+      return await sol.Ed25519HDKeyPair.fromPrivateKeyBytes(
+        privateKey: privateKeyBytes,
+      );
+    } catch (e) {
+      throw CustomException(errMsg: '개인키 형식이 잘못되었습니다: $e');
     }
-
-    final seed = bip39.mnemonicToSeed(mnemonic);
-
-    // ED25519_HD_KEY를 직접 사용하여 개인키 생성
-    final keyData = await ED25519_HD_KEY.derivePath(
-        NetworkType.solana.getDerivationPath(idx), seed);
-
-    // keyData.key가 개인키입니다
-    return bytesToHex(Uint8List.fromList(keyData.key));
-  }
-
-// 헬퍼 함수: Uint8List를 16진수 문자열로 변환
-  String bytesToHex(Uint8List bytes) {
-    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
   }
 
   /// 주소 생성 ----------------------------------------------------------------------
 
-  // 이더리움 주소 생성
+  /// 이더리움 주소 생성
   Future<String> _generateEthereumAddress(Uint8List seed, String path) async {
-    // 2-1. seed로부터 HD 노드 생성 (seed -> master)
     final bip32.BIP32 node = bip32.BIP32.fromSeed(seed);
-    // 2-2. 경로에 따른 자식 키 생성 (master -> child)
     final child = node.derivePath(path);
 
-    // 2. 프라이빗 키 생성 : Uint8List를 hex string으로 변환 후 private key 생성
-    final uIntToPrivateKey = bytesToHex(child.privateKey!);
+    final uIntToPrivateKey = AppUtil.bytesToHex(child.privateKey!);
     final privateKey = AppUtil.getEthCredentials(uIntToPrivateKey);
-
-    // 3. 공개키 생성 (이 과정은 EthPrivateKey 클래스 내부에서 자동으로 처리됨)
-    // privateKey.publicKey
-
-    // 4. 주소 생성 (공개키로부터 - 이것도 내부적으로 처리됨)
     final address = privateKey.address;
 
     return address.hex;
   }
 
-  // 비트코인 주소 생성
+  /// 비트코인 주소 생성
   Future<String> _generateBitcoinAddress(Uint8List seed, String path) async {
     // HD 지갑에서 키 유도
     final node = bip32.BIP32.fromSeed(seed);
@@ -121,23 +107,11 @@ class WalletService {
     // 환경에 따라 네트워크 선택
     final network = WalletConfig.env == Environment.prod
         ? btc.bitcoin
-        : btc.NetworkType(
-            messagePrefix: '\x18BlockCypher Signed Message:\n',
-            bech32: 'bc',
-            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
-            pubKeyHash: 0x1B,
-            // BCY testnet용 pubKeyHash
-            scriptHash: 0x1F,
-            // BCY testnet용 scriptHash
-            wif: 0x49, // BCY testnet용 WIF
-          ); // BCY.test 네트워크 사용
+        : TokenData.btcTestNet;
 
     // 주소 생성
     final address = btc
-        .P2PKH(
-          data: btc.PaymentData(pubkey: child.publicKey),
-          network: network,
-        )
+        .P2PKH(data: btc.PaymentData(pubkey: child.publicKey), network: network)
         .data
         .address;
 
@@ -146,48 +120,9 @@ class WalletService {
 
   // 솔라나 주소 생성
   Future<String> _generateSolanaAddress(Uint8List seed, String path) async {
-    // 1. 니모닉 -> 시드 (이미 파라미터로 받음)
-
-    // 2. 시드 -> 개인키 (HD 월렛: seed -> master node -> child node -> private key)
     final keyData = await ED25519_HD_KEY.derivePath(path, seed);
-
-    // 3. 개인키 -> 공개키 & 4. 공개키 -> 지갑 주소
-    // Ed25519HDKeyPair가 개인키로부터 공개키를 생성하고, 이를 솔라나 주소 형식으로 변환
-    final keyPair = await Ed25519HDKeyPair.fromPrivateKeyBytes(
-      privateKey: keyData.key,
-    );
-
+    final keyPair =
+        await Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: keyData.key);
     return keyPair.address;
-  }
-
-// 1 니모닉 -> 시드
-// 2 시드 -> 개인키 (hd: seed -> master node -> child node -> private key)
-// 3 개인키 -> 공개키
-// 4 공개키 -> 지갑 주소
-
-  /// 주소 복구 ----------------------------------------------------------------------
-// HD 월렛의 주소 복구 기능
-// - 하나의 니모닉에서 여러 개의 주소가 생성될 수 있음
-// - 생성된 주소들 중 실제 사용된 주소를 찾아내는 과정
-  Future<List<Planet>> recoverAddresses(
-    NetworkType network,
-    String mnemonic,
-    int testLastIdx, // 지갑 생성/복구 테스트용 라스트 인덱스 넣기
-  ) async {
-    List<Planet> foundPlanets = [];
-
-    for (var i = 0; i < testLastIdx; i++) {
-      final address = await generateHDAddress(network, mnemonic, i);
-      foundPlanets.add(Planet(
-        id: "",
-        networkType: network,
-        name: "",
-        address: address,
-        mnemonic: mnemonic,
-      ));
-    }
-
-    // 발견된 모든 활성 주소 반환
-    return foundPlanets;
   }
 }

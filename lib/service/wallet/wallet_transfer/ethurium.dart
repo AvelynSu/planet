@@ -103,7 +103,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
       // status가 1이면 성공
       return receipt.status!;
     } catch (e) {
-      throw Exception('Failed to check transaction status: $e');
+      throw CustomException(errMsg: 'Failed to check transaction status: $e');
     }
   }
 

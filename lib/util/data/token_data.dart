@@ -1,8 +1,18 @@
+import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:planet/enum/network_type.dart';
 
 import '../../../model/token_info.dart';
 
 class TokenData {
+  static btc.NetworkType btcTestNet = btc.NetworkType(
+    messagePrefix: '\x18BlockCypher Signed Message:\n',
+    bech32: 'bc',
+    bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+    pubKeyHash: 0x1B,
+    scriptHash: 0x1F,
+    wif: 0x49,
+  );
+
   static const TokenInfo bitToken = TokenInfo(
     name: "Bitcoin",
     symbol: "BTC",

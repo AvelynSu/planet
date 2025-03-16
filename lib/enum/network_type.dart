@@ -74,7 +74,6 @@ enum NetworkType {
         coinType = 60;
         return "m/44'/$coinType'/0'/0/$addressIndex";
       case NetworkType.bitcoin:
-        // 비트코인 메인넷(0)과 테스트넷(1) 구분
         coinType = WalletConfig.env == Environment.prod ? 0 : 1;
         return "m/44'/$coinType'/0'/0/$addressIndex";
       default:
