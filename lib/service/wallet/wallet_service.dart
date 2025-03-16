@@ -14,7 +14,7 @@ import 'package:solana/solana.dart';
 import '../../enum/network_type.dart';
 import '../../util/wallet_config.dart';
 
-// 지갑을 만들때 사용하는 클레스.=
+// 지갑을 만들때 사용하는 클레스
 class WalletService {
   /// 니모닉 생성
   String generateMnemonic() {
@@ -82,6 +82,23 @@ class WalletService {
     } catch (e) {
       throw CustomException(errMsg: '개인키 형식이 잘못되었습니다: $e');
     }
+  }
+
+  /// 개인키로부터 주소 생성 메서드
+  static String getBtcAddressFromPrivateKey(String privateKey) {
+    final keyPair =
+        btc.ECPair.fromPrivateKey(AppUtil.hexToUint8List(privateKey));
+    final network = WalletConfig.env == Environment.prod
+        ? btc.bitcoin
+        : TokenData.btcTestNet;
+    return btc
+            .P2PKH(
+              data: btc.PaymentData(pubkey: keyPair.publicKey),
+              network: network,
+            )
+            .data
+            .address ??
+        "";
   }
 
   /// 주소 생성 ----------------------------------------------------------------------

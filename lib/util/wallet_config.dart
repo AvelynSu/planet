@@ -14,7 +14,7 @@ enum Environment {
 }
 
 class WalletConfig {
-  static Environment env = Environment.dev;
+  static Environment env = Environment.prod;
 
   final String ethRpcUrl;
   final String wsUrl;

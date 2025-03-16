@@ -73,6 +73,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       //-
       // 로컬에 있는 플래닛 FB에서 정보 가져오기
       var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+
+      if (planets.isEmpty) {
+        await apiRepository.signOut();
+        yield AppUnInitialized.sign;
+        return;
+      }
       // 현재 앱에서 보여줄 메인 플래닛
       var current = _getCurrentPlanet(planets);
 

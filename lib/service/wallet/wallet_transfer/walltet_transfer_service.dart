@@ -6,6 +6,7 @@ import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
+import 'package:planet/util/data/token_data.dart';
 import 'package:solana/dto.dart' as sol_dto;
 import 'package:solana/encoder.dart' as sol_encoder;
 import 'package:solana/solana.dart' as sol;

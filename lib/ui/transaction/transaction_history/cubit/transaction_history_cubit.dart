@@ -48,6 +48,7 @@ class TransactionBalanceCubit extends Cubit<TransactionHistoryState> {
         var appState = appBloc.state as AppLoaded;
         emit(state.copyWith(status: ScreenStatus.loading, items: []));
         var planet = appState.current;
+
         var history = await service.getSpecificTokenTransactions(
           address: initialValue.address,
           info: initialValue.info,

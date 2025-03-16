@@ -227,14 +227,18 @@ class ApiRepository {
     List<Future<Planet>> planetFutures = local.map((item) async {
       var planet =
           await getPlanetByAddress(item.address, mnemonic: item.mnemonic);
-      return planet.copyWith(
-        isCurrent: item.isCurrent,
-      );
+      if (planet == Planet.empty) {
+        return Planet.empty;
+      } else {
+        return planet.copyWith(
+          isCurrent: item.isCurrent,
+        );
+      }
     }).toList();
 
     List<Planet> planets = await Future.wait(planetFutures);
 
-    return planets;
+    return planets.where((e) => e != Planet.empty).toList();
   }
 
   Future<void> signOut() async {

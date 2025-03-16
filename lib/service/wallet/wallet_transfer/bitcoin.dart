@@ -11,6 +11,221 @@ class _BitcoinTransferService implements _BlockchainTransferService {
         _httpClient = http.Client(),
         config = WalletConfig();
 
+  /// 트랜잭션 크기를 계산 (bytes)
+  /// P2PKH 트랜잭션 기준으로 계산됨
+  int _calculateTxSize(int inputCount, int outputCount) {
+    const int baseSize = 10; // 트랜잭션 헤더 크기
+    const int inputSize = 150; // 입력당 크기 (서명 포함)
+    const int outputSize = 34; // 출력당 크기 (P2PKH)
+
+    return baseSize + (inputCount * inputSize) + (outputCount * outputSize);
+  }
+
+  /// 수수료 배율 적용 (소수점 처리를 위해 100을 곱하고 나눔)
+  BigInt _applyMultiplier(BigInt value, double multiplier) {
+    final scaledMultiplier = (multiplier * 100).round();
+    return value * BigInt.from(scaledMultiplier) ~/ BigInt.from(100);
+  }
+
+  /// 주소의 미사용 UTXO 목록 조회
+  Future<List<Map<String, dynamic>>> _getUnspentOutputs(String address) async {
+    final response = await _httpClient.get(Uri.parse(
+        '$_apiBaseUrl/addrs/$address?unspentOnly=true&includeScript=true&token=${WalletConfig().blockCypherToken}'));
+
+    if (response.statusCode != 200) {
+      throw CustomException(errMsg: 'Failed to fetch UTXOs: ${response.body}');
+    }
+
+    final responseData = json.decode(response.body);
+    final txrefs = responseData['txrefs'] as List<dynamic>? ?? [];
+
+    return txrefs
+        .where((txref) =>
+            txref['spent'] != true &&
+            txref['tx_output_n'] >= 0)
+        .map((txref) => Map<String, dynamic>.from(txref))
+        .toList();
+  }
+
+  /// 비트코인 트랜잭션 생성
+  /// 입력(UTXO)을 모아서 출력과 거스름돈을 설정하고 서명
+  btc.Transaction _buildTransaction({
+    required List<Map<String, dynamic>> utxos,
+    required String toAddress,
+    required BigInt amount,
+    required BigInt fee,
+    required String fromAddress,
+    required btc.ECPair keyPair,
+    required btc.NetworkType network,
+  }) {
+    final txb = btc.TransactionBuilder(network: network);
+    int totalInput = 0;
+
+    // UTXO 입력 추가 (필요한 금액만큼만)
+    for (var utxo in utxos) {
+      txb.addInput(utxo['tx_hash'], utxo['tx_output_n']);
+      totalInput += (utxo['value'] as num).toInt();
+
+      if (totalInput >= amount.toInt() + fee.toInt()) break;
+    }
+
+    if (totalInput < amount.toInt() + fee.toInt()) {
+      throw const CustomException(
+          errMsg: 'Insufficient balance for transaction and fee');
+    }
+
+    txb.addOutput(toAddress, amount.toInt());
+
+    // 거스름돈 처리 (더스트 한계 고려)
+    final changeAmount = totalInput - amount.toInt() - fee.toInt();
+    if (changeAmount > 546) {
+      // 546 satoshi = 더스트 한계
+      txb.addOutput(fromAddress, changeAmount);
+    }
+
+    // 모든 입력에 서명
+    for (int i = 0; i < txb.inputs.length; i++) {
+      txb.sign(vin: i, keyPair: keyPair);
+    }
+
+    return txb.build();
+  }
+
+  // sendTransaction 메서드가 더 깔끔해짐
+  @override
+  Future<String> sendTransaction({
+    required String fromAddress,
+    required String toAddress,
+    required BigInt amount,
+    required String privateKey,
+    required BigInt fee,
+  }) async {
+    try {
+      final network = WalletConfig.env == Environment.prod
+          ? btc.bitcoin
+          : TokenData.btcTestNet;
+
+      final keyPair = btc.ECPair.fromPrivateKey(
+        AppUtil.hexToUint8List(privateKey),
+        network: network,
+      );
+
+      if (WalletService.getBtcAddressFromPrivateKey(privateKey) !=
+          fromAddress) {
+        throw const CustomException(errMsg: '제공된 주소와 개인 키가 일치하지 않습니다.');
+      }
+
+      final utxos = await _getUnspentOutputs(fromAddress);
+
+      if (utxos.isEmpty) {
+        throw const CustomException(
+            errMsg: 'No available unspent UTXOs found.');
+      }
+
+      final transaction = _buildTransaction(
+        utxos: utxos,
+        toAddress: toAddress,
+        amount: amount,
+        fee: fee,
+        fromAddress: fromAddress,
+        keyPair: keyPair,
+        network: network,
+      );
+
+      final response = await _httpClient.post(
+        Uri.parse(
+            '$_apiBaseUrl/txs/push?token=${WalletConfig().blockCypherToken}'),
+        body: json.encode({'tx': transaction.toHex()}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 201) {
+        throw CustomException(
+            errMsg: 'Failed to broadcast transaction: ${response.body}');
+      }
+
+      return json.decode(response.body)['tx']['hash'];
+    } catch (e) {
+      if (e is CustomException) rethrow;
+      throw CustomException(errMsg: 'Failed to send Bitcoin transaction: $e');
+    }
+  }
+
+  @override
+  Future<TransactionConfirmationStatus> checkTransactionStatus(
+      String txHash) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+            '$_apiBaseUrl/txs/$txHash?token=${WalletConfig().blockCypherToken}'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw Exception('Request timed out'),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to check transaction status: ${response.statusCode}');
+      }
+
+      final data = json.decode(response.body);
+
+      // confirmations가 1 이상이면 확인됨
+      final confirmations = data['confirmations'] ?? 0;
+      return confirmations >= 1
+          ? TransactionConfirmationStatus.confirmed
+          : TransactionConfirmationStatus.unconfirmed;
+    } catch (e) {
+      debugPrint('Error checking Bitcoin transaction status: $e');
+      return TransactionConfirmationStatus.unconfirmed;
+    }
+  }
+
+  @override
+  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required String fromAddress,
+    required String toAddress,
+    required BigInt amount,
+    required String privateKey,
+    required BigInt fee,
+  }) async {
+    try {
+      // 트랜잭션 전송
+      final txHash = await sendTransaction(
+        fromAddress: fromAddress,
+        toAddress: toAddress,
+        amount: amount,
+        privateKey: privateKey,
+        fee: fee,
+      );
+
+      // 2. 트랜잭션 처리 완료 대기
+      return await _waitForTransactionConfirmation(txHash);
+    } catch (e) {
+      debugPrint('Error in sendAndWaitForTransaction: $e');
+      throw Exception('Failed to send and wait for transaction: $e');
+    }
+  }
+
+  Future<TransactionConfirmationStatus> _waitForTransactionConfirmation(
+    String txHash, {
+    int maxAttempts = 15,
+  }) async {
+    int attempts = 0;
+
+    while (attempts < maxAttempts) {
+      if (await checkTransactionStatus(txHash) ==
+          TransactionConfirmationStatus.confirmed) {
+        return TransactionConfirmationStatus.confirmed;
+      }
+      await Future.delayed(const Duration(seconds: 3));
+      attempts++;
+    }
+
+    return TransactionConfirmationStatus.attemptsExceeded;
+  }
+
   @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
@@ -20,7 +235,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     try {
       // 1. 현재 권장 수수료율 조회 (satoshi/byte)
       final response = await _httpClient.get(
-        Uri.parse('$_apiBaseUrl'),
+        Uri.parse(_apiBaseUrl),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
         const Duration(seconds: 15),
@@ -38,8 +253,8 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           BigInt.from((data['medium_fee_per_kb'] ?? 50000) ~/ 1000);
 
       // 트랜잭션 크기 동적 계산
-      final inputCount = 1; // 예시: 입력 개수
-      final outputCount = 2; // 예시: 출력 개수 (수취인, 잔액 변경)
+      const inputCount = 1; // 예시: 입력 개수
+      const outputCount = 2; // 예시: 출력 개수 (수취인, 잔액 변경)
       final standardTxSize =
           BigInt.from(_calculateTxSize(inputCount, outputCount));
 
@@ -84,256 +299,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
           )
       };
     }
-  }
-
-  // 트랜잭션 크기 계산 헬퍼 메서드
-  int _calculateTxSize(int inputCount, int outputCount) {
-    // 대략적인 트랜잭션 크기 계산
-    // 이는 대략적인 추정치이며, 실제 크기는 서명 등에 따라 달라질 수 있음
-    const int baseSize = 10; // 기본 트랜잭션 오버헤드
-    const int inputSize = 150; // P2PKH 인풋 평균 크기
-    const int outputSize = 34; // P2PKH 아웃풋 평균 크기
-
-    return baseSize + (inputCount * inputSize) + (outputCount * outputSize);
-  }
-
-  // double 배율을 BigInt에 안전하게 적용하는 헬퍼 메서드
-  BigInt _applyMultiplier(BigInt value, double multiplier) {
-    final scaledMultiplier = (multiplier * 100).round();
-    return value * BigInt.from(scaledMultiplier) ~/ BigInt.from(100);
-  }
-
-  @override
-  Future<String> sendTransaction({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-  }) async {
-    try {
-      // 네트워크 설정
-      final network = WalletConfig.env == Environment.prod
-          ? btc.bitcoin
-          : btc.NetworkType(
-              messagePrefix: '\x18BlockCypher Signed Message:\n',
-              bech32: 'bc',
-              bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
-              pubKeyHash: 0x1B,
-              scriptHash: 0x1F,
-              wif: 0x49,
-            );
-
-      final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey),
-          network: network);
-      final senderAddress = getAddressFromPrivateKey(privateKey);
-
-      if (senderAddress != fromAddress) {
-        throw Exception('제공된 주소와 개인 키가 일치하지 않습니다.');
-      }
-
-      // 다른 API 엔드포인트 사용 - unspent outputs만 가져옴
-      final utxoResponse = await http.get(Uri.parse(
-          '$_apiBaseUrl/addrs/$fromAddress?unspentOnly=true&includeScript=true&token=${WalletConfig().blockCypherToken}'));
-
-      if (utxoResponse.statusCode != 200) {
-        throw Exception('Failed to fetch UTXOs : ${utxoResponse.body}');
-      }
-
-      // API 응답 디버깅
-      debugPrint('UTXO response : ${utxoResponse.body}');
-
-      final Map<String, dynamic> responseData = json.decode(utxoResponse.body);
-
-      // txrefs 필드에서 미사용 출력 가져옴
-      List<dynamic> unspentOutputs = responseData['txrefs'] ?? [];
-
-      // 미사용 상태만 명시적으로 필터링
-      unspentOutputs = unspentOutputs
-          .where((txref) =>
-                  txref['spent'] != true &&
-                  txref['tx_output_n'] >= 0 // 출력 인덱스가 0 이상인 경우만 (입력이 아닌 출력)
-              )
-          .toList();
-
-      if (unspentOutputs.isEmpty) {
-        throw Exception('No available unspent UTXOs found.');
-      }
-
-      // 트랜잭션 빌더
-      final txb = btc.TransactionBuilder(network: network);
-      int totalInput = 0;
-
-      // 선택된 UTXO 입력 추가
-      for (var utxo in unspentOutputs) {
-        String txHash = utxo['tx_hash'];
-        int vout = utxo['tx_output_n'];
-        int value = utxo['value'];
-
-        txb.addInput(txHash, vout);
-        totalInput += value;
-
-        // 필요한 금액을 충족하면 중단 (입력 최소화)
-        if (totalInput >= amount.toInt() + fee.toInt()) {
-          break;
-        }
-      }
-
-      if (totalInput < amount.toInt() + fee.toInt()) {
-        throw Exception(
-            'Insufficient balance: total input ($totalInput) is less than output (${amount.toInt()}) plus fee(${fee.toInt()})');
-      }
-
-      // 출력 추가
-      txb.addOutput(toAddress, amount.toInt());
-
-      // 거스름돈 계산 및 추가
-      final int changeAmount = totalInput - amount.toInt() - fee.toInt();
-      if (changeAmount > 546) {
-        // 546 사토시는 더스트 한계
-        txb.addOutput(fromAddress, changeAmount);
-      }
-
-      // 서명
-      for (int i = 0; i < txb.inputs.length; i++) {
-        txb.sign(
-          vin: i,
-          keyPair: keyPair,
-        );
-      }
-
-      // 트랜잭션 브로드캐스트
-      final txHex = txb.build().toHex();
-
-      debugPrint('Transaction Hex: $txHex');
-
-      final broadcastResponse = await http.post(
-        Uri.parse(
-            '$_apiBaseUrl/txs/push?token=${WalletConfig().blockCypherToken}'),
-        body: json.encode({'tx': txHex}),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (broadcastResponse.statusCode != 201) {
-        throw Exception(
-            'Failed to broadcast transaction : ${broadcastResponse.body}');
-      }
-
-      final broadcastResult = json.decode(broadcastResponse.body);
-      return broadcastResult['tx']['hash'];
-    } catch (e) {
-      debugPrint('Error sending Bitcoin transaction: $e');
-      throw Exception('Failed to send Bitcoin transaction: $e');
-    }
-  }
-
-// 주소 생성 메서드
-  String getAddressFromPrivateKey(String privateKey) {
-    final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey));
-    final network = WalletConfig.env == Environment.prod
-        ? btc.bitcoin
-        : btc.NetworkType(
-            messagePrefix: '\x18BlockCypher Signed Message:\n',
-            bech32: 'bc',
-            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
-            pubKeyHash: 0x1B,
-            scriptHash: 0x1F,
-            wif: 0x49,
-          );
-    return btc
-            .P2PKH(
-              data: btc.PaymentData(pubkey: keyPair.publicKey),
-              network: network,
-            )
-            .data
-            .address ??
-        "";
-  }
-
-  Uint8List hexToUint8List(String hex) {
-    // 16진수 문자열에서 '0x' 접두사 제거
-    hex = hex.replaceFirst('0x', '');
-
-    // 홀수 길이일 경우 앞에 0 추가
-    if (hex.length % 2 != 0) {
-      hex = '0$hex';
-    }
-
-    return Uint8List.fromList(List.generate(hex.length ~/ 2,
-        (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)));
-  }
-
-  @override
-  Future<TransactionConfirmationStatus> checkTransactionStatus(
-      String txHash) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse(
-            '$_apiBaseUrl/txs/$txHash?token=${WalletConfig().blockCypherToken}'),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw Exception('Request timed out'),
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to check transaction status: ${response.statusCode}');
-      }
-
-      final data = json.decode(response.body);
-
-      // confirmations가 1 이상이면 확인됨
-      final confirmations = data['confirmations'] ?? 0;
-      return TransactionConfirmationStatus.confirmed;
-      return confirmations >= 1;
-    } catch (e) {
-      debugPrint('Error checking Bitcoin transaction status: $e');
-      return TransactionConfirmationStatus.unconfirmed;
-    }
-  }
-
-  @override
-  Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-  }) async {
-    try {
-      // 트랜잭션 전송
-      final txHash = await sendTransaction(
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        amount: amount,
-        privateKey: privateKey,
-        fee: fee,
-      );
-
-      // 2. 트랜잭션 처리 완료 대기
-      return await _waitForTransactionConfirmation(txHash);
-    } catch (e) {
-      debugPrint('Error in sendAndWaitForTransaction: $e');
-      throw Exception('Failed to send and wait for transaction: $e');
-    }
-  }
-
-  Future<TransactionConfirmationStatus> _waitForTransactionConfirmation(
-      String txHash,
-      {int maxAttempts = 15}) async {
-    int attempts = 0;
-
-    while (attempts < maxAttempts) {
-      if (await checkTransactionStatus(txHash) ==
-          TransactionConfirmationStatus.confirmed) {
-        return TransactionConfirmationStatus.confirmed;
-      }
-      await Future.delayed(const Duration(seconds: 3));
-      attempts++;
-    }
-
-    return TransactionConfirmationStatus.attemptsExceeded;
   }
 
   @override

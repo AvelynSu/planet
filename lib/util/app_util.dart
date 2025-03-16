@@ -10,6 +10,19 @@ import '../service/local_storage_service.dart';
 import 'data/planet_name_data.dart';
 
 class AppUtil {
+  static Uint8List hexToUint8List(String hex) {
+    // 16진수 문자열에서 '0x' 접두사 제거
+    hex = hex.replaceFirst('0x', '');
+
+    // 홀수 길이일 경우 앞에 0 추가
+    if (hex.length % 2 != 0) {
+      hex = '0$hex';
+    }
+
+    return Uint8List.fromList(List.generate(hex.length ~/ 2,
+        (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)));
+  }
+
   // 가스 우선순위별 비율 상수 정의 (비트코인에서는 수수료 우선순위)
   static Map<GasPriority, double> feePriority(NetworkType type) {
     switch (type) {
