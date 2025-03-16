@@ -127,5 +127,8 @@
   "planet_name_display": "我的星球是",
 
   "cancel": "取消",
-  "confirm": "确认"
+  "confirm": "确认",
+
+  "transaction_attemptsExceeded_msg" : "请稍后再次确认。"
+
 }

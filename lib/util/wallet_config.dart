@@ -14,7 +14,7 @@ enum Environment {
 }
 
 class WalletConfig {
-  static Environment env = Environment.prod;
+  static Environment env = Environment.dev;
 
   final String ethRpcUrl;
   final String wsUrl;
@@ -23,7 +23,6 @@ class WalletConfig {
   final String bitcoinApiUrl;
   final String blockCypherToken;
   final String solanaRpcUrl;
-  final String solscanApiUrl;
   static final WalletConfig _instance = WalletConfig._internal();
 
   factory WalletConfig() => _instance;
@@ -45,10 +44,7 @@ class WalletConfig {
             : "b0bce5d62dba4e308ec307c1f9b92f78",
         solanaRpcUrl = env == Environment.prod
             ? "https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI"
-            : "https://solana-devnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI",
-        solscanApiUrl = env == Environment.prod
-            ? "https://public-api.solscan.io"
-            : "https://api-devnet.solscan.io";
+            : "https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI";
 
   // 블록체인 타입에 따른 RPC URL을 반환하는 헬퍼 메서드
   String getRpcUrlForNetwork(String networkType) {

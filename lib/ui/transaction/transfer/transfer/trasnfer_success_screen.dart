@@ -7,6 +7,7 @@ import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/model/transfer_fee.dart';
+import 'package:planet/service/wallet/wallet_transfer/walltet_transfer_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/generate_planet.dart';
@@ -23,6 +24,7 @@ class TransferSuccessScreen extends StatelessWidget {
   final TokenInfo tokenInfo;
   final TransferFee fee;
   final Planet recipient;
+  final TransactionConfirmationStatus status;
 
   const TransferSuccessScreen({
     super.key,
@@ -31,6 +33,7 @@ class TransferSuccessScreen extends StatelessWidget {
     required this.amount,
     required this.tokenInfo,
     required this.recipient,
+    required this.status,
   });
 
   static Future<void> push(
@@ -40,6 +43,7 @@ class TransferSuccessScreen extends StatelessWidget {
     required String amount,
     required TokenInfo tokenInfo,
     required Planet recipient,
+    required TransactionConfirmationStatus status,
   }) async {
     return await AppUi.push(
         context,
@@ -49,6 +53,7 @@ class TransferSuccessScreen extends StatelessWidget {
           amount: amount,
           tokenInfo: tokenInfo,
           recipient: recipient,
+          status: status,
         ));
   }
 
@@ -82,12 +87,18 @@ class TransferSuccessScreen extends StatelessWidget {
                     child: CustomImage(
                       path: "icons/ic_check.svg",
                       width: 52,
-                      color: Colors.green,
+                      color: status ==
+                              TransactionConfirmationStatus.attemptsExceeded
+                          ? C.current.sub02
+                          : Colors.green,
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    AppLocalizations.of(context)?.transfer_successful ?? '',
+                    status == TransactionConfirmationStatus.attemptsExceeded
+                        ? AppLocalizations.of(context)!
+                            .transaction_attemptsExceeded_msg
+                        : AppLocalizations.of(context)!.transfer_successful,
                     style: fontSB(14, color: C.current.mainText),
                     textAlign: TextAlign.center,
                   ),

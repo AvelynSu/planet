@@ -127,6 +127,8 @@
   "planet_name_display": "나의 행성은",
 
   "cancel": "취소",
-  "confirm": "확인"
+  "confirm": "확인",
+
+  "transaction_attemptsExceeded_msg" : "잠시 후 다시 확인해주세요."
 
 }

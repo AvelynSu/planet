@@ -8,6 +8,7 @@ import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/util/app_util.dart';
+import 'package:planet/util/wallet_config.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
@@ -75,6 +76,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
         networkType: networkType,
         mnemonic: currentPlanet.mnemonic,
         name: state.nickname,
+        env: WalletConfig.env,
         createdAt: DateTime.now(),
         parentsAddress: parent?.address ?? "",
         isCurrent: true,
@@ -97,7 +99,7 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       planet = planet.copyWith(
         address: address,
         pathIdx: idx,
-
+        env: WalletConfig.env,
         // 부모 지갑이 없으면 이게 부모지갑이 됨
         parentsAddress: planet.parentsAddress.isEmpty ? address : null,
       );

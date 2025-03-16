@@ -369,6 +369,7 @@ class _TransferScreenState extends State<TransferScreen> {
                   cubit.state.gasFees[cubit.state.selectedGasPriority];
               TransferSuccessScreen.push(
                 context,
+                status: success,
                 transactionId: "",
                 amount: cubit.state.amount,
                 tokenInfo: cubit.state.balance.info,

@@ -127,8 +127,10 @@
   "planet_name_display": "My Planet is",
 
   "cancel" : "Cancel",
-  "confirm" : "Confirm"
+  "confirm" : "Confirm",
 
+  "transaction_attemptsExceeded_msg" : "Please check again after a moment.",
 
+  "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。"
 
 }
