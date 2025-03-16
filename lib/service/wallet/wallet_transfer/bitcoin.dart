@@ -11,13 +11,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
         _httpClient = http.Client(),
         config = WalletConfig();
 
-  // 가스 우선순위별 비율 상수 정의 (비트코인에서는 수수료 우선순위)
-  static const Map<GasPriority, double> _feePriorityMultipliers = {
-    GasPriority.slow: 0.5, // 50% - 경제적
-    GasPriority.medium: 1.0, // 100% - 표준
-    GasPriority.fast: 2.0, // 200% - 빠름
-  };
-
   @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
@@ -55,7 +48,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       // 각 우선순위별 수수료 계산
       final fees = {
-        for (var entry in _feePriorityMultipliers.entries)
+        for (var entry in AppUtil.feePriority(NetworkType.bitcoin).entries)
           entry.key: _applyMultiplier(baseFee, entry.value)
       };
 
@@ -77,7 +70,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       final baseFee = fallbackFeeRate * fallbackTxSize;
 
       final fees = {
-        for (var entry in _feePriorityMultipliers.entries)
+        for (var entry in AppUtil.feePriority(NetworkType.bitcoin).entries)
           entry.key: _applyMultiplier(baseFee, entry.value)
       };
 

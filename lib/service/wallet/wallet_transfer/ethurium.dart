@@ -9,13 +9,6 @@ class _EthereumTransferService implements _BlockchainTransferService {
       : web3client = Web3Client(WalletConfig().rpcUrl, http.Client()),
         config = WalletConfig();
 
-  // 가스 우선순위별 비율 상수 정의
-  static const Map<GasPriority, double> _gasPriorityMultipliers = {
-    GasPriority.slow: 0.8, // 80%
-    GasPriority.medium: 1.0, // 100%
-    GasPriority.fast: 1.2, // 120%
-  };
-
   @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
@@ -28,7 +21,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
     // 각 우선순위별 가스 가격 계산
     final gasPrices = {
-      for (var entry in _gasPriorityMultipliers.entries)
+      for (var entry in AppUtil.feePriority(NetworkType.ethereum).entries)
         entry.key: _applyMultiplier(baseGasPrice, entry.value)
     };
 

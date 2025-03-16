@@ -4,10 +4,35 @@ import 'package:planet/enum/network_type.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:web3dart/credentials.dart';
 
+import '../enum/gas_priority.dart';
 import '../service/local_storage_service.dart';
 import 'data/planet_name_data.dart';
 
 class AppUtil {
+  // 가스 우선순위별 비율 상수 정의 (비트코인에서는 수수료 우선순위)
+  static Map<GasPriority, double> feePriority(NetworkType type) {
+    switch (type) {
+      case NetworkType.ethereum:
+        return {
+          GasPriority.slow: 0.8, // 80%
+          GasPriority.medium: 1.0, // 100%
+          GasPriority.fast: 1.2, // 120%
+        };
+      case NetworkType.bitcoin:
+        return {
+          GasPriority.slow: 0.5, // 50% - 경제적
+          GasPriority.medium: 1.0, // 100% - 표준
+          GasPriority.fast: 2.0, // 200% - 빠름
+        };
+      case NetworkType.solana:
+        return {
+          GasPriority.slow: 1.0, // 기본
+          GasPriority.medium: 1.5, // 중간
+          GasPriority.fast: 2.0, // 빠름
+        };
+    }
+  }
+
   static EthereumAddress hexToEthereumAddress(String address) {
     if (!isValidEthereumAddress(address)) {
       throw Exception('Invalid Ethereum address format');

@@ -8,14 +8,6 @@ class _SolanaTransferService implements _BlockchainTransferService {
   _SolanaTransferService()
       : _rpcClient = sol.RpcClient(WalletConfig().solanaRpcUrl),
         config = WalletConfig();
-
-  // 가스 우선순위별 비율 상수 정의
-  static const Map<GasPriority, double> _priorityFeeMultipliers = {
-    GasPriority.slow: 1.0, // 기본
-    GasPriority.medium: 1.5, // 중간
-    GasPriority.fast: 2.0, // 빠름
-  };
-
   @override
   Future<Map<GasPriority, TransferFee>> estimateTransferFees({
     String? fromAddress,
@@ -28,7 +20,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
 
       // 각 우선순위별 수수료 계산
       final Map<GasPriority, TransferFee> result = {};
-      for (final priority in _priorityFeeMultipliers.entries) {
+      for (final priority in AppUtil.feePriority(NetworkType.solana).entries) {
         final feeMultiplier = priority.value;
         final priorityFee =
             BigInt.from((baseFee.toDouble() * feeMultiplier).toInt());
