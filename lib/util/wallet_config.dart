@@ -16,7 +16,7 @@ enum Environment {
 class WalletConfig {
   static Environment env = Environment.prod;
 
-  final String rpcUrl;
+  final String ethRpcUrl;
   final String wsUrl;
   final String alchemyApiKey;
   final int chainId;
@@ -29,7 +29,7 @@ class WalletConfig {
   factory WalletConfig() => _instance;
 
   WalletConfig._internal()
-      : rpcUrl = env == Environment.prod
+      : ethRpcUrl = env == Environment.prod
             ? 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
             : 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
         wsUrl = env == Environment.prod
@@ -54,11 +54,11 @@ class WalletConfig {
   String getRpcUrlForNetwork(String networkType) {
     switch (networkType.toLowerCase()) {
       case "ethereum":
-        return rpcUrl;
+        return ethRpcUrl;
       case "solana":
         return solanaRpcUrl;
       default:
-        return rpcUrl;
+        return ethRpcUrl;
     }
   }
 

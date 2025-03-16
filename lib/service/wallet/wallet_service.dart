@@ -5,8 +5,8 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:planet/model/custom_exception.dart';
+import 'package:planet/util/app_util.dart';
 import 'package:solana/solana.dart';
-import 'package:web3dart/web3dart.dart';
 
 import '../../enum/network_type.dart';
 import '../../model/planet.dart';
@@ -100,7 +100,8 @@ class WalletService {
     final child = node.derivePath(path);
 
     // 2. 프라이빗 키 생성 : Uint8List를 hex string으로 변환 후 private key 생성
-    final privateKey = EthPrivateKey.fromHex(bytesToHex(child.privateKey!));
+    final uIntToPrivateKey = bytesToHex(child.privateKey!);
+    final privateKey = AppUtil.getEthCredentials(uIntToPrivateKey);
 
     // 3. 공개키 생성 (이 과정은 EthPrivateKey 클래스 내부에서 자동으로 처리됨)
     // privateKey.publicKey

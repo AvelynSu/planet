@@ -69,7 +69,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee, // fee는 솔라나에서 무시됨
   }) async {
     try {
       final keyPair = await _getKeyPair(privateKey);
@@ -110,23 +110,15 @@ class _SolanaTransferService implements _BlockchainTransferService {
       );
 
       final message = sol.Message.only(transferInstruction);
-
-      // 트랜잭션 전송 및 확인 (SolanaClient의 메서드 사용)
-      final signature = await _rpcClient.signAndSendTransaction(
-        message,
-        [keyPair],
-      );
+      final signature =
+          await _rpcClient.signAndSendTransaction(message, [keyPair]);
 
       return signature;
     } catch (e) {
-      if (e is CustomException) {
-        rethrow;
-      }
+      if (e is CustomException) rethrow;
       if (e.toString().contains("AccountNotFound") ||
           e.toString().contains("Attempt to debit an account")) {
-        throw const CustomException(
-          errMsg: '계정을 찾을 수 없거나 잔액이 부족합니다.',
-        );
+        throw const CustomException(errMsg: '계정을 찾을 수 없거나 잔액이 부족합니다.');
       }
       throw CustomException(errMsg: '트랜잭션 실패: $e');
     }
@@ -169,7 +161,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
       toAddress: toAddress,
       amount: amount,
       privateKey: privateKey,
-      gasPriority: GasPriority.medium,
+      fee: fee,
     );
   }
 

@@ -50,7 +50,7 @@ class WalletTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
     required NetworkType networkType,
   }) {
     return _services[networkType]!.sendTransaction(
@@ -58,7 +58,7 @@ class WalletTransferService {
       toAddress: toAddress,
       amount: amount,
       privateKey: privateKey,
-      gasPriority: gasPriority,
+      fee: fee,
     );
   }
 
@@ -88,24 +88,6 @@ class WalletTransferService {
     );
   }
 
-  // 커스텀 수수료로 트랜잭션 전송
-  Future<String> sendTransactionWithCustomFee({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-    required NetworkType networkType,
-  }) {
-    return _services[networkType]!.sendTransactionWithCustomFee(
-      fromAddress: fromAddress,
-      toAddress: toAddress,
-      amount: amount,
-      privateKey: privateKey,
-      fee: fee,
-    );
-  }
-
   void dispose() {
     for (var service in _services.values) {
       service.dispose();
@@ -126,20 +108,12 @@ abstract class _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
   });
 
   Future<bool> checkTransactionStatus(String txHash);
 
   Future<bool> sendAndWaitForTransaction({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-  });
-
-  Future<String> sendTransactionWithCustomFee({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,

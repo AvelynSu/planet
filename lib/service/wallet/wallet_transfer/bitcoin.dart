@@ -109,69 +109,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
-  }) async {
-    try {
-      // 1. 수수료 추정
-      final feesMap = await estimateTransferFees();
-      final fee = feesMap[gasPriority]!.estimatedFee;
-
-      // 2. 커스텀 수수료로 트랜잭션 전송
-      return await sendTransactionWithCustomFee(
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        amount: amount,
-        privateKey: privateKey,
-        fee: fee,
-      );
-    } catch (e) {
-      debugPrint('Error sending Bitcoin transaction: $e');
-      throw Exception('Failed to send Bitcoin transaction: $e');
-    }
-  }
-
-// 주소 생성 메서드
-  String getAddressFromPrivateKey(String privateKey) {
-    final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey));
-    final network = WalletConfig.env == Environment.prod
-        ? btc.bitcoin
-        : btc.NetworkType(
-            messagePrefix: '\x18BlockCypher Signed Message:\n',
-            bech32: 'bc',
-            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
-            pubKeyHash: 0x1B,
-            scriptHash: 0x1F,
-            wif: 0x49,
-          );
-    return btc
-            .P2PKH(
-              data: btc.PaymentData(pubkey: keyPair.publicKey),
-              network: network,
-            )
-            .data
-            .address ??
-        "";
-  }
-
-  Uint8List hexToUint8List(String hex) {
-    // 16진수 문자열에서 '0x' 접두사 제거
-    hex = hex.replaceFirst('0x', '');
-
-    // 홀수 길이일 경우 앞에 0 추가
-    if (hex.length % 2 != 0) {
-      hex = '0$hex';
-    }
-
-    return Uint8List.fromList(List.generate(hex.length ~/ 2,
-        (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)));
-  }
-
-  @override
-  Future<String> sendTransactionWithCustomFee({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
     required BigInt fee,
   }) async {
     try {
@@ -187,7 +124,6 @@ class _BitcoinTransferService implements _BlockchainTransferService {
               wif: 0x49,
             );
 
-      // 키페어 생성
       final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey),
           network: network);
       final senderAddress = getAddressFromPrivateKey(privateKey);
@@ -286,9 +222,45 @@ class _BitcoinTransferService implements _BlockchainTransferService {
       final broadcastResult = json.decode(broadcastResponse.body);
       return broadcastResult['tx']['hash'];
     } catch (e) {
-      debugPrint('Error sending Bitcoin transaction with custom fee: $e');
+      debugPrint('Error sending Bitcoin transaction: $e');
       throw Exception('Failed to send Bitcoin transaction: $e');
     }
+  }
+
+// 주소 생성 메서드
+  String getAddressFromPrivateKey(String privateKey) {
+    final keyPair = btc.ECPair.fromPrivateKey(hexToUint8List(privateKey));
+    final network = WalletConfig.env == Environment.prod
+        ? btc.bitcoin
+        : btc.NetworkType(
+            messagePrefix: '\x18BlockCypher Signed Message:\n',
+            bech32: 'bc',
+            bip32: btc.Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+            pubKeyHash: 0x1B,
+            scriptHash: 0x1F,
+            wif: 0x49,
+          );
+    return btc
+            .P2PKH(
+              data: btc.PaymentData(pubkey: keyPair.publicKey),
+              network: network,
+            )
+            .data
+            .address ??
+        "";
+  }
+
+  Uint8List hexToUint8List(String hex) {
+    // 16진수 문자열에서 '0x' 접두사 제거
+    hex = hex.replaceFirst('0x', '');
+
+    // 홀수 길이일 경우 앞에 0 추가
+    if (hex.length % 2 != 0) {
+      hex = '0$hex';
+    }
+
+    return Uint8List.fromList(List.generate(hex.length ~/ 2,
+        (i) => int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16)));
   }
 
   @override
@@ -329,7 +301,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   }) async {
     try {
       // 트랜잭션 전송
-      final txHash = await sendTransactionWithCustomFee(
+      final txHash = await sendTransaction(
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,
@@ -366,26 +338,5 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   @override
   void dispose() {
     _httpClient.close();
-  }
-
-  // 16진수 문자열을 바이트 배열로 변환하는 유틸리티 메서드
-  Uint8List _hexToBytes(String hex) {
-    // 홀수 길이 문자열은 앞에 0을 추가
-    if (hex.length % 2 != 0) {
-      hex = '0$hex';
-    }
-
-    final result = Uint8List(hex.length ~/ 2);
-    for (var i = 0; i < hex.length; i += 2) {
-      final byte = int.parse(hex.substring(i, i + 2), radix: 16);
-      result[i ~/ 2] = byte;
-    }
-    return result;
-  }
-
-  // 바이트 배열을 16진수 문자열로 변환하는 유틸리티 메서드
-  String _bytesToHex(Uint8List bytes) {
-    return List.generate(
-        bytes.length, (i) => bytes[i].toRadixString(16).padLeft(2, '0')).join();
   }
 }

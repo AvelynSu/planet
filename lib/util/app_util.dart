@@ -33,6 +33,25 @@ class AppUtil {
     }
   }
 
+  static Credentials getEthCredentials(String privateKey) {
+    return EthPrivateKey.fromHex(privateKey);
+  }
+
+  /// double 배율을 BigInt에 안전하게 적용하는 헬퍼 메서드
+  static BigInt adjustFeeByPercentage(BigInt basePrice, double percentage) {
+    final scaledMultiplier = (percentage * 100).round();
+    return basePrice * BigInt.from(scaledMultiplier) ~/ BigInt.from(100);
+  }
+
+  /// BigInt 값을 decimals를 고려하여 double로 변환 // ex 1000000000000000000,18 -> 1.0
+  static double bigIntToDecimal(BigInt value, int decimals) {
+    final divisor = BigInt.from(10).pow(decimals);
+    final wholeNumber = value ~/ divisor;
+    final fraction = value % divisor;
+    final fractionalPart = fraction.toDouble() / divisor.toDouble();
+    return wholeNumber.toDouble() + fractionalPart;
+  }
+
   static EthereumAddress hexToEthereumAddress(String address) {
     if (!isValidEthereumAddress(address)) {
       throw Exception('Invalid Ethereum address format');
@@ -101,7 +120,7 @@ class AppUtil {
 
   /// Wei 단위를 ETH 단위로 변환 (1 ETH = 10^18 Wei)
   static double weiToEth(BigInt wei, {int decimals = 18}) {
-    return wei / BigInt.from(10).pow(decimals);
+    return bigIntToDecimal(wei, decimals);
   }
 
   static double lamportsToSol(int lamports) {

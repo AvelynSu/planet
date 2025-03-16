@@ -6,47 +6,8 @@ class _EthereumTransferService implements _BlockchainTransferService {
   final WalletConfig config;
 
   _EthereumTransferService()
-      : web3client = Web3Client(WalletConfig().rpcUrl, http.Client()),
+      : web3client = Web3Client(WalletConfig().ethRpcUrl, http.Client()),
         config = WalletConfig();
-
-  @override
-  Future<Map<GasPriority, TransferFee>> estimateTransferFees({
-    String? fromAddress,
-    String? toAddress,
-    BigInt? amount,
-  }) async {
-    // 기본 가스 가격 조회 및 BigInt로 변환
-    final baseGasPrice = (await web3client.getGasPrice()).getInWei;
-    final gasLimit = BigInt.from(21000);
-
-    // 각 우선순위별 가스 가격 계산
-    final gasPrices = {
-      for (var entry in AppUtil.feePriority(NetworkType.ethereum).entries)
-        entry.key: _applyMultiplier(baseGasPrice, entry.value)
-    };
-
-    // 각 우선순위별 TransactionFee 생성
-    return {
-      for (var priority in GasPriority.values)
-        priority: TransferFee(
-          gasPrice: gasPrices[priority]!,
-          gasLimit: gasLimit,
-          estimatedFee: gasPrices[priority]! * gasLimit,
-        )
-    };
-  }
-
-  // double 배율을 BigInt에 안전하게 적용하는 헬퍼 메서드
-  BigInt _applyMultiplier(BigInt value, double multiplier) {
-    // 소수점 연산을 위해 정수로 변환 (100을 곱하여 백분율로 계산)
-    final scaledMultiplier = (multiplier * 100).round();
-    return value * BigInt.from(scaledMultiplier) ~/ BigInt.from(100);
-  }
-
-  /// 개인키로부터 Credentials 생성
-  Credentials _getCredentials(String privateKey) {
-    return EthPrivateKey.fromHex(privateKey);
-  }
 
   @override
   Future<String> sendTransaction({
@@ -54,53 +15,59 @@ class _EthereumTransferService implements _BlockchainTransferService {
     required String toAddress,
     required BigInt amount,
     required String privateKey,
-    required GasPriority gasPriority,
+    required BigInt fee,
   }) async {
     try {
-      final credentials = _getCredentials(privateKey);
+      final credentials = AppUtil.getEthCredentials(privateKey);
+      final senderAddress = AppUtil.hexToEthereumAddress(fromAddress);
 
-      // 1. 현재 가스 기본 수수료 가져오기
-      final baseGasPrice = (await web3client.getGasPrice()).getInWei;
+      final Future<int> nonceFuture =
+          web3client.getTransactionCount(senderAddress);
+      final Future<EtherAmount> gasPriceFuture = web3client.getGasPrice();
 
-      // 2. 선택된 우선순위에 따른 가스 가격 계산
-      final multiplier = _gasPriorityMultipliers[gasPriority] ?? 1.0;
-      final gasPrice = _applyMultiplier(baseGasPrice, multiplier);
+      final currentNonce = await nonceFuture;
+      final currentGasPrice = (await gasPriceFuture).getInWei;
 
-      // 3. EIP-1559 트랜잭션 생성
+      final gasPrice = _calculateGasPrice(fee, currentGasPrice);
+
       final transaction = Transaction(
         to: AppUtil.hexToEthereumAddress(toAddress),
         value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
+        gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
+        nonce: currentNonce,
         maxGas: 21000,
-        maxPriorityFeePerGas:
-            EtherAmount.fromBigInt(EtherUnit.wei, gasPrice ~/ BigInt.from(2)),
-        maxFeePerGas: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
       );
 
-      // 4. 트랜잭션 전송
-      final txHash = await web3client.sendTransaction(
+      return await web3client.sendTransaction(
         credentials,
         transaction,
         chainId: config.chainId,
       );
-
-      return txHash;
     } catch (e) {
-      var errorMessage = e.toString();
+      final errorMessage = e.toString();
       if (errorMessage.contains("insufficient funds for")) {
         throw const CustomException(
             errMsg: 'Not enough ETH to cover transaction costs.');
       } else if (errorMessage.contains("nonce too low")) {
         throw const CustomException(
             errMsg: 'Transaction nonce is too low. Please try again.');
-      } else if (errorMessage.contains("gas price too low")) {
+      } else if (errorMessage.contains("gas price too low") ||
+          errorMessage.contains("replacement transaction underpriced")) {
         throw const CustomException(errMsg: 'Gas price is too low.');
       }
-
       throw CustomException(errMsg: 'Transaction failed: $e');
     }
   }
 
-  Future<String> sendTransactionWithCustomFee({
+  BigInt _calculateGasPrice(BigInt fee, BigInt currentGasPrice) {
+    final calculatedGasPrice = fee ~/ BigInt.from(21000);
+    final minGasPrice =
+        (currentGasPrice * BigInt.from(110)) ~/ BigInt.from(100);
+    return calculatedGasPrice > minGasPrice ? calculatedGasPrice : minGasPrice;
+  }
+
+  @override
+  Future<bool> sendAndWaitForTransaction({
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -108,48 +75,19 @@ class _EthereumTransferService implements _BlockchainTransferService {
     required BigInt fee,
   }) async {
     try {
-      final credentials = _getCredentials(privateKey);
-
-      // 1. 현재 대기 중인 트랜잭션의 논스 및 가스 가격 확인
-      // fromAddress의 현재 논스 가져오기
-      final currentNonce = await web3client.getTransactionCount(
-        AppUtil.hexToEthereumAddress(fromAddress),
+      // 1. 트랜잭션 전송
+      final txHash = await sendTransaction(
+        fromAddress: fromAddress,
+        toAddress: toAddress,
+        amount: amount,
+        privateKey: privateKey,
+        fee: fee,
       );
 
-      // 2. 현재 네트워크의 기본 가스 가격 가져오기
-      final currentGasPrice = (await web3client.getGasPrice()).getInWei;
-
-      // 3. 제공된 fee를 기반으로 가스 가격 계산하되, 최소한 현재 가스 가격보다 10% 높게 설정
-      final calculatedGasPrice = fee ~/ BigInt.from(21000); // 기본 가스 한도로 나눔
-      final minGasPrice = (currentGasPrice * BigInt.from(110)) ~/
-          BigInt.from(100); // 현재 가스 가격의 110%
-
-      // 계산된 가스 가격과 최소 가스 가격 중 더 큰 값 사용
-      final gasPrice =
-          calculatedGasPrice > minGasPrice ? calculatedGasPrice : minGasPrice;
-
-      // 4. 트랜잭션 생성
-      final transaction = Transaction(
-        to: AppUtil.hexToEthereumAddress(toAddress),
-        value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
-        maxGas: 21000,
-        gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
-        nonce: currentNonce, // 명시적 논스 설정
-      );
-
-      // 5. 트랜잭션 전송
-      final txHash = await web3client.sendTransaction(
-        credentials,
-        transaction,
-        chainId: config.chainId,
-      );
-
-      return txHash;
+      // 2. 트랜잭션 처리 완료 대기
+      return await _waitForTransactionConfirmation(txHash);
     } catch (e) {
-      if (e.toString().contains("replacement transaction underpriced")) {
-        throw Exception('트랜잭션 수수료가 너무 낮습니다. 더 높은 수수료를 설정해주세요.');
-      }
-      throw Exception('Transaction failed: $e');
+      rethrow;
     }
   }
 
@@ -169,46 +107,50 @@ class _EthereumTransferService implements _BlockchainTransferService {
     }
   }
 
+  @override
+  Future<Map<GasPriority, TransferFee>> estimateTransferFees({
+    String? fromAddress,
+    String? toAddress,
+    BigInt? amount,
+  }) async {
+    // 기본 가스 가격 조회 및 BigInt로 변환
+    final baseGasPrice = (await web3client.getGasPrice()).getInWei;
+    final gasLimit = BigInt.from(21000);
+
+    // 각 우선순위별 가스 가격 계산
+    final gasPrices = {
+      for (var entry in AppUtil.feePriority(NetworkType.ethereum).entries)
+        entry.key: AppUtil.adjustFeeByPercentage(baseGasPrice, entry.value)
+    };
+
+    // 각 우선순위별 TransactionFee 생성
+    return {
+      for (var priority in GasPriority.values)
+        priority: TransferFee(
+          gasPrice: gasPrices[priority]!,
+          gasLimit: gasLimit,
+          estimatedFee: gasPrices[priority]! * gasLimit,
+        )
+    };
+  }
+
   // 트랜잭션 상태를 기다리는 공통 메서드
-  Future<bool> _waitForTransactionConfirmation(String txHash,
-      {int maxAttempts = 30}) async {
+  Future<bool> _waitForTransactionConfirmation(
+    String txHash, {
+    int maxAttempts = 30,
+  }) async {
     bool isConfirmed = false;
     int attempts = 0;
 
     while (!isConfirmed && attempts < maxAttempts) {
       isConfirmed = await checkTransactionStatus(txHash);
       if (!isConfirmed) {
-        await Future.delayed(const Duration(seconds: 2)); // 2초마다 확인
+        await Future.delayed(const Duration(seconds: 3)); // 3초마다 확인
         attempts++;
       }
     }
 
     return isConfirmed;
-  }
-
-  @override
-  Future<bool> sendAndWaitForTransaction({
-    required String fromAddress,
-    required String toAddress,
-    required BigInt amount,
-    required String privateKey,
-    required BigInt fee,
-  }) async {
-    try {
-      // 1. 트랜잭션 전송
-      final txHash = await sendTransactionWithCustomFee(
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        amount: amount,
-        privateKey: privateKey,
-        fee: fee,
-      );
-
-      // 2. 트랜잭션 처리 완료 대기
-      return await _waitForTransactionConfirmation(txHash);
-    } catch (e) {
-      rethrow;
-    }
   }
 
   @override

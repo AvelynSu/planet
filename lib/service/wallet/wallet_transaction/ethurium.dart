@@ -80,7 +80,7 @@ class _EthereumHistoryService implements _BlockchainHistoryService {
           Map<String, dynamic> body) async {
         final response = await httpClient
             .post(
-              Uri.parse('${config.rpcUrl}'),
+              Uri.parse('${config.ethRpcUrl}'),
               headers: {'Content-Type': 'application/json'},
               body: json.encode(body),
             )

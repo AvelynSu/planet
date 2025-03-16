@@ -145,7 +145,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       // Check if using custom gas settings
       if (state.useCustomGas && state.customGasFee != null) {
         // sendAndWaitForTransactionWithCustomGas 대신 sendTransactionWithCustomFee 사용
-        final txHash = await _transferService.sendTransactionWithCustomFee(
+        final txHash = await _transferService.sendTransaction(
           fromAddress: currentPlanet.address,
           toAddress: state.toPlanet.address,
           amount: amountInWei,

@@ -5,7 +5,7 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
 
   _EthereumBalanceService()
       : web3client = Web3Client(
-          WalletConfig().rpcUrl,
+          WalletConfig().ethRpcUrl,
           http.Client(),
         );
 
