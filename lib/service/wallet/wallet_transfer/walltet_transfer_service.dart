@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
 import 'package:http/http.dart' as http;
 import 'package:planet/model/custom_exception.dart';
+import 'package:planet/model/token_info.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/util/data/token_data.dart';
 import 'package:solana/dto.dart' as sol_dto;
@@ -47,6 +48,7 @@ class WalletTransferService {
 
   // 트랜잭션 전송만 하고 끝냄
   Future<String> sendTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -55,6 +57,7 @@ class WalletTransferService {
     required NetworkType networkType,
   }) {
     return _services[networkType]!.sendTransaction(
+      tokenInfo: tokenInfo,
       fromAddress: fromAddress,
       toAddress: toAddress,
       amount: amount,
@@ -73,6 +76,7 @@ class WalletTransferService {
 
   // 트랜잭션을 전송하고 결과까지 기다림
   Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -81,6 +85,7 @@ class WalletTransferService {
     required NetworkType networkType,
   }) {
     return _services[networkType]!.sendAndWaitForTransaction(
+      tokenInfo: tokenInfo,
       fromAddress: fromAddress,
       toAddress: toAddress,
       amount: amount,
@@ -105,6 +110,7 @@ abstract class _BlockchainTransferService {
   });
 
   Future<String> sendTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -115,6 +121,7 @@ abstract class _BlockchainTransferService {
   Future<TransactionConfirmationStatus> checkTransactionStatus(String txHash);
 
   Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,

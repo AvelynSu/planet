@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/custom_exception.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/model/token_info.dart';
@@ -192,7 +193,8 @@ class _TransferScreenState extends State<TransferScreen> {
                                   '',
                             ),
 
-                            if (state.gasFees.isNotEmpty)
+                            if (state.gasFees.isNotEmpty &&
+                                widget.info.networkType != NetworkType.solana)
                               Container(
                                 margin: const EdgeInsets.only(top: 12),
                                 child: GasPrioritySelector(

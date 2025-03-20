@@ -127,5 +127,7 @@
   "planet_name_display": "私のプラネットは",
 
   "cancel": "キャンセル",
-  "confirm": "確認"
+  "confirm": "確認",
+
+  "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。"
 }

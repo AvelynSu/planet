@@ -40,9 +40,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     final txrefs = responseData['txrefs'] as List<dynamic>? ?? [];
 
     return txrefs
-        .where((txref) =>
-            txref['spent'] != true &&
-            txref['tx_output_n'] >= 0)
+        .where((txref) => txref['spent'] != true && txref['tx_output_n'] >= 0)
         .map((txref) => Map<String, dynamic>.from(txref))
         .toList();
   }
@@ -94,6 +92,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   // sendTransaction 메서드가 더 깔끔해짐
   @override
   Future<String> sendTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -184,6 +183,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
   @override
   Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -193,6 +193,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     try {
       // 트랜잭션 전송
       final txHash = await sendTransaction(
+        tokenInfo: tokenInfo,
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,

@@ -11,6 +11,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
 
   @override
   Future<String> sendTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -18,7 +19,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
     required BigInt fee, // fee는 솔라나에서 무시됨
   }) async {
     try {
-      // 프라이빗키 받아서 fromAddress 와 일치하는지 확인
+      // 프라이빗키 받아서 fromAddress와 일치하는지 확인
       final keyPair = await WalletService.getSolKeyPairByPrivacyKey(privateKey);
 
       if (keyPair.publicKey.toBase58() != fromAddress) {
@@ -27,46 +28,53 @@ class _SolanaTransferService implements _BlockchainTransferService {
         );
       }
 
-      // 지금 월렛에 얼마 들어있는지 확인
-      final balance = await _rpcClient.getBalance(fromAddress);
-      final destinationPubkey = sol.Ed25519HDPublicKey.fromBase58(toAddress);
+      // 네이티브 SOL인지 SPL 토큰인지 확인
+      final bool isNativeToken = tokenInfo.symbol == 'SOL';
 
-      final receiverAccount =
-          await _rpcClient.getAccountInfo(toAddress); // 새 계정 생성시 필요한 비용
-      final minimumRent =
-          receiverAccount.value == null ? BigInt.from(890880) : BigInt.zero;
-      final minimumFee = BigInt.from(5000); // 트렌젝션 수수료 (고정)
-      final amountWithRent = amount + minimumRent; // 전송금액 + 렌트비용
-      final totalRequired = amountWithRent + minimumFee; // 총 필요한 금액
+      if (isNativeToken) {
+        // 기존 SOL 전송 로직 (변경 없음)
+        final balance = await _rpcClient.getBalance(fromAddress);
+        final destinationPubkey = sol.Ed25519HDPublicKey.fromBase58(toAddress);
 
-      if (BigInt.from(balance.value) < totalRequired) {
-        throw const CustomException(
-          errMsg:
-              'Insufficient balance. Please check transfer amount, fee, and account creation cost',
+        final receiverAccount =
+            await _rpcClient.getAccountInfo(toAddress); // 새 계정 생성시 필요한 비용
+        final minimumRent =
+            receiverAccount.value == null ? BigInt.from(890880) : BigInt.zero;
+        final minimumFee = BigInt.from(5000); // 트렌젝션 수수료 (고정)
+        final amountWithRent = amount + minimumRent; // 전송금액 + 렌트비용
+        final totalRequired = amountWithRent + minimumFee; // 총 필요한 금액
+
+        if (BigInt.from(balance.value) < totalRequired) {
+          throw const CustomException(
+            errMsg:
+                'Insufficient balance. Please check transfer amount, fee, and account creation cost',
+          );
+        }
+
+        final recentBlockhash =
+            await _rpcClient.getLatestBlockhash(); // 내부에서 이 값을 사용함
+        final systemProgramId =
+            sol.Ed25519HDPublicKey.fromBase58(sol.SystemProgram.programId);
+
+        final transferInstruction = sol_encoder.Instruction(
+          programId: systemProgramId,
+          accounts: [
+            sol_encoder.AccountMeta.writeable(
+                pubKey: keyPair.publicKey, isSigner: true),
+            sol_encoder.AccountMeta.writeable(
+                pubKey: destinationPubkey, isSigner: false), // 받는 사람 서명은 불필요
+          ],
+          data: _createTransferData(amountWithRent),
         );
+
+        final message = sol.Message.only(transferInstruction);
+        final signature =
+            await _rpcClient.signAndSendTransaction(message, [keyPair]);
+
+        return signature;
+      } else {
+        throw CustomException(errMsg: '아직 미작성');
       }
-
-      final recentBlockhash =
-          await _rpcClient.getLatestBlockhash(); // 내부에서 이 값을 사용함
-      final systemProgramId =
-          sol.Ed25519HDPublicKey.fromBase58(sol.SystemProgram.programId);
-
-      final transferInstruction = sol_encoder.Instruction(
-        programId: systemProgramId,
-        accounts: [
-          sol_encoder.AccountMeta.writeable(
-              pubKey: keyPair.publicKey, isSigner: true),
-          sol_encoder.AccountMeta.writeable(
-              pubKey: destinationPubkey, isSigner: false), // 받는 사람 서명은 불필요
-        ],
-        data: _createTransferData(amountWithRent),
-      );
-
-      final message = sol.Message.only(transferInstruction);
-      final signature =
-          await _rpcClient.signAndSendTransaction(message, [keyPair]);
-
-      return signature;
     } catch (e) {
       if (e is CustomException) rethrow;
       if (e.toString().contains("AccountNotFound") ||
@@ -74,11 +82,20 @@ class _SolanaTransferService implements _BlockchainTransferService {
         throw const CustomException(
             errMsg: 'Account not found or insufficient balance');
       }
+      print(e);
       throw CustomException(errMsg: 'Transaction failed: $e');
     }
   }
 
-  // SOL 전송 데이터 생성 헬퍼 메서드
+// 64비트 정수를 리틀 엔디안 바이트 배열로 변환
+  Uint8List _uint64ToByteArray(int value) {
+    final buffer = Uint8List(8);
+    final byteData = ByteData.view(buffer.buffer);
+    byteData.setUint64(0, value, Endian.little);
+    return buffer;
+  }
+
+// SOL 전송 데이터 생성 헬퍼 메서드
   sol_encoder.ByteArray _createTransferData(BigInt amount) {
     // 1. 명령어 인덱스 (2 = transfer)
     final instructionIndex = sol_encoder.ByteArray(const [2, 0, 0, 0]);
@@ -90,12 +107,16 @@ class _SolanaTransferService implements _BlockchainTransferService {
     return sol_encoder.ByteArray([...instructionIndex, ...amountBytes]);
   }
 
-  // 64비트 정수를 리틀 엔디안 바이트 배열로 변환
-  Uint8List _uint64ToByteArray(int value) {
-    final buffer = Uint8List(8);
-    final byteData = ByteData.view(buffer.buffer);
-    byteData.setUint64(0, value, Endian.little);
-    return buffer;
+// SPL 토큰 전송 데이터 생성 헬퍼 메서드
+  sol_encoder.ByteArray _createTokenTransferData(BigInt amount) {
+    // 1. 명령어 인덱스 (3 = transfer)
+    final instructionIndex = sol_encoder.ByteArray(const [3, 0, 0, 0]);
+
+    // 2. 금액을 바이트 배열로 변환 (리틀 엔디안)
+    final amountBytes = _uint64ToByteArray(amount.toInt());
+
+    // 3. 데이터 합치기
+    return sol_encoder.ByteArray([...instructionIndex, ...amountBytes]);
   }
 
   @override
@@ -123,6 +144,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
 
   @override
   Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -132,6 +154,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
     try {
       // 1. 트랜잭션 전송
       final txHash = await sendTransaction(
+        tokenInfo: tokenInfo,
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,

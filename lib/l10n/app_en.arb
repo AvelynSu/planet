@@ -129,8 +129,6 @@
   "cancel" : "Cancel",
   "confirm" : "Confirm",
 
-  "transaction_attemptsExceeded_msg" : "Please check again after a moment.",
-
-  "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。"
+  "transaction_attemptsExceeded_msg" : "Please check again after a moment."
 
 }

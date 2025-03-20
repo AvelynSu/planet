@@ -147,6 +147,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       if (state.useCustomGas && state.customGasFee != null) {
         // sendAndWaitForTransactionWithCustomGas 대신 sendTransactionWithCustomFee 사용
         final txHash = await _transferService.sendTransaction(
+          tokenInfo: tokenInfo,
           fromAddress: currentPlanet.address,
           toAddress: state.toPlanet.address,
           amount: amountInWei,
@@ -163,6 +164,7 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
       } else {
         // sendAndWaitForTransaction 사용하되 필수 파라미터 추가
         success = await _transferService.sendAndWaitForTransaction(
+          tokenInfo: tokenInfo,
           fromAddress: currentPlanet.address,
           toAddress: state.toPlanet.address,
           amount: amountInWei,

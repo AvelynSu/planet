@@ -11,6 +11,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
   @override
   Future<String> sendTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -30,19 +31,57 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
       final gasPrice = _calculateGasPrice(fee, currentGasPrice);
 
-      final transaction = Transaction(
-        to: AppUtil.hexToEthereumAddress(toAddress),
-        value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
-        gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
-        nonce: currentNonce,
-        maxGas: 21000,
-      );
+      // 네이티브 토큰(ETH)인지 아닌지 확인
+      final bool isNativeToken = tokenInfo.symbol == 'ETH';
 
-      return await web3client.sendTransaction(
-        credentials,
-        transaction,
-        chainId: config.chainId,
-      );
+      String txHash;
+
+      if (isNativeToken) {
+        // ETH 전송 처리
+        final transaction = Transaction(
+          to: AppUtil.hexToEthereumAddress(toAddress),
+          value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
+          gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
+          nonce: currentNonce,
+          maxGas: 21000,
+        );
+
+        txHash = await web3client.sendTransaction(
+          credentials,
+          transaction,
+          chainId: config.chainId,
+        );
+      } else {
+        // ERC-20 토큰 전송 처리
+        // 토큰 컨트랙트 ABI 정의 (간소화된 버전)
+        final String tokenAbi = '''
+[{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function"}]
+''';
+        final contract = DeployedContract(
+          ContractAbi.fromJson(tokenAbi, tokenInfo.symbol),
+          AppUtil.hexToEthereumAddress(tokenInfo.address),
+        );
+
+        final transferFunction = contract.function('transfer');
+
+        final transaction = Transaction.callContract(
+          contract: contract,
+          function: transferFunction,
+          parameters: [AppUtil.hexToEthereumAddress(toAddress), amount],
+          gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
+          maxGas: 100000,
+          // 토큰 전송은 일반적으로 더 많은 가스가 필요
+          nonce: currentNonce,
+        );
+
+        txHash = await web3client.sendTransaction(
+          credentials,
+          transaction,
+          chainId: config.chainId,
+        );
+      }
+
+      return txHash;
     } catch (e) {
       final errorMessage = e.toString();
       if (errorMessage.contains("insufficient funds for")) {
@@ -68,6 +107,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
   @override
   Future<TransactionConfirmationStatus> sendAndWaitForTransaction({
+    required TokenInfo tokenInfo,
     required String fromAddress,
     required String toAddress,
     required BigInt amount,
@@ -77,6 +117,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
     try {
       // 1. 트랜잭션 전송
       final txHash = await sendTransaction(
+        tokenInfo: tokenInfo,
         fromAddress: fromAddress,
         toAddress: toAddress,
         amount: amount,

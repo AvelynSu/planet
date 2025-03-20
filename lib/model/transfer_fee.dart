@@ -21,6 +21,7 @@ class TransferFee {
   String get formatted => '${feeInEth.toStringAsFixed(8)} ETH';
 
   String feeToUiValue(NetworkType network) {
+    print(estimatedFee);
     switch (network) {
       case NetworkType.ethereum:
         final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
@@ -30,9 +31,13 @@ class TransferFee {
       case NetworkType.bitcoin:
         final btcValue = estimatedFee.toDouble() / 100000000;
         return btcValue.toStringAsFixed(8);
+
       case NetworkType.solana:
         final solValue = estimatedFee.toDouble() / 1000000000;
         return solValue.toStringAsFixed(8);
+
+      default:
+        return '0.00000000'; // 기본값 반환 또는 예외 처리
     }
   }
 }
