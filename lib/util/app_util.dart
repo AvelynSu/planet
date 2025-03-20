@@ -142,9 +142,9 @@ class AppUtil {
     return bigIntToDecimal(wei, decimals);
   }
 
-  static double lamportsToSol(int lamports) {
-    const int _LAMPORTS_PER_SOL = 1000000000; // 9 decimals for SOL
-    return lamports / _LAMPORTS_PER_SOL;
+  static double lamportsToSol(int lamports, int decimals) {
+    final divisor = pow(10, decimals).toInt();
+    return lamports / divisor;
   }
 
   /// satoshi를 BTC로 변환
@@ -154,7 +154,8 @@ class AppUtil {
   }
 
   // wei or satoshi
-  static BigInt valueToRaw(String amount, NetworkType network) {
+  static BigInt valueToRaw(String amount, NetworkType network,
+      {int? tokenDecimals}) {
     // Handle empty input
     if (amount.isEmpty) {
       return BigInt.zero;
@@ -167,20 +168,31 @@ class AppUtil {
       switch (network) {
         case NetworkType.bitcoin:
           // Convert to Satoshi (1 BTC = 10^8 Satoshi)
-          return BigInt.from(parsedAmount * 1e8);
+          return BigInt.from(parsedAmount * pow(10, 8));
 
         case NetworkType.solana:
-          // Convert to Lamports (1 SOL = 10^9 Lamports)
-          return BigInt.from(parsedAmount * 1e9);
+          if (tokenDecimals != null) {
+            // SPL 토큰인 경우, 토큰별 소수점 자릿수 사용 (Trump = 6자리)
+            return BigInt.from(parsedAmount * pow(10, tokenDecimals));
+          } else {
+            // 네이티브 SOL인 경우 (9자리)
+            return BigInt.from(parsedAmount * pow(10, 9));
+          }
 
         case NetworkType.ethereum:
-          // Convert to Wei (1 ETH = 10^18 Wei)
-          return BigInt.from(parsedAmount * 1e18);
+          if (tokenDecimals != null) {
+            // ERC-20 토큰인 경우, 토큰별 소수점 자릿수 사용
+            return BigInt.from(parsedAmount * pow(10, tokenDecimals));
+          } else {
+            // 네이티브 ETH인 경우 (18자리)
+            return BigInt.from(parsedAmount * pow(10, 18));
+          }
 
         default:
           return BigInt.zero;
       }
     } catch (e) {
+      print('Error converting amount: $e');
       return BigInt.zero;
     }
   }

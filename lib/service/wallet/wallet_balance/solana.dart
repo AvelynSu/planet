@@ -21,7 +21,7 @@ class _SolanaBalanceService implements _BlockchainBalanceService {
       // SOL(네이티브 토큰)인 경우
       if (info.symbol == "SOL") {
         final balance = await _solanaClient.rpcClient.getBalance(address);
-        final value = AppUtil.lamportsToSol(balance.value);
+        final value = AppUtil.lamportsToSol(balance.value, info.decimals);
         return TokenBalance(address: address, info: info, balance: value);
       }
 

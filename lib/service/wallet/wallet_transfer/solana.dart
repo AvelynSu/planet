@@ -73,7 +73,7 @@ class _SolanaTransferService implements _BlockchainTransferService {
 
         return signature;
       } else {
-        throw CustomException(errMsg: '아직 미작성');
+        throw CustomException(errMsg: 'Coming soon...');
       }
     } catch (e) {
       if (e is CustomException) rethrow;
