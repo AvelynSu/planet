@@ -127,72 +127,72 @@ class TokenTransferCubit extends Cubit<TokenTransferState> {
   Future<TransactionConfirmationStatus> executeTransfer() async {
     emit(state.copyWith(status: ScreenStatus.loading));
 
-    try {
-      // Get current wallet credentials
-      final appState = appBloc.state as AppLoaded;
-      final currentPlanet = appState.current;
+    // try {
+    // Get current wallet credentials
+    final appState = appBloc.state as AppLoaded;
+    final currentPlanet = appState.current;
 
-      // Get wallet private key from mnemonic
-      final mnemonic = currentPlanet.mnemonic;
-      final privateKey = await _walletService.getPrivateKeyFromMnemonic(
-          mnemonic, networkType, currentPlanet.pathIdx);
+    // Get wallet private key from mnemonic
+    final mnemonic = currentPlanet.mnemonic;
+    final privateKey = await _walletService.getPrivateKeyFromMnemonic(
+        mnemonic, networkType, currentPlanet.pathIdx);
 
-      // Parse amount
-      final amountInWei = AppUtil.valueToRaw(
-        state.amount,
-        networkType,
-        tokenDecimals: tokenInfo.decimals,
+    // Parse amount
+    final amountInWei = AppUtil.valueToRaw(
+      state.amount,
+      networkType,
+      tokenDecimals: tokenInfo.decimals,
+    );
+
+    TransactionConfirmationStatus success =
+        TransactionConfirmationStatus.unconfirmed;
+
+    // Check if using custom gas settings
+    if (state.useCustomGas && state.customGasFee != null) {
+      // sendAndWaitForTransactionWithCustomGas 대신 sendTransactionWithCustomFee 사용
+      final txHash = await _transferService.sendTransaction(
+        tokenInfo: tokenInfo,
+        fromAddress: currentPlanet.address,
+        toAddress: state.toPlanet.address,
+        amount: amountInWei,
+        privateKey: privateKey,
+        fee: state.customGasFee!.estimatedFee,
+        networkType: networkType,
       );
 
-      TransactionConfirmationStatus success =
-          TransactionConfirmationStatus.unconfirmed;
-
-      // Check if using custom gas settings
-      if (state.useCustomGas && state.customGasFee != null) {
-        // sendAndWaitForTransactionWithCustomGas 대신 sendTransactionWithCustomFee 사용
-        final txHash = await _transferService.sendTransaction(
-          tokenInfo: tokenInfo,
-          fromAddress: currentPlanet.address,
-          toAddress: state.toPlanet.address,
-          amount: amountInWei,
-          privateKey: privateKey,
-          fee: state.customGasFee!.estimatedFee,
-          networkType: networkType,
-        );
-
-        // 트랜잭션 상태 확인
-        success = await _transferService.checkTransactionStatus(
-          txHash: txHash,
-          networkType: networkType,
-        );
-      } else {
-        // sendAndWaitForTransaction 사용하되 필수 파라미터 추가
-        success = await _transferService.sendAndWaitForTransaction(
-          tokenInfo: tokenInfo,
-          fromAddress: currentPlanet.address,
-          toAddress: state.toPlanet.address,
-          amount: amountInWei,
-          privateKey: privateKey,
-          fee: state.gasFees[state.selectedGasPriority]!.estimatedFee,
-          networkType: networkType,
-        );
-      }
-
-      if (success == TransactionConfirmationStatus.confirmed) {
-        // Refresh balances
-        appBloc.add(
-            AppUpdate(updatePlanets: false, updateBalanceToken: tokenInfo));
-      }
-
-      emit(state.copyWith(status: ScreenStatus.success));
-      return success;
-    } on CustomException catch (e) {
-      emit(state.copyWith(
-        status: ScreenStatus.fail,
-        exception: e,
-      ));
-      return TransactionConfirmationStatus.unconfirmed;
+      // 트랜잭션 상태 확인
+      success = await _transferService.checkTransactionStatus(
+        txHash: txHash,
+        networkType: networkType,
+      );
+    } else {
+      // sendAndWaitForTransaction 사용하되 필수 파라미터 추가
+      success = await _transferService.sendAndWaitForTransaction(
+        tokenInfo: tokenInfo,
+        fromAddress: currentPlanet.address,
+        toAddress: state.toPlanet.address,
+        amount: amountInWei,
+        privateKey: privateKey,
+        fee: state.gasFees[state.selectedGasPriority]!.estimatedFee,
+        networkType: networkType,
+      );
     }
+
+    if (success == TransactionConfirmationStatus.confirmed) {
+      // Refresh balances
+      appBloc
+          .add(AppUpdate(updatePlanets: false, updateBalanceToken: tokenInfo));
+    }
+
+    emit(state.copyWith(status: ScreenStatus.success));
+    return success;
+    // } on CustomException catch (e) {
+    //   emit(state.copyWith(
+    //     status: ScreenStatus.fail,
+    //     exception: e,
+    //   ));
+    //   return TransactionConfirmationStatus.unconfirmed;
+    // }
   }
 
   @override

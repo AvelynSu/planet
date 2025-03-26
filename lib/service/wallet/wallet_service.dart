@@ -9,7 +9,7 @@ import 'package:planet/model/custom_exception.dart';
 import 'package:planet/util/app_util.dart';
 import 'package:planet/util/data/token_data.dart';
 import 'package:solana/solana.dart' as sol;
-import 'package:solana/solana.dart';
+import 'package:solana_web3/solana_web3.dart' as sol3;
 
 import '../../enum/network_type.dart';
 import '../../util/wallet_config.dart';
@@ -72,13 +72,12 @@ class WalletService {
   }
 
   /// 개인키로부터 키페어 생성
-  static Future<sol.Ed25519HDKeyPair> getSolKeyPairByPrivacyKey(
+  /// 개인키로부터 키페어 생성
+  static Future<sol3.Keypair> getSolKeyPairByPrivacyKey(
       String privateKey) async {
     try {
       final privateKeyBytes = Uint8List.fromList(hex.decode(privateKey));
-      return await sol.Ed25519HDKeyPair.fromPrivateKeyBytes(
-        privateKey: privateKeyBytes,
-      );
+      return sol3.Keypair.fromSeedSync(privateKeyBytes);
     } catch (e) {
       throw CustomException(errMsg: '개인키 형식이 잘못되었습니다: $e');
     }
@@ -139,7 +138,7 @@ class WalletService {
   Future<String> _generateSolanaAddress(Uint8List seed, String path) async {
     final keyData = await ED25519_HD_KEY.derivePath(path, seed);
     final keyPair =
-        await Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: keyData.key);
+        await sol.Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: keyData.key);
     return keyPair.address;
   }
 }

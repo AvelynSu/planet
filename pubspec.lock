@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  base_codecs:
+    dependency: transitive
+    description:
+      name: base_codecs
+      sha256: "41701a12ede9912663decd708279924ece5018566daa7d1f484d5f4f10894f91"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   base_x:
     dependency: transitive
     description:
@@ -894,10 +902,50 @@ packages:
     dependency: "direct main"
     description:
       name: solana
-      sha256: "98d8780dbd9af7e90ff14a6e762a45d77466450304773610317d1fffdea09701"
+      sha256: "3f8c9ad84af6fbce1e5d76ab67b17c9ec944185235a6032b578ecab0b1f59ee3"
       url: "https://pub.dev"
     source: hosted
-    version: "0.31.2+1"
+    version: "0.31.0+1"
+  solana_borsh:
+    dependency: transitive
+    description:
+      name: solana_borsh
+      sha256: "33b061a09c85bd34798a0104c26049511d55cc390e05c68243c8a9d5a344c5ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
+  solana_buffer:
+    dependency: transitive
+    description:
+      name: solana_buffer
+      sha256: fbd7b5139ac0e64cc190e50530dd369a78b8b83f5bf5178a0a014afa55b4e9d2
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
+  solana_common:
+    dependency: transitive
+    description:
+      name: solana_common
+      sha256: d181abe055c0df1f95818dfa67b12a2f1a93030745238e13f3aa49053f9aee6d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+1"
+  solana_jsonrpc:
+    dependency: transitive
+    description:
+      name: solana_jsonrpc
+      sha256: "1bb286b60918a621d5909503e0daa928c9f99f2241d8eb4b2cc7f74d1a78deee"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
+  solana_web3:
+    dependency: "direct main"
+    description:
+      name: solana_web3
+      sha256: "706b76a475e74dae5ffb523b66c0c51cc73f8e2a137bf418debaba096b42510c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   source_span:
     dependency: transitive
     description:
@@ -1194,22 +1242,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.7.3"
-  web_socket:
-    dependency: transitive
-    description:
-      name: web_socket
-      sha256: "3c12d96c0c9a4eec095246debcea7b86c0324f22df69893d538fcc6f1b8cce83"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.6"
   web_socket_channel:
     dependency: transitive
     description:
       name: web_socket_channel
-      sha256: "0b8e2457400d8a859b7b2030786835a28a8e80836ef64402abef392ff4f1d0e5"
+      sha256: d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "2.4.0"
   win32:
     dependency: transitive
     description:

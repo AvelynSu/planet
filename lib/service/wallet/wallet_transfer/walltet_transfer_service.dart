@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data' show ByteData, Endian, Uint8List;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bitcoin/flutter_bitcoin.dart' as btc;
@@ -9,8 +8,9 @@ import 'package:planet/model/token_info.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/util/data/token_data.dart';
 import 'package:solana/dto.dart' as sol_dto;
-import 'package:solana/encoder.dart' as sol_encoder;
 import 'package:solana/solana.dart' as sol;
+import 'package:solana_web3/programs.dart';
+import 'package:solana_web3/solana_web3.dart' as sol3;
 import 'package:web3dart/web3dart.dart';
 
 import '../../../enum/gas_priority.dart';
