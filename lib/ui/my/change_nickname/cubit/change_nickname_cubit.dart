@@ -46,8 +46,8 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
 
     var enablePlanet = await apiRepository.enablePlanetName(state.nickname);
     if (enablePlanet) {
-      var updatePlanet =
-          await apiRepository.updatePlanet(planet, state.nickname);
+      var updatePlanet = await apiRepository.updatePlanetName(
+          planet, planet.name, state.nickname);
 
       await LocalStorageService.saveMnemonics([updatePlanet]);
       appBloc.add(AppUpdate(updateBalance: false));
@@ -56,7 +56,8 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
       emit(
         state.copyWith(
           status: ScreenStatus.fail,
-          exception: CustomException(errMsg: "이미 사용중인 행성이름입니다."),
+          exception:
+              CustomException(errType: ExceptionType.planetNameDuplicate),
         ),
       );
     }

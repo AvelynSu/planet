@@ -129,6 +129,8 @@
   "cancel": "취소",
   "confirm": "확인",
 
-  "transaction_attemptsExceeded_msg" : "잠시 후 다시 확인해주세요."
+  "transaction_attemptsExceeded_msg" : "잠시 후 다시 확인해주세요.",
+  "sol_history_not_supported": "SOL 거래 내역은 지원하지 않습니다.\n(지원 준비중)"
+
 
 }

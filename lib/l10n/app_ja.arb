@@ -129,5 +129,7 @@
   "cancel": "キャンセル",
   "confirm": "確認",
 
-  "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。"
+  "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。",
+  "sol_history_not_supported": "SOL履歴は現在サポートされていません。\n(サポート準備中)"
+
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
@@ -20,21 +21,22 @@ class ForceUpdateScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Gif(
-              width: 100,
-              height: 100,
-              image: AssetImage("assets/icons/planet.gif"),
-              // controller: _controller,
-              // // if duration and fps is null, original gif fps will be used.
-              // //fps: 30,
-              duration: const Duration(seconds: 3),
-              autostart: Autostart.loop,
-              // placeholder: (context) => const Text('Loading...'),
-              // onFetchCompleted: () {
-              //   _controller.reset();
-              //   _controller.forward();
-              // },
-            ),
+            if (!kIsWeb)
+              Gif(
+                width: 100,
+                height: 100,
+                image: AssetImage("assets/icons/planet.gif"),
+                // controller: _controller,
+                // // if duration and fps is null, original gif fps will be used.
+                // //fps: 30,
+                duration: const Duration(seconds: 3),
+                autostart: Autostart.loop,
+                // placeholder: (context) => const Text('Loading...'),
+                // onFetchCompleted: () {
+                //   _controller.reset();
+                //   _controller.forward();
+                // },
+              ),
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)?.update_title ?? '',

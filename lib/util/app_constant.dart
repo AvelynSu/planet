@@ -3,6 +3,7 @@ class AppConstant {
   static String fbCommon = "common";
   static String fbCustomToken = "custom_token";
   static String fbPlanetNameDoc = "planet_name";
+  static String fbPlanetNameFnDoc = "planet_name_fn";
 
   static String spThemeMode = "spThemeMode";
 

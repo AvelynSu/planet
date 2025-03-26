@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class FriendSearchField extends StatefulWidget {
   final TextEditingController controller;
   final Function(String) onChange;
@@ -64,7 +65,8 @@ class _FriendSearchFieldState extends State<FriendSearchField> {
                 // fillColor: widget.backgroundColor,
                 // filled: widget.backgroundColor != null,
                 counterText: '',
-                hintText: AppLocalizations.of(context)?.search_address_hint ?? '',
+                hintText:
+                    AppLocalizations.of(context)?.search_address_hint ?? '',
                 hintStyle: fontR(16, color: C.current.sub01),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
@@ -97,25 +99,38 @@ class _FriendSearchFieldState extends State<FriendSearchField> {
 
 class CustomColorSelectionHandle extends TextSelectionControls {
   CustomColorSelectionHandle(this.handleColor)
-      : _controls = Platform.isIOS
-            ? cupertinoTextSelectionControls
-            : materialTextSelectionControls;
+      : _controls = kIsWeb
+            ? materialTextSelectionControls // 웹에서는 기본적으로 Material 스타일 사용
+            : Platform.isIOS
+                ? cupertinoTextSelectionControls
+                : materialTextSelectionControls;
 
   final Color handleColor;
   final TextSelectionControls _controls;
 
   /// Wrap the given handle builder with the needed theme data for
   /// each platform to modify the color.
-  Widget _wrapWithThemeData(Widget Function(BuildContext) builder) =>
-      Platform.isIOS
-          // ios handle uses the CupertinoTheme primary color, so override that.
-          ? CupertinoTheme(
-              data: CupertinoThemeData(primaryColor: handleColor),
-              child: Builder(builder: builder))
-          // material handle uses the selection handle color, so override that.
-          : TextSelectionTheme(
-              data: TextSelectionThemeData(selectionHandleColor: handleColor),
-              child: Builder(builder: builder));
+  Widget _wrapWithThemeData(Widget Function(BuildContext) builder) {
+    if (kIsWeb) {
+      // 웹에서는 Material 테마 사용
+      return TextSelectionTheme(
+        data: TextSelectionThemeData(selectionHandleColor: handleColor),
+        child: Builder(builder: builder),
+      );
+    } else if (Platform.isIOS) {
+      // iOS 테마
+      return CupertinoTheme(
+        data: CupertinoThemeData(primaryColor: handleColor),
+        child: Builder(builder: builder),
+      );
+    } else {
+      // 기타 플랫폼 (Android 등)
+      return TextSelectionTheme(
+        data: TextSelectionThemeData(selectionHandleColor: handleColor),
+        child: Builder(builder: builder),
+      );
+    }
+  }
 
   @override
   Widget buildHandle(BuildContext context, TextSelectionHandleType type,
@@ -141,10 +156,9 @@ class CustomColorSelectionHandle extends TextSelectionControls {
     Offset selectionMidpoint,
     List<TextSelectionPoint> endpoints,
     TextSelectionDelegate delegate,
-    ValueListenable<ClipboardStatus>? clipboardStatus, // different type
+    ValueListenable<ClipboardStatus>? clipboardStatus,
     Offset? lastSecondaryTapDownPosition,
   ) {
-    // ignore: deprecated_member_use
     return _controls.buildToolbar(
         context,
         globalEditableRegion,

@@ -129,6 +129,8 @@
   "cancel" : "Cancel",
   "confirm" : "Confirm",
 
-  "transaction_attemptsExceeded_msg" : "Please check again after a moment."
+  "transaction_attemptsExceeded_msg" : "Please check again after a moment.",
+  "sol_history_not_supported": "SOL history is not supported.\n(Support in preparation)"
+
 
 }

@@ -17,6 +17,9 @@ class ApiRepository {
   final _planetNameDoc = FirebaseFirestore.instance
       .collection(AppConstant.fbCommon)
       .doc(AppConstant.fbPlanetNameDoc);
+  final _planetNamefnDoc = FirebaseFirestore.instance
+      .collection(AppConstant.fbCommon)
+      .doc(AppConstant.fbPlanetNameFnDoc);
   final _planetCol =
       FirebaseFirestore.instance.collection(AppConstant.fbPlanet);
 
@@ -168,12 +171,16 @@ class ApiRepository {
   /// 닉네임 전부 불러오기
   Future<List<String>> getAllNickName() async {
     var res = await _planetNameDoc.get();
+    var res2 = await _planetNamefnDoc.get();
 
     var result = (res.data()!["items"] as List<dynamic>)
         .map((e) => e as String)
         .toList();
+    var result2 = (res2.data()!["items"] as List<dynamic>)
+        .map((e) => e as String)
+        .toList();
 
-    return result;
+    return result + result2;
   }
 
   /// 행성 저장하기
@@ -187,9 +194,14 @@ class ApiRepository {
   }
 
   /// 이름 변경
-  Future<Planet> updatePlanet(Planet planet, String name) async {
+  Future<Planet> updatePlanetName(
+      Planet planet, String oldName, String name) async {
     await _planetNameDoc.update({
-      "items": FieldValue.arrayRemove([planet.name])
+      "items": FieldValue.arrayRemove([oldName])
+    });
+
+    await _planetNameDoc.update({
+      "items": FieldValue.arrayUnion([name])
     });
 
     var res = await _planetCol.doc(planet.id).update({"name": name});
@@ -207,7 +219,9 @@ class ApiRepository {
   /// 사용 가능한 닉네임인지 확인
   Future<bool> enablePlanetName(String name) async {
     var res = await _planetCol.where("name", isEqualTo: name).get();
-    return res.docs.isEmpty;
+    var res2 = await getAllNickName();
+
+    return !res2.contains(name) && res.docs.isEmpty;
   }
 
   /// 주소로 행성 불러오기.

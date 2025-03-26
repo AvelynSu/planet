@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -64,6 +61,16 @@ class DefaultFirebaseOptions {
     projectId: 'planet-908b5',
     storageBucket: 'planet-908b5.firebasestorage.app',
     iosBundleId: 'io.grabity.PlanetWallet',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAQOdT2nLz-kqQTaFsm7qYAJO7r-TMwCKI',
+    appId: '1:271562196054:web:07958f18cc7fac1d10a7f7',
+    messagingSenderId: '271562196054',
+    projectId: 'planet-908b5',
+    authDomain: 'planet-908b5.firebaseapp.com',
+    storageBucket: 'planet-908b5.firebasestorage.app',
+    measurementId: 'G-FY03VS8RJD',
   );
 
 }

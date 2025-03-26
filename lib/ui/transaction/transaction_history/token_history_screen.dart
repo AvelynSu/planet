@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/token_balance.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/default_button.dart';
@@ -168,12 +169,16 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                           if (state.items.isEmpty &&
                               state.status == ScreenStatus.loaded)
                             Container(
-                              margin: EdgeInsets.symmetric(vertical: 50),
+                              margin: const EdgeInsets.symmetric(vertical: 50),
                               child: Text(
-                                AppLocalizations.of(context)
-                                        ?.transaction_empty_list ??
-                                    '',
-                                style: fontR(16, color: C.current.sub01),
+                                state.planet.networkType == NetworkType.solana
+                                    ? AppLocalizations.of(context)!
+                                        .sol_history_not_supported
+                                    : AppLocalizations.of(context)!
+                                        .transaction_empty_list,
+                                textAlign: TextAlign.center,
+                                style: fontR(16,
+                                    color: C.current.sub01, height: 1.3),
                               ),
                             ),
                         ],

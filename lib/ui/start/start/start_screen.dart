@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -63,12 +64,13 @@ class _StartScreenState extends State<StartScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Gif(
-                              image: AssetImage("assets/icons/planet.gif"),
-                              width: 200,
-                              duration: const Duration(seconds: 3),
-                              autostart: Autostart.loop,
-                            ),
+                            if (!kIsWeb)
+                              Gif(
+                                image: AssetImage("assets/icons/planet.gif"),
+                                width: 200,
+                                duration: const Duration(seconds: 3),
+                                autostart: Autostart.loop,
+                              ),
                             Text(
                               AppLocalizations.of(context)?.start_tagline ?? '',
                               textAlign: TextAlign.center,

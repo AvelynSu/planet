@@ -129,6 +129,8 @@
   "cancel": "取消",
   "confirm": "确认",
 
-  "transaction_attemptsExceeded_msg" : "请稍后再次确认。"
+  "transaction_attemptsExceeded_msg" : "请稍后再次确认。",
+  "sol_history_not_supported": "暂不支持SOL交易记录。\n(支持正在准备中)"
+
 
 }

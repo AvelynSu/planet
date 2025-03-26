@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
 
@@ -17,19 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Gif(
-            image: AssetImage("assets/icons/planet_gif.gif"),
-            // controller: _controller,
-            // // if duration and fps is null, original gif fps will be used.
-            // //fps: 30,
-            duration: const Duration(seconds: 3),
-            autostart: Autostart.loop,
-            // placeholder: (context) => const Text('Loading...'),
-            // onFetchCompleted: () {
-            //   _controller.reset();
-            //   _controller.forward();
-            // },
-          ),
+          if (!kIsWeb)
+            Gif(
+              image: AssetImage("assets/icons/planet_gif.gif"),
+              duration: const Duration(seconds: 3),
+              autostart: Autostart.loop,
+            ),
         ],
       ),
     );
