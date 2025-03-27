@@ -7,8 +7,6 @@ import 'package:planet/model/custom_exception.dart';
 import 'package:planet/model/token_info.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
 import 'package:planet/util/data/token_data.dart';
-import 'package:solana/dto.dart' as sol_dto;
-import 'package:solana/solana.dart' as sol;
 import 'package:solana_web3/programs.dart';
 import 'package:solana_web3/solana_web3.dart' as sol3;
 import 'package:web3dart/web3dart.dart';
