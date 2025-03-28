@@ -123,11 +123,14 @@ class ApiRepository {
         .generateHDAddress(NetworkType.bitcoin, mnemonic, 0);
     var sol = await WalletService()
         .generateHDAddress(NetworkType.solana, mnemonic, 0);
+    var bsc =
+        await WalletService().generateHDAddress(NetworkType.bsc, mnemonic, 0);
 
     var parents = [
       Planet(networkType: NetworkType.ethereum, parentsAddress: eth),
       Planet(networkType: NetworkType.bitcoin, parentsAddress: btc),
-      Planet(networkType: NetworkType.solana, parentsAddress: sol)
+      Planet(networkType: NetworkType.solana, parentsAddress: sol),
+      Planet(networkType: NetworkType.bsc, parentsAddress: bsc),
     ];
 
     var res = await _planetCol.where("parentsAddress",

@@ -1,12 +1,12 @@
 part of 'walltet_transfer_service.dart';
 
-/// 이더리움 전송 서비스
-class _EthereumTransferService implements _BlockchainTransferService {
+/// BSC 전송 서비스
+class _BscTransferService implements _BlockchainTransferService {
   final Web3Client web3client;
   final WalletConfig config;
 
-  _EthereumTransferService()
-      : web3client = Web3Client(WalletConfig().ethRpcUrl, http.Client()),
+  _BscTransferService()
+      : web3client = Web3Client(WalletConfig().bscRpcUrl, http.Client()),
         config = WalletConfig();
 
   @override
@@ -19,8 +19,8 @@ class _EthereumTransferService implements _BlockchainTransferService {
     required BigInt fee,
   }) async {
     try {
-      final credentials = AppUtil.getEthCredentials(privateKey);
-      final senderAddress = AppUtil.hexToEthereumAddress(fromAddress);
+      final credentials = AppUtil.getBscCredentials(privateKey);
+      final senderAddress = AppUtil.hexToBscAddress(fromAddress);
 
       final Future<int> nonceFuture =
           web3client.getTransactionCount(senderAddress);
@@ -31,15 +31,15 @@ class _EthereumTransferService implements _BlockchainTransferService {
 
       final gasPrice = _calculateGasPrice(fee, currentGasPrice);
 
-      // 네이티브 토큰(ETH)인지 아닌지 확인
-      final bool isNativeToken = tokenInfo.symbol == 'ETH';
+      // 네이티브 토큰(BNB)인지 아닌지 확인
+      final bool isNativeToken = tokenInfo.symbol == 'BNB';
 
       String txHash;
 
       if (isNativeToken) {
-        // ETH 전송 처리
+        // BNB 전송 처리
         final transaction = Transaction(
-          to: AppUtil.hexToEthereumAddress(toAddress),
+          to: AppUtil.hexToBscAddress(toAddress),
           value: EtherAmount.fromBigInt(EtherUnit.wei, amount),
           gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
           nonce: currentNonce,
@@ -49,17 +49,16 @@ class _EthereumTransferService implements _BlockchainTransferService {
         txHash = await web3client.sendTransaction(
           credentials,
           transaction,
-          chainId: config.chainId(NetworkType.ethereum),
+          chainId: config.chainId(NetworkType.bsc),
         );
       } else {
-        // ERC-20 토큰 전송 처리
-        // 토큰 컨트랙트 ABI 정의 (간소화된 버전)
+        // BEP-20 토큰 전송 처리
         final String tokenAbi = '''
 [{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function"}]
 ''';
         final contract = DeployedContract(
-          ContractAbi.fromJson(tokenAbi, tokenInfo.symbol),
-          AppUtil.hexToEthereumAddress(tokenInfo.address),
+          ContractAbi.fromJson(tokenAbi, 'BEP20'),
+          AppUtil.hexToBscAddress(tokenInfo.address),
         );
 
         final transferFunction = contract.function('transfer');
@@ -67,17 +66,16 @@ class _EthereumTransferService implements _BlockchainTransferService {
         final transaction = Transaction.callContract(
           contract: contract,
           function: transferFunction,
-          parameters: [AppUtil.hexToEthereumAddress(toAddress), amount],
+          parameters: [AppUtil.hexToBscAddress(toAddress), amount],
           gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, gasPrice),
           maxGas: 100000,
-          // 토큰 전송은 일반적으로 더 많은 가스가 필요
           nonce: currentNonce,
         );
 
         txHash = await web3client.sendTransaction(
           credentials,
           transaction,
-          chainId: config.chainId(NetworkType.ethereum),
+          chainId: config.chainId(NetworkType.bsc),
         );
       }
 
@@ -86,7 +84,7 @@ class _EthereumTransferService implements _BlockchainTransferService {
       final errorMessage = e.toString();
       if (errorMessage.contains("insufficient funds for")) {
         throw const CustomException(
-            errMsg: 'Not enough ETH to cover transaction costs.');
+            errMsg: 'Not enough BNB to cover transaction costs.');
       } else if (errorMessage.contains("nonce too low")) {
         throw const CustomException(
             errMsg: 'Transaction nonce is too low. Please try again.');
@@ -115,7 +113,6 @@ class _EthereumTransferService implements _BlockchainTransferService {
     required BigInt fee,
   }) async {
     try {
-      // 1. 트랜잭션 전송
       final txHash = await sendTransaction(
         tokenInfo: tokenInfo,
         fromAddress: fromAddress,
@@ -125,7 +122,6 @@ class _EthereumTransferService implements _BlockchainTransferService {
         fee: fee,
       );
 
-      // 2. 트랜잭션 처리 완료 대기
       return await _waitForTransactionConfirmation(txHash);
     } catch (e) {
       rethrow;
@@ -136,13 +132,8 @@ class _EthereumTransferService implements _BlockchainTransferService {
   Future<TransactionConfirmationStatus> checkTransactionStatus(
       String txHash) async {
     try {
-      // 트랜잭션 영수증 조회
       final receipt = await web3client.getTransactionReceipt(txHash);
-
-      // null이면 아직 처리 중
       if (receipt == null) return TransactionConfirmationStatus.unconfirmed;
-
-      // receipt.status가 1이면 성공
       return TransactionConfirmationStatus.confirmed;
     } catch (e) {
       throw CustomException(errMsg: 'Failed to check transaction status: $e');
@@ -155,17 +146,14 @@ class _EthereumTransferService implements _BlockchainTransferService {
     String? toAddress,
     BigInt? amount,
   }) async {
-    // 기본 가스 가격 조회 및 BigInt로 변환
     final baseGasPrice = (await web3client.getGasPrice()).getInWei;
     final gasLimit = BigInt.from(21000);
 
-    // 각 우선순위별 가스 가격 계산
     final gasPrices = {
-      for (var entry in AppUtil.feePriority(NetworkType.ethereum).entries)
+      for (var entry in AppUtil.feePriority(NetworkType.bsc).entries)
         entry.key: AppUtil.adjustFeeByPercentage(baseGasPrice, entry.value)
     };
 
-    // 각 우선순위별 TransactionFee 생성
     return {
       for (var priority in GasPriority.values)
         priority: TransferFee(
@@ -176,7 +164,6 @@ class _EthereumTransferService implements _BlockchainTransferService {
     };
   }
 
-  // 트랜잭션 상태를 기다리는 공통 메서드
   Future<TransactionConfirmationStatus> _waitForTransactionConfirmation(
       String txHash,
       {int maxAttempts = 15}) async {

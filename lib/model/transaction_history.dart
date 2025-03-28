@@ -481,6 +481,28 @@ class TransactionHistory {
       return TransactionHistory.empty;
     }
   }
+
+  // BNB 트랜잭션 생성을 위한 factory 생성자
+  factory TransactionHistory.createBnbTransaction(
+      AlchemyCommonTransactionData data, double value) {
+    return TransactionHistory(
+      hash: data.hash,
+      from: data.from,
+      to: data.to,
+      timestamp: data.timestamp,
+      tokenSymbol: 'BNB',
+      amount: value,
+      confirmations: data.confirmations,
+      isSuccess: true,
+      decimals: 18,  // BNB의 기본 decimals는 ETH와 동일하게 18
+      tokenAddress: null,
+      fee: null,
+      gas: null,
+      gasPrice: null,
+      gasUsed: null,
+      status: data.status,
+    );
+  }
 }
 
 /// 솔라나 트랜잭션 파싱을 위한 헬퍼 클래스

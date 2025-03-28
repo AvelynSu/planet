@@ -40,6 +40,8 @@ class WalletService {
         return _generateBitcoinAddress(seed, derivationPath);
       case NetworkType.solana:
         return _generateSolanaAddress(seed, derivationPath);
+      case NetworkType.bsc:
+        return _generateBscAddress(seed, derivationPath);
     }
   }
 
@@ -64,6 +66,11 @@ class WalletService {
         final child = node.derivePath(path);
         return AppUtil.bytesToHex(child.privateKey!);
       case NetworkType.ethereum:
+        final node = bip32.BIP32.fromSeed(seed);
+        final child = node.derivePath(path);
+        final privateKeyHex = AppUtil.bytesToHex(child.privateKey!);
+        return "0x$privateKeyHex";
+      case NetworkType.bsc:
         final node = bip32.BIP32.fromSeed(seed);
         final child = node.derivePath(path);
         final privateKeyHex = AppUtil.bytesToHex(child.privateKey!);
@@ -140,5 +147,13 @@ class WalletService {
     final keyPair =
         await sol.Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: keyData.key);
     return keyPair.address;
+  }
+
+  // BSC 주소 생성
+  Future<String> _generateBscAddress(Uint8List seed, String path) async {
+    final node = bip32.BIP32.fromSeed(seed);
+    final child = node.derivePath(path);
+    final privateKeyHex = AppUtil.bytesToHex(child.privateKey!);
+    return "0x$privateKeyHex";
   }
 }

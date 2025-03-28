@@ -3,7 +3,8 @@ import '../util/wallet_config.dart';
 enum NetworkType {
   ethereum,
   bitcoin,
-  solana;
+  solana,
+  bsc;
 
   String get coinType {
     switch (this) {
@@ -15,6 +16,8 @@ enum NetworkType {
         return isMainnet ? "0" : "1";
       case NetworkType.solana:
         return "501";
+      case NetworkType.bsc:
+        return "56";
     }
   }
 
@@ -26,6 +29,8 @@ enum NetworkType {
         return NetworkType.bitcoin;
       case "solana":
         return NetworkType.solana;
+      case "bsc":
+        return NetworkType.bsc;
     }
     return NetworkType.ethereum;
   }
@@ -38,6 +43,8 @@ enum NetworkType {
         return "BTC";
       case NetworkType.solana:
         return "SOL";
+      case NetworkType.bsc:
+        return "BNB";
     }
   }
 
@@ -49,6 +56,8 @@ enum NetworkType {
         return "icons/ic_bitcoin.png";
       case NetworkType.solana:
         return "icons/ic_solana.png";
+      case NetworkType.bsc:
+        return "icons/ic_bsc.png";
     }
   }
 
@@ -60,6 +69,8 @@ enum NetworkType {
         return "BITCOIN";
       case NetworkType.solana:
         return "SOLANA";
+      case NetworkType.bsc:
+        return "BINANCE SMART CHAIN";
     }
   }
 
@@ -76,8 +87,9 @@ enum NetworkType {
       case NetworkType.bitcoin:
         coinType = WalletConfig.env == Environment.prod ? 0 : 1;
         return "m/44'/$coinType'/0'/0/$addressIndex";
-      default:
-        return "";
+      case NetworkType.bsc:
+        coinType = 56;
+        return "m/44'/$coinType'/0'/0/$addressIndex";
     }
   }
 

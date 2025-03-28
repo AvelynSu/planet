@@ -1,11 +1,11 @@
 part of 'wallet_balance_service.dart';
 
-class _EthereumBalanceService implements _BlockchainBalanceService {
+class _BscBalanceService implements _BlockchainBalanceService {
   final Web3Client web3client;
 
-  _EthereumBalanceService()
+  _BscBalanceService()
       : web3client = Web3Client(
-          WalletConfig().ethRpcUrl,
+          WalletConfig().bscRpcUrl,
           http.Client(),
         );
 
@@ -16,14 +16,15 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
     required TokenInfo info,
   }) async {
     try {
-      // ETH(네이티브 토큰)인 경우 web3client 사용
-      if (info.symbol == "ETH") {
-        final balance = await web3client.getBalance(AppUtil.hexToEthereumAddress(address));
+      // BNB(네이티브 토큰)인 경우 web3client 사용
+      if (info.symbol == "BNB") {
+        final balance =
+            await web3client.getBalance(AppUtil.hexToEthereumAddress(address));
         final value = AppUtil.weiToEth(balance.getInWei);
         return TokenBalance(address: address, info: info, balance: value);
       }
 
-      // ERC-20 토큰은 직접 컨트랙트 호출
+      // BEP-20 토큰은 직접 컨트랙트 호출
       return await _getTokenBalanceUsingContract(address, info);
     } catch (e) {
       debugPrint('Error getting ${info.symbol} balance: $e');
@@ -39,21 +40,21 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
     try {
       final results = <TokenBalance>[];
 
-      // 1. ETH 잔액 조회 (네이티브 토큰)
-      final ethToken = TokenData.ethTokens.firstWhere((t) => t.symbol == "ETH");
-      final ethBalance =
-          await getTokenBalance(address: walletAddress, info: ethToken);
-      results.add(ethBalance);
+      // 1. BNB 잔액 조회 (네이티브 토큰)
+      final bnbToken = TokenData.bscTokens.firstWhere((t) => t.symbol == "BNB");
+      final bnbBalance =
+          await getTokenBalance(address: walletAddress, info: bnbToken);
+      results.add(bnbBalance);
 
-      // 2. ERC-20 토큰 병렬 조회
-      final erc20Tokens =
-          TokenData.ethTokens.where((token) => token.symbol != "ETH").toList();
-      if (erc20Tokens.isEmpty) {
+      // 2. BEP-20 토큰 병렬 조회
+      final bep20Tokens =
+          TokenData.bscTokens.where((token) => token.symbol != "BNB").toList();
+      if (bep20Tokens.isEmpty) {
         return results;
       }
 
-      final erc20Balances = await Future.wait(
-        erc20Tokens.map(
+      final bep20Balances = await Future.wait(
+        bep20Tokens.map(
           (token) =>
               _getTokenBalanceUsingContract(walletAddress, token).catchError(
             (e) {
@@ -64,7 +65,7 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
         ),
       );
 
-      results.addAll(erc20Balances);
+      results.addAll(bep20Balances);
       return results;
     } catch (e) {
       debugPrint('Error in getAllTokenBalances: $e');
@@ -75,9 +76,9 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
   /// 기존 컨트랙트 호출 방식으로 토큰 잔액 조회 (폴백 메서드)
   Future<TokenBalance> _getTokenBalanceUsingContract(
       String address, TokenInfo info) async {
-    // DeployedContract : 이더리움 스마트컨트렉트와 상호작용 하기 위한 객체
+    // DeployedContract : BSC 스마트컨트렉트와 상호작용 하기 위한 객체
     final contract = DeployedContract(
-      ContractAbi.fromJson(TokenAbi.ERC20, 'ERC20'),
+      ContractAbi.fromJson(TokenAbi.ERC20, 'BEP20'),
       AppUtil.hexToEthereumAddress(info.address),
     );
 

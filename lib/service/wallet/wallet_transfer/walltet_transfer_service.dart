@@ -18,6 +18,7 @@ import '../../../util/app_util.dart';
 import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';
+part 'bsc.dart';
 part 'ethurium.dart';
 part 'solana.dart';
 
@@ -28,6 +29,7 @@ class WalletTransferService {
     _services[NetworkType.ethereum] = _EthereumTransferService();
     _services[NetworkType.bitcoin] = _BitcoinTransferService();
     _services[NetworkType.solana] = _SolanaTransferService();
+    _services[NetworkType.bsc] = _BscTransferService();
   }
 
   // 가스비 또는 수수료 예상

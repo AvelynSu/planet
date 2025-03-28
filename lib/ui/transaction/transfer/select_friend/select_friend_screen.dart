@@ -74,7 +74,7 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                 onTap: () async {
                   var result = await QrScannerScreen.push(context);
                   if (result != null) {
-                    cubit.onUpdateSearchValue(result!);
+                    cubit.onUpdateSearchValue(result);
                   }
                 },
               ),

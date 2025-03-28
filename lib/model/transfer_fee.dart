@@ -24,6 +24,7 @@ class TransferFee {
     print(estimatedFee);
     switch (network) {
       case NetworkType.ethereum:
+      case NetworkType.bsc:
         final ethValue = EtherAmount.fromBigInt(EtherUnit.wei, estimatedFee)
             .getValueInUnit(EtherUnit.ether);
         return ethValue.toStringAsFixed(8);

@@ -45,6 +45,12 @@ class AppUtil {
           GasPriority.medium: 1, // 중간
           GasPriority.fast: 2, // 빠름
         };
+      case NetworkType.bsc:
+        return {
+          GasPriority.slow: 0.5, // 50% - 경제적
+          GasPriority.medium: 1.0, // 100% - 표준
+          GasPriority.fast: 2.0, // 200% - 빠름
+        };
     }
   }
 
@@ -180,6 +186,7 @@ class AppUtil {
           }
 
         case NetworkType.ethereum:
+        case NetworkType.bsc:
           if (tokenDecimals != null) {
             // ERC-20 토큰인 경우, 토큰별 소수점 자릿수 사용
             return BigInt.from(parsedAmount * pow(10, tokenDecimals));
@@ -187,9 +194,6 @@ class AppUtil {
             // 네이티브 ETH인 경우 (18자리)
             return BigInt.from(parsedAmount * pow(10, 18));
           }
-
-        default:
-          return BigInt.zero;
       }
     } catch (e) {
       print('Error converting amount: $e');
@@ -290,5 +294,15 @@ class AppUtil {
     } else {
       return 1;
     }
+  }
+
+  /// BSC 자격증명 생성
+  static EthPrivateKey getBscCredentials(String privateKey) {
+    return EthPrivateKey.fromHex(privateKey);
+  }
+
+  /// BSC 주소 변환
+  static EthereumAddress hexToBscAddress(String address) {
+    return EthereumAddress.fromHex(address);
   }
 }

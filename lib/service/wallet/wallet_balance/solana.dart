@@ -1,8 +1,6 @@
 part of 'wallet_balance_service.dart';
 
 class _SolanaBalanceService implements _BlockchainBalanceService {
-  // 상수 정의
-
   final sol.SolanaClient _solanaClient;
 
   _SolanaBalanceService()

@@ -16,6 +16,7 @@ import '../../../util/data/token_data.dart';
 import '../../../util/wallet_config.dart';
 
 part 'bitcoin.dart';
+part 'bsc.dart';
 part 'ethurium.dart';
 part 'solana.dart';
 
@@ -26,6 +27,7 @@ class WalletBalanceService {
     _services[NetworkType.ethereum] = _EthereumBalanceService();
     _services[NetworkType.bitcoin] = _BitcoinBalanceService();
     _services[NetworkType.solana] = _SolanaBalanceService();
+    _services[NetworkType.bsc] = _BscBalanceService();
   }
 
   Future<TokenBalance> getTokenBalance({

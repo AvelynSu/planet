@@ -1,3 +1,5 @@
+import 'package:planet/enum/network_type.dart';
+
 enum Environment {
   dev,
   prod;
@@ -17,12 +19,10 @@ class WalletConfig {
   static Environment env = Environment.prod;
 
   final String ethRpcUrl;
-  final String wsUrl;
-  final String alchemyApiKey;
-  final int chainId;
   final String bitcoinApiUrl;
   final String blockCypherToken;
   final String solanaRpcUrl;
+  final String bscRpcUrl;
   static final WalletConfig _instance = WalletConfig._internal();
 
   factory WalletConfig() => _instance;
@@ -31,11 +31,9 @@ class WalletConfig {
       : ethRpcUrl = env == Environment.prod
             ? 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
             : 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-        wsUrl = env == Environment.prod
-            ? 'wss://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
-            : 'wss://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-        alchemyApiKey = 'AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-        chainId = env == Environment.prod ? 1 : 1,
+        bscRpcUrl = env == Environment.prod
+            ? 'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
+            : 'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
         bitcoinApiUrl = env == Environment.prod
             ? "https://api.blockcypher.com/v1/btc/main"
             : "https://api.blockcypher.com/v1/bcy/test",
@@ -58,15 +56,28 @@ class WalletConfig {
     }
   }
 
-  // 블록체인 타입에 따른 WebSocket URL을 반환하는 헬퍼 메서드
+  int? chainId(NetworkType type) {
+    switch (type) {
+      case NetworkType.ethereum:
+        return env == Environment.prod ? 1 : 5; // 메인넷: 1, Goerli 테스트넷: 5
+      case NetworkType.bitcoin:
+        return env == Environment.prod ? 0 : 1; // 메인넷: 0, 테스트넷: 1
+      case NetworkType.solana:
+        return env == Environment.prod ? 101 : 103; // 메인넷: 101, 테스트넷: 103
+      case NetworkType.bsc:
+        return env == Environment.prod ? 56 : 97; // 메인넷: 56, 테스트넷: 97
+    }
+  }
+
+  // 블록체인 타입에 따른 WebSocket URL을 반환하는 헬퍼 메서드 (sol만 필요함)
   String getWsUrlForNetwork(String networkType) {
     switch (networkType.toLowerCase()) {
       case "ethereum":
-        return wsUrl;
+        return "";
       case "solana":
         return solanaRpcUrl.replaceFirst('https://', 'wss://');
       default:
-        return wsUrl;
+        return "";
     }
   }
 }

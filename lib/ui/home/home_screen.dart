@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/custom_theme.dart';
-import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/custom_image.dart';
@@ -161,22 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-    );
-  }
-
-  _planetRow(Planet planet) {
-    return Row(
-      children: [
-        PlanetComponent(
-          network: planet.networkType,
-          data: planet.name,
-          size: 20,
-        ),
-        Text(
-          planet.name,
-          style: fontR(16, color: C.current.mainText),
-        ),
-      ],
     );
   }
 
