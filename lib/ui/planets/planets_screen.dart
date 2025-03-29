@@ -119,10 +119,10 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
         height: 360,
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: C.color(C.current.sub01.withValues(alpha: 0.2),
-                C.current.onBackground.withValues(alpha: 0.15)),
+                C.current.onBackground.withValues(alpha: 0.1)),
           ),
           color: C.color(
             C.current.background.withValues(alpha: 0.3),

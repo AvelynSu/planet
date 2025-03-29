@@ -130,6 +130,14 @@
   "confirm": "確認",
 
   "transaction_attemptsExceeded_msg" : "しばらくしてからもう一度ご確認ください。",
-  "sol_history_not_supported": "SOL履歴は現在サポートされていません。\n(サポート準備中)"
+  "sol_history_not_supported": "SOL履歴は現在サポートされていません。\n(サポート準備中)",
 
+  "planet_address_copy_button": "コピー",
+    "planet_address_send_button": "送信",
+    "planet_address_network_mismatch": "現在{currentNetwork}惑星にいます。*{targetNetwork}惑星に切り替えて*からもう一度お試しください。",
+
+  "ethereum": "イーサリアム",
+  "bitcoin": "ビットコイン",
+  "solana": "ソラナ",
+  "bnb_smart_chain": "BNBスマートチェーン"
 }

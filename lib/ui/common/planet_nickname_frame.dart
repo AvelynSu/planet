@@ -81,7 +81,7 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                     CustomImage(path: widget.network!.icon),
                     SizedBox(width: 4),
                     Text(
-                      widget.network!.title,
+                      widget.network!.title(context),
                       style: fontR(14, color: C.current.mainText),
                     ),
                   ],

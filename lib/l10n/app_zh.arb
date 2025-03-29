@@ -130,7 +130,15 @@
   "confirm": "确认",
 
   "transaction_attemptsExceeded_msg" : "请稍后再次确认。",
-  "sol_history_not_supported": "暂不支持SOL交易记录。\n(支持正在准备中)"
+  "sol_history_not_supported": "暂不支持SOL交易记录。\n(支持正在准备中)",
 
+    "planet_address_copy_button": "复制",
+    "planet_address_send_button": "发送",
+    "planet_address_network_mismatch": "您当前在{currentNetwork}行星上。*请切换到{targetNetwork}行星*，然后重试。",
+
+     "ethereum": "以太坊",
+     "bitcoin": "比特币",
+     "solana": "索拉纳",
+     "bnb_smart_chain": "BNB智能链"
 
 }

@@ -118,7 +118,7 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  planet.networkType?.title ?? "",
+                  planet.networkType?.title(context) ?? "",
                   style: fontR(16, color: C.current.sub01),
                 ),
                 const SizedBox(height: 8),

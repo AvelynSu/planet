@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   width: 32,
           // ),
           Text(
-            state.planet.networkType?.title ?? "",
+            state.planet.networkType?.title(context) ?? "",
             style: fontR(18, color: C.current.onBackground),
           ),
           const SizedBox(width: 4),

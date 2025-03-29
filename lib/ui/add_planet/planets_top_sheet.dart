@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/bloc/app/app_state.dart';
@@ -74,7 +75,7 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
                     networkType: NetworkType.ethereum);
               },
               iconPath: "icons/ic_planet.svg",
-              title: "Add New Planet",
+              title: AppLocalizations.of(context)!.planets_add_new,
             ),
             CustomImage(
               onTap: () {
@@ -119,7 +120,7 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
           Row(
             children: [
               Text(
-                planet.networkType?.title ?? "",
+                planet.networkType?.title(context) ?? "",
                 style: fontR(14, color: C.current.sub01),
               ),
               CustomImage(

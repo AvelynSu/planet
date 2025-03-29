@@ -130,7 +130,15 @@
   "confirm" : "Confirm",
 
   "transaction_attemptsExceeded_msg" : "Please check again after a moment.",
-  "sol_history_not_supported": "SOL history is not supported.\n(Support in preparation)"
+  "sol_history_not_supported": "SOL history is not supported.\n(Support in preparation)",
 
+   "planet_address_copy_button": "Copy",
+   "planet_address_send_button": "Send",
+   "planet_address_network_mismatch": "You are currently on the {currentNetwork} planet. *Please switch to the {targetNetwork} planet* and try again.",
+
+    "ethereum": "Ethereum",
+    "bitcoin": "Bitcoin",
+    "solana": "Solana",
+    "bnb_smart_chain": "BNB Smart Chain"
 
 }

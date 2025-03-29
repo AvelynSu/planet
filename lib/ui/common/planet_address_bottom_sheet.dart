@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/model/planet.dart';
@@ -127,7 +128,7 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
             Column(
               children: [
                 CustomBottomSheetHeader(
-                  title: widget.planet.networkType?.title ?? "",
+                  title: widget.planet.networkType?.title(context) ?? "",
                 ),
                 const SizedBox(height: 40),
                 Container(
@@ -170,13 +171,15 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
                     children: [
                       Expanded(
                         child: _button(
-                          title: "Copy",
+                          title: AppLocalizations.of(context)!
+                              .planet_address_copy_button,
                           isReverse: true,
                           onTap: () async {
                             await Clipboard.setData(
                                 ClipboardData(text: widget.planet.address));
                             DefaultDialog.showTimerDialog(context,
-                                description: "Success Copy");
+                                description:
+                                    AppLocalizations.of(context)!.success_copy);
                           },
                         ),
                       ),
@@ -185,13 +188,17 @@ class _PlanetAddressBottomSheetState extends State<PlanetAddressBottomSheet> {
                       if (current.address != widget.planet.address)
                         Expanded(
                           child: _button(
-                            title: "Send",
+                            title: AppLocalizations.of(context)!
+                                .planet_address_send_button,
                             onTap: () {
                               if (current.networkType !=
                                   widget.planet.networkType) {
                                 DefaultDialog.show(context,
-                                    description:
-                                        "You are currently on the ${current.networkType?.title} planet. *Please switch to the ${widget.planet.networkType?.title} planet* and try again.");
+                                    description: AppLocalizations.of(context)!
+                                        .planet_address_network_mismatch(
+                                            current.networkType!.title(context),
+                                            widget.planet.networkType!
+                                                .title(context)));
                                 return;
                               }
 

@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../util/wallet_config.dart';
 
 enum NetworkType {
@@ -61,16 +64,16 @@ enum NetworkType {
     }
   }
 
-  String get title {
+  String title(BuildContext context) {
     switch (this) {
       case NetworkType.ethereum:
-        return "ETHEREUM";
+        return AppLocalizations.of(context)!.ethereum;
       case NetworkType.bitcoin:
-        return "BITCOIN";
+        return AppLocalizations.of(context)!.bitcoin;
       case NetworkType.solana:
-        return "SOLANA";
+        return AppLocalizations.of(context)!.solana;
       case NetworkType.bsc:
-        return "BINANCE SMART CHAIN";
+        return AppLocalizations.of(context)!.bnb_smart_chain;
     }
   }
 
