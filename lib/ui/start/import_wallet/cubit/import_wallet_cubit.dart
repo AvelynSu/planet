@@ -24,10 +24,6 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
   }) : super(const ImportWalletState());
   final WalletService _walletService = WalletService();
 
-  String getTestValue() {
-    return _walletService.generateMnemonic();
-  }
-
   updateMnimonic(String value) {
     emit(state.copyWith(mnemonic: value));
   }

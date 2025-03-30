@@ -139,6 +139,7 @@
     "ethereum": "Ethereum",
     "bitcoin": "Bitcoin",
     "solana": "Solana",
-    "bnb_smart_chain": "BNB Smart Chain"
+    "bnb_smart_chain": "BNB Smart Chain",
+    "input_format_hint": "Please enter 3-15 characters using numbers, English letters, and _ only."
 
 }

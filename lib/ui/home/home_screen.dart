@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/ui/common/bounce_button.dart';
 import 'package:planet/ui/common/copy_component.dart';
 import 'package:planet/ui/common/custom_image.dart';
@@ -165,30 +166,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _appBar(HomeState state) {
     return Container(
-      color: Colors.transparent,
-      height: 52,
-      padding: EdgeInsets.symmetric(horizontal: hPadding),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Container(
-          //   // path: "icons/ic_planet.svg",
-          //   // color: C.current.sub01,
-          //   width: 32,
-          // ),
-          Text(
-            state.planet.networkType?.title(context) ?? "",
-            style: fontR(18, color: C.current.onBackground),
-          ),
-          const SizedBox(width: 4),
-          CustomImage(
-            width: 20,
-            rotate: pi / 2,
-            path: "icons/ic_small_arrow.svg",
-            color: C.current.onBackground,
-          )
-        ],
+      height: 48,
+      margin: EdgeInsets.only(top: 8),
+      alignment: Alignment.center,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: C.current.sub01.withValues(alpha: 0),
+        ),
+        height: 48,
+        padding: EdgeInsets.symmetric(horizontal: hPadding),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _networkSymbol(state.planet.networkType!),
+            Text(
+              state.planet.networkType?.title(context) ?? "",
+              style: fontR(18, color: C.current.onBackground),
+            ),
+            const SizedBox(width: 8),
+            CustomImage(
+              width: 16,
+              rotate: pi / 2,
+              path: "icons/ic_small_arrow.svg",
+              color: C.current.onBackground,
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+  _networkSymbol(NetworkType network) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.all(3),
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        color: C.current.sub02.withValues(alpha: 0.8),
+        // border: Border.all(color: C.current.sub01),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: CustomImage(path: network.icon),
     );
   }
 }

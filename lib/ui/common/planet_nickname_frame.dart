@@ -50,12 +50,14 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
     _controller = TextEditingController(text: widget.nickname);
   }
 
+  String errorMsg = "";
+
   @override
   Widget build(BuildContext context) {
-    var errorMsg = "";
-
-    if (widget.exception.errType == ExceptionType.planetNameDuplicate) {
-      errorMsg = AppLocalizations.of(context)!.planet_name_duplicate;
+    if (errorMsg.isEmpty) {
+      if (widget.exception.errType == ExceptionType.planetNameDuplicate) {
+        errorMsg = AppLocalizations.of(context)!.planet_name_duplicate;
+      }
     }
 
     return BaseScaffold(
@@ -135,10 +137,12 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                         align: TextAlign.center,
                         style: fontR(22, color: primary),
                         onChange: (value) {
+                          errorMsg = "";
+                          setState(() {});
                           widget.onUpdateValue(value);
                         },
                       ),
-                      if (widget.status != ScreenStatus.fail)
+                      if (errorMsg.isEmpty)
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           child: Text(
@@ -147,12 +151,13 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                             style: fontR(14, color: C.current.sub01),
                           ),
                         ),
-                      if (widget.status == ScreenStatus.fail)
+                      if (errorMsg.isNotEmpty)
                         Container(
                           margin: const EdgeInsets.only(top: 12),
                           child: Text(
                             errorMsg,
-                            style: fontR(14, color: primary),
+                            textAlign: TextAlign.center,
+                            style: fontR(14, color: primary, height: 1.3),
                           ),
                         ),
                       const SizedBox(height: 100),
@@ -185,7 +190,14 @@ class _PlanetNicknameFrameState extends State<PlanetNicknameFrame> {
                           const SizedBox(width: 30),
                           SetNicknameButton(
                             onTap: () {
-                              widget.onComplete();
+                              if (widget.nickname.length < 3 ||
+                                  widget.nickname.length > 15) {
+                                errorMsg = AppLocalizations.of(context)!
+                                    .input_format_hint;
+                                setState(() {});
+                              } else {
+                                widget.onComplete();
+                              }
                             },
                             iconPath: "icons/ic_check.svg",
                           ),

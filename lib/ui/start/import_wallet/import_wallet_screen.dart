@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/repository/fb_repository.dart';
@@ -8,7 +9,7 @@ import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_field.dart';
 import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/small_round_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
 import '../set_nickname/set_nickname_screen.dart';
@@ -112,7 +113,9 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
                             // 입력 필드 라벨
                             Text(
-                              AppLocalizations.of(context)?.wallet_import_recovery_phrase ?? '',
+                              AppLocalizations.of(context)
+                                      ?.wallet_import_recovery_phrase ??
+                                  '',
                               //   '복구 문구',
                               style: fontR(16, color: C.current.mainText),
                             ),
@@ -136,8 +139,9 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                   CustomField(
                                     controller: _controller,
                                     maxLine: 5,
-                                    hintText:
-                                        AppLocalizations.of(context)?.wallet_import_placeholder ?? '',
+                                    hintText: AppLocalizations.of(context)
+                                            ?.wallet_import_placeholder ??
+                                        '',
                                     onChange: (text) {
                                       _validateInput(text);
                                       cubit.updateMnimonic(text);
@@ -158,7 +162,9 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                       }
                                     },
                                     iconPath: "icons/ic_copy.svg",
-                                    title: AppLocalizations.of(context)?.wallet_import_paste ?? '',
+                                    title: AppLocalizations.of(context)
+                                            ?.wallet_import_paste ??
+                                        '',
                                   ),
                                 ],
                               ),
@@ -168,10 +174,15 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
 
                             // 단어 수 표시
                             Text(
-                              AppLocalizations.of(context)?.wallet_import_word_count(
-                                      _controller.text.trim().isEmpty
-                                          ? 0
-                                          : _controller.text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length) ??
+                              AppLocalizations.of(context)
+                                      ?.wallet_import_word_count(
+                                          _controller.text.trim().isEmpty
+                                              ? 0
+                                              : _controller.text
+                                                  .trim()
+                                                  .split(RegExp(r'\s+'))
+                                                  .where((w) => w.isNotEmpty)
+                                                  .length) ??
                                   '',
                               style: fontR(14, color: C.current.sub01),
                             ),
@@ -201,7 +212,9 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        AppLocalizations.of(context)?.recovery_phrase_requirement ?? '',
+                                        AppLocalizations.of(context)
+                                                ?.recovery_phrase_requirement ??
+                                            '',
                                         style: fontR(14,
                                             color: C.current.primary,
                                             height: 1.4),
@@ -225,7 +238,9 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                       children: [
                         // 버튼
                         DefaultButton(
-                          title: AppLocalizations.of(context)?.wallet_import_restore ?? '',
+                          title: AppLocalizations.of(context)
+                                  ?.wallet_import_restore ??
+                              '',
                           onTap: _isValidInput
                               ? () async {
                                   var planet =
@@ -240,36 +255,6 @@ class _ImportWalletScreenState extends State<ImportWalletScreen> {
                         ),
 
                         const SizedBox(height: 16),
-
-                        // 테스트용 버튼 (개발 모드에서만 표시)
-                        // TODO: 프로덕션에서 제거하기
-                        // Opacity(
-                        //   opacity: 0.8,
-                        //   child: GestureDetector(
-                        //     onTap: () {
-                        //       var item = cubit.getTestValue();
-                        //       _controller.text = item;
-                        //       _validateInput(item);
-                        //       cubit.updateMnimonic(item);
-                        //     },
-                        //     child: Container(
-                        //       width: double.infinity,
-                        //       padding: const EdgeInsets.symmetric(vertical: 12),
-                        //       decoration: BoxDecoration(
-                        //         border: Border.all(
-                        //           color: C.current.sub01.withValues(alpha: 0.5),
-                        //         ),
-                        //         borderRadius: BorderRadius.circular(8),
-                        //       ),
-                        //       child: Center(
-                        //         child: Text(
-                        //           "Fill with Test Phrase",
-                        //           style: fontR(14, color: C.current.sub01),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

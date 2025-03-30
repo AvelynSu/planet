@@ -139,6 +139,8 @@
      "ethereum": "以太坊",
      "bitcoin": "比特币",
      "solana": "索拉纳",
-     "bnb_smart_chain": "BNB智能链"
+     "bnb_smart_chain": "BNB智能链",
+
+     "input_format_hint": "请输入3至15个字符，仅限数字、英文和下划线(_)的组合。"
 
 }

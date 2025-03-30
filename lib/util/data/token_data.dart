@@ -13,44 +13,7 @@ class TokenData {
     wif: 0x49,
   );
 
-  static const List<TokenInfo> bscTokens = [
-    // BNB (네이티브 토큰)
-    TokenInfo(
-      symbol: "BNB",
-      name: "Binance Coin",
-      address: "",
-      // 네이티브 토큰은 주소 필요 없음
-      decimals: 18,
-      logoUrl:
-          "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_bsc.png?alt=media&token=da3578ae-495c-49e0-9111-7ac0c09ee77d",
-      networkType: NetworkType.bsc,
-      coingeckoKey: "binancecoin",
-    ),
-
-    // USDT (BEP-20)
-    TokenInfo(
-      symbol: "USDT",
-      name: "Tether USD",
-      address: "0x55d398326f99059fF775485246999027B3197955",
-      decimals: 18,
-      logoUrl:
-          "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_bsc.png?alt=media&token=da3578ae-495c-49e0-9111-7ac0c09ee77d",
-      networkType: NetworkType.bsc,
-      coingeckoKey: "tether",
-    ),
-
-    // CAKE (PancakeSwap 토큰)
-    TokenInfo(
-      symbol: "CAKE",
-      name: "PancakeSwap Token",
-      address: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
-      decimals: 18,
-      logoUrl:
-          "https://firebasestorage.googleapis.com/v0/b/planet-908b5.firebasestorage.app/o/custom_token%2Fic_bsc.png?alt=media&token=da3578ae-495c-49e0-9111-7ac0c09ee77d",
-      networkType: NetworkType.bsc,
-      coingeckoKey: "pancakeswap-token",
-    ),
-  ];
+  static List<TokenInfo> bscTokens = [];
 
   static const TokenInfo bitToken = TokenInfo(
     name: "Bitcoin",
@@ -74,8 +37,13 @@ class TokenData {
 class TokenDataSet {
   final List<TokenInfo> etherium;
   final List<TokenInfo> solana;
+  final List<TokenInfo> bsc;
 
-  TokenDataSet({required this.etherium, required this.solana});
+  TokenDataSet({
+    required this.etherium,
+    required this.solana,
+    required this.bsc,
+  });
 
   factory TokenDataSet.fromJson(Map<String, dynamic> json) {
     return TokenDataSet(
@@ -83,6 +51,9 @@ class TokenDataSet {
           .map((e) => TokenInfo.fromJson(e))
           .toList(),
       solana: (json["solana"] as List<dynamic>)
+          .map((e) => TokenInfo.fromJson(e))
+          .toList(),
+      bsc: (json["bsc"] as List<dynamic>)
           .map((e) => TokenInfo.fromJson(e))
           .toList(),
     );

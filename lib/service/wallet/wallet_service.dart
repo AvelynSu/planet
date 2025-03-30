@@ -154,6 +154,9 @@ class WalletService {
     final node = bip32.BIP32.fromSeed(seed);
     final child = node.derivePath(path);
     final privateKeyHex = AppUtil.bytesToHex(child.privateKey!);
-    return "0x$privateKeyHex";
+    final privateKey = AppUtil.getEthCredentials(privateKeyHex);
+    final address = privateKey.address;
+
+    return address.hex;
   }
 }

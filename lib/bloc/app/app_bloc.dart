@@ -36,11 +36,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
+    // await apiRepository.updateCustomtoken();
+
     /// 이더 커스텀 토큰에 넣기
     var customTokens = await apiRepository.getCustomToken();
     // await apiRepository.updateCustomtoken();
     TokenData.ethTokens = customTokens.etherium;
     TokenData.solanaTokens = customTokens.solana;
+    TokenData.bscTokens = customTokens.bsc;
     globalService.initialize();
 
     // await apiRepository.signOut();
