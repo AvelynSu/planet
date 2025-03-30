@@ -77,6 +77,12 @@ class _PlanetSettingScreenState extends State<PlanetSettingScreen> {
                           showArrow: false,
                         ),
                         SettingRowTile(
+                          onTap: () {},
+                          title: "Path",
+                          subText: "${state.planet.pathIdx}",
+                          showArrow: false,
+                        ),
+                        SettingRowTile(
                           onTap: () {
                             BackupMnemonicScreen.push(context,
                                 planet: state.planet);
