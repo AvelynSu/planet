@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -87,8 +88,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 52),
                             child: Column(
                               children: [
-                                Text(
-                                  "${state.balance.balance} ${state.balance.info.symbol}",
+                                AutoSizeText(
+                                  "${state.balance.balanceToString} ${state.balance.info.symbol}",
+                                  maxLines: 1,
                                   style: fontR(28, color: C.current.mainText),
                                 ),
                                 const SizedBox(height: 12),

@@ -54,7 +54,7 @@ class HomeTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "${item.balance}" " ${item.info.symbol}",
+                "${item.balanceToString}" " ${item.info.symbol}",
                 style: fontM(14, color: C.current.mainText),
               ),
               const SizedBox(height: 6),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:planet/model/token_info.dart';
 
 class TokenBalance {
@@ -15,6 +17,13 @@ class TokenBalance {
 
   double get price {
     return (info.tokenPrice * balance);
+  }
+
+  String get balanceToString {
+    if (balance == 0) {
+      return "0";
+    }
+    return balance.toStringAsFixed(min(8, info.decimals));
   }
 
   factory TokenBalance.fromInfo(

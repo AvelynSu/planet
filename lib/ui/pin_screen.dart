@@ -144,7 +144,13 @@ class _PinScreenState extends State<PinScreen> {
           children: [
             Expanded(
               child: Container(
+                padding: widget.onBack != null
+                    ? null
+                    : EdgeInsets.only(
+                        top: AppUi.statusBarHeight(context),
+                      ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -161,29 +167,44 @@ class _PinScreenState extends State<PinScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         /// 핀번호 부분
-                        ...List.generate(6, (e) {
-                          String label = value.length > e ? "${value[e]}" : "";
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 42,
-                            height: 42,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color:
-                                  C.current.onBackground.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: e == value.length
-                                    ? primary
-                                    : Colors.transparent,
+                        ...List.generate(
+                          6,
+                          (e) {
+                            String label =
+                                value.length > e ? "${value[e]}" : "";
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 42,
+                              height: 42,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: C.current.onBackground
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: e == value.length
+                                      ? primary
+                                      : Colors.transparent,
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              label,
-                              style: fontR(16, color: C.current.mainText),
-                            ),
-                          );
-                        })
+                              child: e < value.length
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        color: C.current.mainText,
+                                      ),
+                                      width: 8,
+                                      height: 8,
+                                    )
+                                  : Text(
+                                      label,
+                                      style:
+                                          fontR(16, color: C.current.mainText),
+                                    ),
+                            );
+                          },
+                        )
                       ],
                     ),
                   ],
@@ -208,7 +229,7 @@ class _PinScreenState extends State<PinScreen> {
                   }
                 },
               ),
-            )
+            ),
           ],
         ),
       ),

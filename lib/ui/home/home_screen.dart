@@ -79,8 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Column(
                               children: [
                                 SizedBox(
-                                    height:
-                                        52 + AppUi.statusBarHeight(context)),
+                                  height: 52 + AppUi.statusBarHeight(context),
+                                ),
 
                                 // 플래닛 이름 섹션
                                 Column(
