@@ -8,11 +8,11 @@ class _BitcoinHistoryService implements _BlockchainHistoryService {
   final http.Client _httpClient;
 
   _BitcoinHistoryService({String? apiBaseUrl})
-      : _apiBaseUrl = apiBaseUrl ?? WalletConfig().bitcoinApiUrl,
+      : _apiBaseUrl = apiBaseUrl ?? WalletConfig.config.bitcoinApiUrl,
         _httpClient = http.Client();
 
   String _buildTransactionUrl(String address) {
-    return '$_apiBaseUrl/addrs/$address/full?limit=50?token=${WalletConfig().blockCypherToken}';
+    return '$_apiBaseUrl/addrs/$address/full?limit=50?token=${WalletConfig.config.blockCypherToken}';
   }
 
   List<TransactionHistory> _processTransactions(List txs, String address) {

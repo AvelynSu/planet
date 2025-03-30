@@ -10,6 +10,7 @@ import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/util/app_constant.dart';
 import 'package:planet/util/app_util.dart';
 import 'package:planet/util/data/token_data.dart';
+import 'package:planet/util/wallet_config.dart';
 
 import '../../service/global_service.dart';
 import '../../service/wallet/wallet_balance/wallet_balance_service.dart';
@@ -36,7 +37,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
-    // await apiRepository.updateCustomtoken();
+    // await apiRepository.updateAdmin();
+
+    WalletConfig.config = await apiRepository.getWalletConfig();
 
     /// 이더 커스텀 토큰에 넣기
     var customTokens = await apiRepository.getCustomToken();

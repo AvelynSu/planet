@@ -6,8 +6,8 @@ class _BscTransferService implements _BlockchainTransferService {
   final WalletConfig config;
 
   _BscTransferService()
-      : web3client = Web3Client(WalletConfig().bscRpcUrl, http.Client()),
-        config = WalletConfig();
+      : web3client = Web3Client(WalletConfig.config.bscRpcUrl, http.Client()),
+        config = WalletConfig.config;
 
   @override
   Future<String> sendTransaction({

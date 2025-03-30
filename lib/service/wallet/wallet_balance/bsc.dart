@@ -5,7 +5,7 @@ class _BscBalanceService implements _BlockchainBalanceService {
 
   _BscBalanceService()
       : web3client = Web3Client(
-          WalletConfig().bscRpcUrl,
+          WalletConfig.config.bscRpcUrl,
           http.Client(),
         );
 

@@ -7,8 +7,8 @@ class _SolanaTransferService implements _BlockchainTransferService {
 
   _SolanaTransferService()
       : _rpcClient = sol3.Connection(
-            sol3.Cluster(Uri.parse(WalletConfig().solanaRpcUrl))),
-        config = WalletConfig();
+            sol3.Cluster(Uri.parse(WalletConfig.config.solanaRpcUrl))),
+        config = WalletConfig.config;
 
   @override
   Future<String> sendTransaction({

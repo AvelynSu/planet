@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:planet/model/token_info.dart';
@@ -15,7 +14,7 @@ part 'ethurium.dart';
 part 'solana.dart';
 
 class WalletHistoryService {
-  final config = WalletConfig();
+  final config = WalletConfig.config;
   final Map<NetworkType, _BlockchainHistoryService> _services = {};
 
   WalletHistoryService() {

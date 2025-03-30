@@ -6,8 +6,8 @@ class _EthereumTransferService implements _BlockchainTransferService {
   final WalletConfig config;
 
   _EthereumTransferService()
-      : web3client = Web3Client(WalletConfig().ethRpcUrl, http.Client()),
-        config = WalletConfig();
+      : web3client = Web3Client(WalletConfig.config.ethRpcUrl, http.Client()),
+        config = WalletConfig.config;
 
   @override
   Future<String> sendTransaction({

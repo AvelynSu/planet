@@ -23,26 +23,36 @@ class WalletConfig {
   final String blockCypherToken;
   final String solanaRpcUrl;
   final String bscRpcUrl;
-  static final WalletConfig _instance = WalletConfig._internal();
 
-  factory WalletConfig() => _instance;
+  WalletConfig({
+    this.ethRpcUrl = "",
+    this.bitcoinApiUrl = "",
+    this.blockCypherToken = "",
+    this.solanaRpcUrl = "",
+    this.bscRpcUrl = "",
+  });
 
-  WalletConfig._internal()
-      : ethRpcUrl = env == Environment.prod
-            ? 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
-            : 'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-        bscRpcUrl = env == Environment.prod
-            ? 'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI'
-            : 'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-        bitcoinApiUrl = env == Environment.prod
-            ? "https://api.blockcypher.com/v1/btc/main"
-            : "https://api.blockcypher.com/v1/bcy/test",
-        blockCypherToken = env == Environment.prod
-            ? "b0bce5d62dba4e308ec307c1f9b92f78"
-            : "b0bce5d62dba4e308ec307c1f9b92f78",
-        solanaRpcUrl = env == Environment.prod
-            ? "https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI"
-            : "https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI";
+  static WalletConfig config = WalletConfig();
+
+  factory WalletConfig.fromJson(Map<String, dynamic> json) {
+    return WalletConfig(
+      ethRpcUrl: json['ethRpcUrl'] ?? '',
+      bscRpcUrl: json['bscRpcUrl'] ?? '',
+      bitcoinApiUrl: json['bitcoinApiUrl'] ?? '',
+      blockCypherToken: json['blockCypherToken'] ?? '',
+      solanaRpcUrl: json['solanaRpcUrl'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ethRpcUrl': ethRpcUrl,
+      'bscRpcUrl': bscRpcUrl,
+      'bitcoinApiUrl': bitcoinApiUrl,
+      'blockCypherToken': blockCypherToken,
+      'solanaRpcUrl': solanaRpcUrl,
+    };
+  }
 
   // 블록체인 타입에 따른 RPC URL을 반환하는 헬퍼 메서드
   String getRpcUrlForNetwork(String networkType) {

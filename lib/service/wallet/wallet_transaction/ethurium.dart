@@ -4,7 +4,7 @@ part of 'transaction_history_service.dart';
 class _EthereumHistoryService implements _BlockchainHistoryService {
   static const int _requestTimeout = 15;
 
-  final config = WalletConfig();
+  final config = WalletConfig.config;
   final httpClient = http.Client();
 
   @override

@@ -5,7 +5,7 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
 
   _EthereumBalanceService()
       : web3client = Web3Client(
-          WalletConfig().ethRpcUrl,
+          WalletConfig.config.ethRpcUrl,
           http.Client(),
         );
 
@@ -18,7 +18,8 @@ class _EthereumBalanceService implements _BlockchainBalanceService {
     try {
       // ETH(네이티브 토큰)인 경우 web3client 사용
       if (info.symbol == "ETH") {
-        final balance = await web3client.getBalance(AppUtil.hexToEthereumAddress(address));
+        final balance =
+            await web3client.getBalance(AppUtil.hexToEthereumAddress(address));
         final value = AppUtil.weiToEth(balance.getInWei);
         return TokenBalance(address: address, info: info, balance: value);
       }

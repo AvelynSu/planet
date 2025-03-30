@@ -5,8 +5,9 @@ class _SolanaBalanceService implements _BlockchainBalanceService {
 
   _SolanaBalanceService()
       : _solanaClient = sol.SolanaClient(
-          rpcUrl: Uri.parse(WalletConfig().solanaRpcUrl),
-          websocketUrl: Uri.parse(WalletConfig().getWsUrlForNetwork("solana")),
+          rpcUrl: Uri.parse(WalletConfig.config.solanaRpcUrl),
+          websocketUrl:
+              Uri.parse(WalletConfig.config.getWsUrlForNetwork("solana")),
         );
 
   /// 특정 토큰 1개의 잔액 조회

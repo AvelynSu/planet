@@ -5,7 +5,7 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
   final http.Client _httpClient;
 
   _BitcoinBalanceService({String? apiBaseUrl})
-      : _apiBaseUrl = apiBaseUrl ?? WalletConfig().bitcoinApiUrl,
+      : _apiBaseUrl = apiBaseUrl ?? WalletConfig.config.bitcoinApiUrl,
         _httpClient = http.Client();
 
   /// 특정 주소의 BTC 잔액 조회
@@ -13,7 +13,7 @@ class _BitcoinBalanceService implements _BlockchainBalanceService {
     try {
       final response = await _httpClient.get(
         Uri.parse(
-            '$_apiBaseUrl/addrs/$address?token=${WalletConfig().blockCypherToken}'),
+            '$_apiBaseUrl/addrs/$address?token=${WalletConfig.config.blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       );
 

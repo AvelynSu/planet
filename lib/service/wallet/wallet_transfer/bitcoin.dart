@@ -7,9 +7,9 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   final WalletConfig config;
 
   _BitcoinTransferService({String? apiBaseUrl})
-      : _apiBaseUrl = apiBaseUrl ?? WalletConfig().bitcoinApiUrl,
+      : _apiBaseUrl = apiBaseUrl ?? WalletConfig.config.bitcoinApiUrl,
         _httpClient = http.Client(),
-        config = WalletConfig();
+        config = WalletConfig.config;
 
   /// 트랜잭션 크기를 계산 (bytes)
   /// P2PKH 트랜잭션 기준으로 계산됨
@@ -30,7 +30,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
   /// 주소의 미사용 UTXO 목록 조회
   Future<List<Map<String, dynamic>>> _getUnspentOutputs(String address) async {
     final response = await _httpClient.get(Uri.parse(
-        '$_apiBaseUrl/addrs/$address?unspentOnly=true&includeScript=true&token=${WalletConfig().blockCypherToken}'));
+        '$_apiBaseUrl/addrs/$address?unspentOnly=true&includeScript=true&token=${WalletConfig.config.blockCypherToken}'));
 
     if (response.statusCode != 200) {
       throw CustomException(errMsg: 'Failed to fetch UTXOs: ${response.body}');
@@ -133,7 +133,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
 
       final response = await _httpClient.post(
         Uri.parse(
-            '$_apiBaseUrl/txs/push?token=${WalletConfig().blockCypherToken}'),
+            '$_apiBaseUrl/txs/push?token=${WalletConfig.config.blockCypherToken}'),
         body: json.encode({'tx': transaction.toHex()}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -156,7 +156,7 @@ class _BitcoinTransferService implements _BlockchainTransferService {
     try {
       final response = await _httpClient.get(
         Uri.parse(
-            '$_apiBaseUrl/txs/$txHash?token=${WalletConfig().blockCypherToken}'),
+            '$_apiBaseUrl/txs/$txHash?token=${WalletConfig.config.blockCypherToken}'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(
         const Duration(seconds: 15),

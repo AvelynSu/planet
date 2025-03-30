@@ -2,7 +2,7 @@ part of 'transaction_history_service.dart';
 
 /// 솔라나 거래 내역 서비스
 class _SolanaHistoryService implements _BlockchainHistoryService {
-  final config = WalletConfig();
+  final config = WalletConfig.config;
   final httpClient = http.Client();
   static const int _requestTimeout = 15;
 
