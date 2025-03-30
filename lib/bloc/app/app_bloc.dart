@@ -119,6 +119,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // 현재 앱에서 메인으로 다루는 플래닛
       var current = _getCurrentPlanet(planets);
 
+      if ((state as AppLoaded).current.name != current.name) {
+        yield (state as AppLoaded).copyWith(current: current);
+      }
+
       // 메인 플래닛의 토큰 Balance 들
       List<TokenBalance> updateBalance = (state as AppLoaded).balances;
 

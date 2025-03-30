@@ -170,8 +170,7 @@ class _PinScreenState extends State<PinScreen> {
                         ...List.generate(
                           6,
                           (e) {
-                            String label =
-                                value.length > e ? "${value[e]}" : "";
+                            String label = value.length > e ? value[e] : "";
                             return Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               width: 42,
