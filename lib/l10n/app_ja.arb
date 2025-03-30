@@ -141,5 +141,7 @@
   "solana": "ソラナ",
   "bnb_smart_chain": "BNBスマートチェーン",
 
-  "input_format_hint": "数字、英語、_の組み合わせで3〜15文字で入力してください。"
+  "input_format_hint": "数字、英語、_の組み合わせで3〜15文字で入力してください。",
+
+  "invalid_address_format": "{networkType}のアドレス形式ではありません。"
 }

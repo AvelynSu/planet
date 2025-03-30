@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/custom_theme.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -11,6 +12,7 @@ import 'package:planet/ui/common/custom_image.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/generate_planet.dart';
 import 'package:planet/ui/transaction/transfer/select_friend/qr_scanner_screen.dart';
+import 'package:planet/util/address_validator.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../util/app_ui.dart';
@@ -20,18 +22,26 @@ import 'cubit/select_friends_cubit.dart';
 import 'friend_search_field.dart';
 
 class SelectFriendScreen extends StatefulWidget {
+  final NetworkType networkType;
   final Function(Planet) onSelect;
 
   const SelectFriendScreen({
     super.key,
+    required this.networkType,
     required this.onSelect,
   });
 
   static Future<Planet?> push(
     BuildContext context, {
     required Function(Planet) onSelect,
+    required NetworkType nework,
   }) async {
-    return await AppUi.push(context, SelectFriendScreen(onSelect: onSelect));
+    return await AppUi.push(
+        context,
+        SelectFriendScreen(
+          onSelect: onSelect,
+          networkType: nework,
+        ));
   }
 
   @override
@@ -72,7 +82,10 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                 width: 32,
                 path: "icons/ic_capture.svg",
                 onTap: () async {
-                  var result = await QrScannerScreen.push(context);
+                  var result = await QrScannerScreen.push(
+                    context,
+                    networkType: widget.networkType,
+                  );
                   if (result != null) {
                     cubit.onUpdateSearchValue(result);
                   }
@@ -106,21 +119,19 @@ class _SelectFriendScreenState extends State<SelectFriendScreen> {
                                       ?.transfer_address ??
                                   ''),
                               _unregisteredPlanetTile(
-                                Planet(address: state.searchText),
-                                () {
-                                  if (AppUtil.isValidEthereumAddress(
-                                      state.searchText)) {
-                                    widget.onSelect(
-                                        Planet(address: state.searchText));
-                                  } else {
-                                    DefaultDialog.showTimerDialog(context,
-                                        description: AppLocalizations.of(
-                                                    context)
-                                                ?.transfer_invalid_address ??
-                                            '');
-                                  }
-                                },
-                              ),
+                                  Planet(address: state.searchText), () {
+                                if (AddressValidator.isValidAddress(
+                                    widget.networkType, state.searchText)) {
+                                  widget.onSelect(
+                                      Planet(address: state.searchText));
+                                } else {
+                                  DefaultDialog.showTimerDialog(context,
+                                      description: AppLocalizations.of(context)!
+                                          .invalid_address_format(widget
+                                              .networkType
+                                              .title(context)));
+                                }
+                              }),
                             ],
                           ),
 

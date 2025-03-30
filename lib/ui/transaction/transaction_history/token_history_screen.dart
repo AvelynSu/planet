@@ -131,6 +131,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                     /// 친구 고르기
                                     SelectFriendScreen.push(
                                       context,
+                                      nework: widget.info.info.networkType,
                                       onSelect: (planet) {
                                         /// 물량 입력하기
                                         TransferAmountInputScreen.push(

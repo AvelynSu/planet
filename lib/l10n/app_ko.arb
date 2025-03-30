@@ -143,7 +143,9 @@
     "solana": "솔라나",
     "bnb_smart_chain": "BNB 스마트 체인",
 
-    "input_format_hint": "숫자,영어,_ 조합의 3~15자로 입력해주세요."
+    "input_format_hint": "숫자,영어,_ 조합의 3~15자로 입력해주세요.",
+
+    "invalid_address_format": "{networkType}의 주소 형식이 아닙니다."
 
 
 

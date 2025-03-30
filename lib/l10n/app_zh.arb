@@ -141,6 +141,8 @@
      "solana": "索拉纳",
      "bnb_smart_chain": "BNB智能链",
 
-     "input_format_hint": "请输入3至15个字符，仅限数字、英文和下划线(_)的组合。"
+     "input_format_hint": "请输入3至15个字符，仅限数字、英文和下划线(_)的组合。",
+
+     "invalid_address_format": "这不是有效的{networkType}地址格式。"
 
 }

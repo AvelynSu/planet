@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:planet/custom_theme.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/common/custom_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/util/address_validator.dart';
 
 import '../../../../util/app_ui.dart';
 
 class QrScannerScreen extends StatefulWidget {
-  const QrScannerScreen({super.key});
+  final NetworkType networkType;
 
-  static Future<String?> push(BuildContext context) async {
-    return await AppUi.push(context, const QrScannerScreen());
+  const QrScannerScreen({
+    super.key,
+    required this.networkType,
+  });
+
+  static Future<String?> push(
+    BuildContext context, {
+    required NetworkType networkType,
+  }) async {
+    return await AppUi.push(
+        context,
+        QrScannerScreen(
+          networkType: networkType,
+        ));
   }
 
   @override
@@ -65,17 +80,25 @@ class _QRScannerScreenState extends State<QrScannerScreen> {
             controller: cameraController,
             onDetect: _foundBarcode,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: CustomImage(
-              path: "icons/img_qr.svg",
-              width: double.infinity,
+          Column(children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: CustomImage(
+                path: "icons/img_qr.svg",
+                width: double.infinity,
+              ),
             ),
-          ),
+            Text(
+              errMsg,
+              style: fontR(14, color: primary),
+            ),
+          ]),
         ],
       ),
     );
   }
+
+  String errMsg = "";
 
   void _foundBarcode(BarcodeCapture capture) {
     // 중복 스캔 방지
@@ -89,7 +112,15 @@ class _QRScannerScreenState extends State<QrScannerScreen> {
       debugPrint('Barcode found! ${barcode.rawValue}');
       _screenOpened = true;
       print(barcode.rawValue);
-      Navigator.pop(context, barcode.rawValue);
+
+      if (AddressValidator.isValidAddress(
+          widget.networkType, barcode.rawValue ?? "")) {
+        Navigator.pop(context, barcode.rawValue);
+      } else {
+        errMsg = AppLocalizations.of(context)!
+            .invalid_address_format(widget.networkType.title(context));
+        setState(() {});
+      }
       // Navigator.push(
       //   context,
       //   MaterialPageRoute(
