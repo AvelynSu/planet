@@ -45,8 +45,7 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
 
     var enablePlanet = await apiRepository.enablePlanetName(state.nickname);
     if (enablePlanet) {
-      var updatePlanet = await apiRepository.updatePlanetName(
-          planet, planet.name, state.nickname);
+      await apiRepository.updatePlanetName(planet, planet.name, state.nickname);
       appBloc.add(AppUpdate(updatePlanets: true, updateBalance: false));
       emit(state.copyWith(status: ScreenStatus.success));
     } else {

@@ -259,6 +259,7 @@ class ApiRepository {
   Future<void> signOut() async {
     const storage = FlutterSecureStorage();
     await storage.deleteAll();
+    await SharedPrefsUtil.clear();
   }
 
   /// -- 관리자

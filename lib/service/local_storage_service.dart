@@ -1,28 +1,44 @@
+import 'dart:convert';
+
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/planet.dart';
 import '../util/app_constant.dart';
+import '../util/wallet_config.dart';
 
 class LocalStorageService {
   static Future<String> getMnemonics() async {
-    return "";
+    var oldPlanets = await oldGetLocalPlanets();
+    if (oldPlanets.isNotEmpty) {
+      var old = oldPlanets.first.mnemonic;
+      await clearMnemonics();
+      await saveMnemonics(old);
+      return await getMnemonics();
+    } else {
+      const storage = FlutterSecureStorage();
+      var mnemonic = await storage.read(key: 'mnemonic');
+      return mnemonic ?? "";
+    }
   }
 
   static Future<String> saveMnemonics(String mnemonic) async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'mnemonic', value: mnemonic);
     return mnemonic;
   }
 
-  // static Future<List<Planet>> getLocalPlanets() async {
-  //   const storage = FlutterSecureStorage();
-  //   final encodedJson = await storage.read(key: 'planets');
-  //
-  //   if (encodedJson == null) return [];
-  //
-  //   final jsonList = jsonDecode(encodedJson) as List;
-  //   var result = jsonList.map((json) => Planet.fromJson(json)).toList();
-  //   return result.where((e) => e.env == WalletConfig.env).toList();
-  // }
+  static Future<List<Planet>> oldGetLocalPlanets() async {
+    const storage = FlutterSecureStorage();
+    final encodedJson = await storage.read(key: 'planets');
+
+    if (encodedJson == null) return [];
+
+    final jsonList = jsonDecode(encodedJson) as List;
+    var result = jsonList.map((json) => Planet.fromJson(json)).toList();
+    return result.where((e) => e.env == WalletConfig.env).toList();
+  }
 
   static Future<void> clearMnemonics() async {
     const storage = FlutterSecureStorage();

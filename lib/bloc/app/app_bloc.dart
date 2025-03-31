@@ -37,19 +37,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppInitializeToState(AppInitialize event) async* {
-    // await apiRepository.updateAdmin();
-
     WalletConfig.config = await apiRepository.getWalletConfig();
 
     /// 이더 커스텀 토큰에 넣기
     var customTokens = await apiRepository.getCustomToken();
-    // await apiRepository.updateCustomtoken();
+
     TokenData.ethTokens = customTokens.etherium;
     TokenData.solanaTokens = customTokens.solana;
     TokenData.bscTokens = customTokens.bsc;
     globalService.initialize();
 
-    // await apiRepository.signOut();
     yield AppLoading();
     FirebaseAnalytics.instance.logAppOpen();
 
@@ -133,6 +130,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await SharedPrefsUtil.setString("current_planet", current.address);
         yield (state as AppLoaded).copyWith(current: current);
       }
+
+      current = planets
+          .where((e) =>
+              e.address == current.address &&
+              e.networkType == current.networkType)
+          .first;
 
       // 메인 플래닛의 토큰 Balance 들
       List<TokenBalance> updateBalance = (state as AppLoaded).balances;
