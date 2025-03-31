@@ -16,6 +16,7 @@ import 'package:planet/ui/common/small_round_button.dart';
 
 import '../../custom_theme.dart';
 import '../../service/local_storage_service.dart';
+import '../../util/app_constant.dart';
 import '../common/custom_image.dart';
 import '../common/top_sheet.dart';
 
@@ -56,9 +57,11 @@ class _PlanetsTopSheetState extends State<PlanetsTopSheet> {
           return BounceButton(
             child: _item(e),
             onTap: () async {
-              await LocalStorageService.saveMnemonics([],
-                  isCurrentAddress: e.address);
-              context.read<AppBloc>().add(AppUpdate(updateBalance: true));
+              await SharedPrefsUtil.setString(
+                  AppConstant.currentPlanet, e.address);
+              context
+                  .read<AppBloc>()
+                  .add(AppUpdate(currentPlanet: e, updateBalance: true));
               Navigator.pop(context);
             },
           );

@@ -14,7 +14,6 @@ import 'package:planet/util/app_ui.dart';
 
 import '../../custom_theme.dart';
 import '../../enum/network_type.dart';
-import '../../service/local_storage_service.dart';
 import '../common/custom_image.dart';
 import '../common/default_dialog.dart';
 import 'add_planet_screen.dart';
@@ -99,12 +98,12 @@ class _PlanetListSettingScreenState extends State<PlanetListSettingScreen> {
                           },
                         ),
                         onTap: () async {
-                          await LocalStorageService.saveMnemonics([],
-                              isCurrentAddress: e.address);
-                          context
-                              .read<AppBloc>()
-                              .add(AppUpdate(updateBalance: true));
-                          Navigator.pop(context);
+                          // await LocalStorageService.saveMnemonics([],
+                          //     isCurrentAddress: e.address);
+                          // context
+                          //     .read<AppBloc>()
+                          //     .add(AppUpdate(updateBalance: true));
+                          // Navigator.pop(context);
                         },
                       ),
                     ),

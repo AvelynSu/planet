@@ -11,7 +11,6 @@ class Planet extends Equatable {
   final String address;
   final String mnemonic;
   final DateTime? createdAt;
-  final bool isCurrent;
   final bool isDeleted;
 
   final Environment env;
@@ -26,7 +25,6 @@ class Planet extends Equatable {
     this.address = "",
     this.mnemonic = "",
     this.createdAt,
-    this.isCurrent = false,
     this.pathIdx = 0,
     this.parentsAddress = "",
     this.isDeleted = false,
@@ -44,7 +42,6 @@ class Planet extends Equatable {
       createdAt: FBFormatter.fromJsonDate(json["createdAt"]),
       mnemonic: json["mnemonic"] ?? "",
       pathIdx: json["pathIdx"] ?? 0,
-      isCurrent: json["isCurrent"] ?? false,
       parentsAddress: json["parentsAddress"] ?? json["address"] ?? "",
       isDeleted: json["isDeleted"] ?? false,
       env: Environment.fromJson(json["env"]),
@@ -59,7 +56,6 @@ class Planet extends Equatable {
       if (isLocal) 'mnemonic': mnemonic,
       'address': address,
       'createdAt': FBFormatter.toJsonDate(createdAt),
-      'isCurrent': isCurrent,
       'pathIdx': pathIdx,
       'parentsAddress': parentsAddress.isEmpty ? address : parentsAddress,
       'isDeleted': isDeleted ?? false,
@@ -74,7 +70,6 @@ class Planet extends Equatable {
     String? name,
     String? mnemonic,
     DateTime? createdAt,
-    bool? isCurrent,
     int? pathIdx,
     String? parentsAddress,
     bool? isDeleted,
@@ -87,7 +82,6 @@ class Planet extends Equatable {
       name: name ?? this.name,
       mnemonic: mnemonic ?? this.mnemonic,
       createdAt: createdAt ?? this.createdAt,
-      isCurrent: isCurrent ?? this.isCurrent,
       pathIdx: pathIdx ?? this.pathIdx,
       parentsAddress: parentsAddress ?? this.parentsAddress,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -103,7 +97,6 @@ class Planet extends Equatable {
         address,
         mnemonic,
         createdAt,
-        isCurrent,
         pathIdx,
         parentsAddress,
         isDeleted,

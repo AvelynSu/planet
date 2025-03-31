@@ -106,7 +106,7 @@ class ApiRepository {
       return planet;
     } else {
       // 등록된 지갑이면 저장해주기
-      await LocalStorageService.saveMnemonics(planets);
+      await LocalStorageService.saveMnemonics(mnemonic);
       onAppInitialize();
     }
     return null;
@@ -238,23 +238,23 @@ class ApiRepository {
   }
 
   /// 로컬에 있는 플래닛 정보로 FB에서 불러오기
-  Future<List<Planet>> getPlanetByLocalInfo(List<Planet> local) async {
-    List<Future<Planet>> planetFutures = local.map((item) async {
-      var planet =
-          await getPlanetByAddress(item.address, mnemonic: item.mnemonic);
-      if (planet == Planet.empty) {
-        return Planet.empty;
-      } else {
-        return planet.copyWith(
-          isCurrent: item.isCurrent,
-        );
-      }
-    }).toList();
-
-    List<Planet> planets = await Future.wait(planetFutures);
-
-    return planets.where((e) => e != Planet.empty).toList();
-  }
+  // Future<List<Planet>> getPlanetByLocalInfo(List<Planet> local) async {
+  //   List<Future<Planet>> planetFutures = local.map((item) async {
+  //     var planet =
+  //         await getPlanetByAddress(item.address, mnemonic: item.mnemonic);
+  //     if (planet == Planet.empty) {
+  //       return Planet.empty;
+  //     } else {
+  //       return planet.copyWith(
+  //         isCurrent: item.isCurrent,
+  //       );
+  //     }
+  //   }).toList();
+  //
+  //   List<Planet> planets = await Future.wait(planetFutures);
+  //
+  //   return planets.where((e) => e != Planet.empty).toList();
+  // }
 
   Future<void> signOut() async {
     const storage = FlutterSecureStorage();
@@ -274,23 +274,6 @@ class ApiRepository {
 
   /// 커스텀 토큰 업데이트
   Future<void> updateAdmin() async {
-    // await FirebaseFirestore.instance
-    //     .collection(AppConstant.fbCommon)
-    //     .doc("config")
-    //     .set({
-    //   "prod": WalletConfig(
-    //     ethRpcUrl:
-    //         'https://eth-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-    //     bitcoinApiUrl:
-    //         'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-    //     blockCypherToken: "b0bce5d62dba4e308ec307c1f9b92f78",
-    //     solanaRpcUrl:
-    //         "https://solana-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI",
-    //     bscRpcUrl:
-    //         'https://bnb-mainnet.g.alchemy.com/v2/AS2Fwk9-iN6gMwhHq96tsvnVoINK5FJI',
-    //   ).toJson()
-    // });
-
     // await _customTokenCol.doc("tokens").update({
     //   "bsc": FieldValue.arrayUnion([].map((e) => e.toJson()).toList()),
     //   "ethereum": FieldValue.arrayUnion([].map((e) => e.toJson()).toList()),

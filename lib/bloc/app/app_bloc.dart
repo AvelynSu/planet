@@ -60,14 +60,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       return;
     }
 
-    var localPlanets = await LocalStorageService.getLocalPlanets();
+    var mnemonics = await LocalStorageService.getMnemonics();
 
-    // 로컬에 저장된 플래닛이 없는 경우
-    if (localPlanets.isEmpty) {
+    if (mnemonics.isEmpty) {
       yield AppUnInitialized.sign;
     } else {
-      // 로컬에 저장된거 있는데
-      // 핀번호가 없는 경우
+      // 니모닉은 있는데 핀번호가 없는 경우
       var pin = SharedPrefsUtil.getString(AppConstant.pinCode) ?? "";
       if (pin.isEmpty) {
         yield AppUnInitialized.pin;
@@ -76,16 +74,22 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
       // 핀번호까지 잘 마친 경우
       //-
-      // 로컬에 있는 플래닛 FB에서 정보 가져오기
-      var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+      // 니모닉으로 부모 주소 가져오고, 그에 맞는 행성들 가져오기
+      var planets =
+          await apiRepository.getPlanetsByParents(mnemonic: mnemonics);
 
       if (planets.isEmpty) {
         await apiRepository.signOut();
         yield AppUnInitialized.sign;
         return;
       }
+
+      var currentAddress = SharedPrefsUtil.getString("current_planet");
+
       // 현재 앱에서 보여줄 메인 플래닛
-      var current = _getCurrentPlanet(planets);
+      var current =
+          planets.where((e) => e.address == currentAddress).firstOrNull ??
+              planets.first;
 
       // 현재 메인 플래닛의 토큰 밸런스들
       var updateBalance = await _getTokenBalance(
@@ -117,15 +121,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     yield (state as AppLoaded).copyWith(isLoading: true);
 
     try {
-      // 로컬에서 플래닛 가져오기
+      // 플레닛 업데이트 필요하면 다 가져오기
       var planets = event.updatePlanets
           ? await _getPlanetDto()
           : (state as AppLoaded).planets;
 
       // 현재 앱에서 메인으로 다루는 플래닛
-      var current = _getCurrentPlanet(planets);
+      var current = event.currentPlanet ?? (state as AppLoaded).current;
 
-      if ((state as AppLoaded).current.name != current.name) {
+      if (event.currentPlanet != null) {
+        await SharedPrefsUtil.setString("current_planet", current.address);
         yield (state as AppLoaded).copyWith(current: current);
       }
 
@@ -176,14 +181,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   /// functions ------------------------------------
   /// functions ------------------------------------
   Future<List<Planet>> _getPlanetDto() async {
-    var localPlanets = await LocalStorageService.getLocalPlanets();
-    // 로컬에서 가져온 플래닛의 정보 FB에서 불러오기
-    var planets = await apiRepository.getPlanetByLocalInfo(localPlanets);
+    var mnemonics = await LocalStorageService.getMnemonics();
+    var planets = await apiRepository.getPlanetsByParents(mnemonic: mnemonics);
     return planets;
-  }
-
-  Planet _getCurrentPlanet(List<Planet> planets) {
-    return planets.where((e) => e.isCurrent).firstOrNull ?? planets.first;
   }
 
   /// 한개만 업데이트 필요한 경우와 전체 필요한 경우 구분해서 보여줌

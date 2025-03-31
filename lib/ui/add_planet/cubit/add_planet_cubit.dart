@@ -15,6 +15,7 @@ import '../../../../model/custom_exception.dart';
 import '../../../bloc/app/app_event.dart';
 import '../../../service/local_storage_service.dart';
 import '../../../service/wallet/wallet_service.dart';
+import '../../../util/app_constant.dart';
 
 part 'add_planet_state.dart';
 
@@ -79,7 +80,6 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
         env: WalletConfig.env,
         createdAt: DateTime.now(),
         parentsAddress: parent?.address ?? "",
-        isCurrent: true,
         pathIdx: idx,
       );
 
@@ -107,11 +107,15 @@ class AddPlanetCubit extends Cubit<AddPlanetState> {
       // 플래닛 fb에 저장
       await apiRepository.addPlanet(planet);
 
-      // 로컬에 저장
-      await LocalStorageService.saveMnemonics([planet, ...planets],
-          isCurrentAddress: planet.address);
+      // 내 로컬에 정보도 변경
+      await SharedPrefsUtil.setString(
+          AppConstant.currentPlanet, planet.address);
 
-      appBloc.add(AppUpdate(updateBalance: true));
+      appBloc.add(AppUpdate(
+        updatePlanets: true,
+        updateBalance: true,
+        currentPlanet: planet,
+      ));
       emit(state.copyWith(status: ScreenStatus.success));
     } else {
       emit(

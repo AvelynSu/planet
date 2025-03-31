@@ -9,6 +9,7 @@ import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/service/wallet/wallet_service.dart';
+import 'package:planet/util/app_constant.dart';
 
 import '../../../../../enum/screen_status.dart';
 import '../../../../../model/custom_exception.dart';
@@ -64,14 +65,15 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
           mnemonic: planet.mnemonic,
           name: state.nickname,
           createdAt: DateTime.now(),
-          isCurrent: true,
           pathIdx: 0);
 
       // 플래닛 fb에 저장
       await apiRepository.addPlanet(_planet);
 
-      // 로컬에 저장
-      await LocalStorageService.saveMnemonics([_planet]);
+      // 내 로컬에 정보도 변경
+      await SharedPrefsUtil.setString(
+          AppConstant.currentPlanet, _planet.address);
+      await LocalStorageService.saveMnemonics(planet.mnemonic);
 
       appBloc.add(AppInitialize());
       emit(state.copyWith(status: ScreenStatus.success));

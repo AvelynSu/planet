@@ -1,61 +1,28 @@
-import 'dart:convert';
-
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:planet/model/planet.dart';
-import 'package:planet/util/wallet_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../util/app_constant.dart';
 
 class LocalStorageService {
-  // 넣는값만 추가하거나 수정하기
-  static Future<void> saveMnemonics(List<Planet> mnemonics,
-      {String? isCurrentAddress}) async {
-    const storage = FlutterSecureStorage();
-
-    final existingData = await storage.read(key: 'planets');
-    List<dynamic> storedList =
-        existingData != null ? jsonDecode(existingData) : [];
-
-    // 새로 받은 Planet 객체들을 처리
-    for (var planet in mnemonics) {
-      final json = planet.toJson(isLocal: true);
-      final existingIndex =
-          storedList.indexWhere((item) => item['address'] == planet.address);
-
-      if (existingIndex != -1) {
-        // 이미 있는 주소면 덮어쓰기
-        storedList[existingIndex] = json;
-      } else {
-        // 없는 주소면 추가
-        storedList.add(json);
-      }
-    }
-
-    // isCurrentAddress에 값이 있으면 해당 주소의 객체만 isCurrent가 true, 나머지는 false로 설정
-    if (isCurrentAddress != null) {
-      storedList = storedList.map((item) {
-        Map<String, dynamic> planetMap = Map<String, dynamic>.from(item);
-        planetMap['isCurrent'] = planetMap['address'] == isCurrentAddress;
-        return planetMap;
-      }).toList();
-    }
-
-    final encodedJson = jsonEncode(storedList);
-    await storage.write(key: 'planets', value: encodedJson);
+  static Future<String> getMnemonics() async {
+    return "";
   }
 
-  static Future<List<Planet>> getLocalPlanets() async {
-    const storage = FlutterSecureStorage();
-    final encodedJson = await storage.read(key: 'planets');
-
-    if (encodedJson == null) return [];
-
-    final jsonList = jsonDecode(encodedJson) as List;
-    var result = jsonList.map((json) => Planet.fromJson(json)).toList();
-    return result.where((e) => e.env == WalletConfig.env).toList();
+  static Future<String> saveMnemonics(String mnemonic) async {
+    return mnemonic;
   }
+
+  // static Future<List<Planet>> getLocalPlanets() async {
+  //   const storage = FlutterSecureStorage();
+  //   final encodedJson = await storage.read(key: 'planets');
+  //
+  //   if (encodedJson == null) return [];
+  //
+  //   final jsonList = jsonDecode(encodedJson) as List;
+  //   var result = jsonList.map((json) => Planet.fromJson(json)).toList();
+  //   return result.where((e) => e.env == WalletConfig.env).toList();
+  // }
 
   static Future<void> clearMnemonics() async {
     const storage = FlutterSecureStorage();

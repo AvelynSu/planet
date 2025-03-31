@@ -6,7 +6,6 @@ import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
-import 'package:planet/service/local_storage_service.dart';
 
 import '../../../../enum/screen_status.dart';
 import '../../../../model/custom_exception.dart';
@@ -48,9 +47,7 @@ class ChangeNicknameCubit extends Cubit<ChangeNicknameState> {
     if (enablePlanet) {
       var updatePlanet = await apiRepository.updatePlanetName(
           planet, planet.name, state.nickname);
-
-      await LocalStorageService.saveMnemonics([updatePlanet]);
-      appBloc.add(AppUpdate(updateBalance: false));
+      appBloc.add(AppUpdate(updatePlanets: true, updateBalance: false));
       emit(state.copyWith(status: ScreenStatus.success));
     } else {
       emit(
