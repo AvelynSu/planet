@@ -169,6 +169,21 @@ class ApiRepository {
     return result;
   }
 
+  Future<void> deletePlanet(List<Planet> planets) async {
+    final batch = FirebaseFirestore.instance.batch();
+    final planetNames = planets.map((planet) => planet.name).toList();
+
+    for (var planet in planets) {
+      batch.delete(_planetCol.doc(planet.id));
+    }
+
+    batch
+        .update(_planetNameDoc, {"items": FieldValue.arrayRemove(planetNames)});
+
+    // 모든 작업을 한 번에 실행
+    return batch.commit();
+  }
+
   /// 닉네임 전부 불러오기
   Future<List<String>> getAllNickName() async {
     var res = await _planetNameDoc.get();

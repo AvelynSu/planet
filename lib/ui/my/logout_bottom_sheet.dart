@@ -39,7 +39,7 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet> {
     var appState = context.read<AppBloc>().state;
     var mnemonic = (appState is AppLoaded) ? appState.current.mnemonic : "";
     return CustomBottomSheetFrame(
-      title: "Sign out",
+      title: AppLocalizations.of(context)!.settings_sign_out,
       topPadding: 0,
       backgroundColor: C.current.sub02,
       titleColor: C.current.mainText,

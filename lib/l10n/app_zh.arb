@@ -143,6 +143,19 @@
 
      "input_format_hint": "请输入3至15个字符，仅限数字、英文和下划线(_)的组合。",
 
-     "invalid_address_format": "这不是有效的{networkType}地址格式。"
+     "invalid_address_format": "这不是有效的{networkType}地址格式。",
+
+       "deleteAccount": "删除账户",
+       "deleteAccountWarning": "删除账户前，请确认以下信息。",
+       "mnemonicBackupTitle": "备份助记词",
+       "mnemonicBackupDescription": "删除账户后，您需要此助记词来访问区块链资产。请务必备份。",
+       "copyMnemonic": "复制",
+       "deleteAccountCheck1": "使用此助记词创建的所有行星将被删除。",
+       "deleteAccountCheck2": "区块链上的资产不会被删除，您可以使用助记词重新访问它们。",
+       "deleteAccountCheck3": "其他用户可能会获得您的行星名称的所有权。",
+       "deleteAccountButton": "删除账户",
+       "deleteAccountConfirmTitle": "确认删除账户",
+       "deleteAccountConfirmDescription": "您确定要删除账户吗？此操作无法撤销。",
+       "deleteButton": "删除"
 
 }

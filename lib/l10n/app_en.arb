@@ -143,6 +143,19 @@
     "input_format_hint": "Please enter 3-15 characters using numbers, English letters, and _ only.",
 
 
-    "invalid_address_format": "This is not a valid {networkType} address format."
+    "invalid_address_format": "This is not a valid {networkType} address format.",
+
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "Please review the information below before deleting your account.",
+    "mnemonicBackupTitle": "Backup Mnemonic Phrase",
+    "mnemonicBackupDescription": "You will need this mnemonic phrase to access your blockchain assets after account deletion. Make sure to back it up.",
+    "copyMnemonic": "Copy",
+    "deleteAccountCheck1": "All planets created with this mnemonic will be deleted.",
+    "deleteAccountCheck2": "Your assets on the blockchain will not be deleted, and you can access them again using your mnemonic phrase.",
+    "deleteAccountCheck3": "Other users may be able to claim your planet names.",
+    "deleteAccountButton": "Delete Account",
+    "deleteAccountConfirmTitle": "Confirm Account Deletion",
+    "deleteAccountConfirmDescription": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deleteButton": "Delete"
 
 }

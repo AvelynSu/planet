@@ -145,7 +145,21 @@
 
     "input_format_hint": "숫자,영어,_ 조합의 3~15자로 입력해주세요.",
 
-    "invalid_address_format": "{networkType}의 주소 형식이 아닙니다."
+    "invalid_address_format": "{networkType}의 주소 형식이 아닙니다.",
+
+
+    "deleteAccount": "계정 삭제",
+      "deleteAccountWarning": "계정을 삭제하기 전에 아래 정보를 확인하세요.",
+      "mnemonicBackupTitle": "니모닉 구문 백업",
+      "mnemonicBackupDescription": "계정 삭제 후에도 블록체인 자산에 접근하려면 니모닉 구문이 필요합니다. 반드시 백업하세요.",
+      "copyMnemonic": "복사하기",
+      "deleteAccountCheck1": "이 니모닉으로 생성한 모든 행성이 삭제됩니다.",
+      "deleteAccountCheck2": "블록체인에 있는 자산은 삭제되지 않으며, 자산에는 니모닉을 통해 다시 접근할 수 있습니다.",
+      "deleteAccountCheck3": "다른 사용자가 당신의 행성 이름을 소유할 수 있게 됩니다.",
+      "deleteAccountButton": "계정 삭제",
+      "deleteAccountConfirmTitle": "계정 삭제 확인",
+      "deleteAccountConfirmDescription": "정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      "deleteButton": "삭제"
 
 
 

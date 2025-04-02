@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/bloc/app/app_event.dart';
+import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
+import 'package:planet/ui/my/security/delete_account_bottom_sheet.dart';
 import 'package:planet/ui/pin_screen.dart';
 
 import '../../../util/app_ui.dart';
@@ -53,6 +58,19 @@ class _SecurityScreenState extends State<SecurityScreen> {
               );
             },
             title: AppLocalizations.of(context)?.change_pincode ?? '',
+          ),
+          SettingRowTile(
+            onTap: () async {
+              var result = await DeleteAccountBottomSheet.show(
+                context,
+                onSuccess: () {
+                  var allPlanet =
+                      (context.read<AppBloc>().state as AppLoaded).planets;
+                  context.read<AppBloc>().add(AppDelete(allPlanet));
+                },
+              );
+            },
+            title: AppLocalizations.of(context)!.deleteAccount,
           ),
         ],
       ),

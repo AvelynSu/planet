@@ -143,5 +143,17 @@
 
   "input_format_hint": "数字、英語、_の組み合わせで3〜15文字で入力してください。",
 
-  "invalid_address_format": "{networkType}のアドレス形式ではありません。"
+  "invalid_address_format": "{networkType}のアドレス形式ではありません。",
+ "deleteAccount": "アカウント削除",
+  "deleteAccountWarning": "アカウントを削除する前に、以下の情報を確認してください。",
+  "mnemonicBackupTitle": "ニーモニックフレーズのバックアップ",
+  "mnemonicBackupDescription": "アカウント削除後もブロックチェーン資産にアクセスするには、このニーモニックフレーズが必要です。必ずバックアップしてください。",
+  "copyMnemonic": "コピー",
+  "deleteAccountCheck1": "このニーモニックで作成されたすべての惑星が削除されます。",
+  "deleteAccountCheck2": "ブロックチェーン上の資産は削除されず、ニーモニックフレーズを使って再度アクセスできます。",
+  "deleteAccountCheck3": "他のユーザーがあなたの惑星名を所有できるようになります。",
+  "deleteAccountButton": "アカウントを削除",
+  "deleteAccountConfirmTitle": "アカウント削除の確認",
+  "deleteAccountConfirmDescription": "本当にアカウントを削除しますか？この操作は元に戻せません。",
+  "deleteButton": "削除"
 }

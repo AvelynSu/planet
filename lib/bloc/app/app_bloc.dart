@@ -33,6 +33,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield* mapAppUpdateToState(event);
     } else if (event is AppSignOut) {
       yield* mapAppSignOutToState(event);
+    } else if (event is AppDelete) {
+      yield* mapAppDeleteToState(event);
     }
   }
 
@@ -176,6 +178,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   Stream<AppState> mapAppSignOutToState(AppSignOut event) async* {
+    await apiRepository.signOut();
+    add(AppInitialize());
+  }
+
+  Stream<AppState> mapAppDeleteToState(AppDelete event) async* {
+    yield AppLoading();
+    await apiRepository.deletePlanet(event.planets);
     await apiRepository.signOut();
     add(AppInitialize());
   }

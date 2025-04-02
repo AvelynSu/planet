@@ -42,3 +42,8 @@ class AppUpdate extends AppEvent {
 }
 
 class AppSignOut extends AppEvent {}
+
+class AppDelete extends AppEvent {
+  final List<Planet> planets;
+  AppDelete(this.planets);
+}
