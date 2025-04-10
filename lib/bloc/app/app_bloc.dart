@@ -108,10 +108,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         newBalance.add(item);
       }
 
+      var others = await apiRepository.getAllPlanetForTest();
+
       yield AppLoaded(
         planets: planets,
         balances: newBalance,
         current: current,
+        others: others,
       );
     }
   }
@@ -166,11 +169,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       updateBalance = [...newBalance];
       // }
 
+      List<Planet> updateOthers =
+          event.others == null ? (state as AppLoaded).others : event.others!;
+
       yield AppLoaded(
         isLoading: false,
         planets: planets,
         balances: updateBalance,
         current: current,
+        others: updateOthers,
       );
     } catch (err) {
       print(err);

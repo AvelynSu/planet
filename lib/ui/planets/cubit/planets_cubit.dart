@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:planet/bloc/app/bloc.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 
@@ -10,23 +11,29 @@ import '../../../../model/custom_exception.dart';
 
 part 'planets_state.dart';
 
-List<Planet> _planets = [];
-
 class PlanetsCubit extends Cubit<PlanetsState> {
+  final AppBloc appBloc;
   final ApiRepository apiRepository;
 
   PlanetsCubit({
+    required this.appBloc,
     required this.apiRepository,
   }) : super(const PlanetsState());
 
   initialize() async {
-    if (_planets.isNotEmpty) {
-      emit(state.copyWith(planet: _planets.first, planets: _planets));
+    var appState = appBloc.state as AppLoaded;
+
+    if (appState.others.isNotEmpty) {
+      emit(state.copyWith(
+          planet: appState.others.first, planets: appState.others));
     } else {
       await Future.delayed(const Duration(milliseconds: 300));
     }
     var planets = await apiRepository.getAllPlanetForTest();
-    _planets = planets;
+    appBloc.add(AppUpdate(
+      others: planets,
+      updatePlanets: false,
+    ));
     emit(state.copyWith(planets: planets, planet: planets.first));
   }
 

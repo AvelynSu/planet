@@ -130,7 +130,6 @@ class _AppScreenState extends State<AppScreen> {
           } else if (state is AppLoaded) {
             screen = AppView();
           }
-
           return screen;
         },
       ),

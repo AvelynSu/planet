@@ -22,6 +22,7 @@ class AppUpdate extends AppEvent {
   final bool updatePlanets;
   final bool updatePrice;
   final Planet? currentPlanet;
+  final List<Planet>? others;
 
   AppUpdate({
     this.updateBalance = false,
@@ -29,6 +30,7 @@ class AppUpdate extends AppEvent {
     this.updatePlanets = true,
     this.updatePrice = false,
     this.currentPlanet,
+    this.others,
   });
 
   @override
@@ -38,6 +40,7 @@ class AppUpdate extends AppEvent {
         updatePlanets,
         updatePrice,
         currentPlanet,
+        others,
       ];
 }
 
@@ -45,5 +48,6 @@ class AppSignOut extends AppEvent {}
 
 class AppDelete extends AppEvent {
   final List<Planet> planets;
+
   AppDelete(this.planets);
 }

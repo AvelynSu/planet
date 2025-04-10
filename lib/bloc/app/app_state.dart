@@ -45,6 +45,8 @@ class AppLoaded extends AppState {
   // currentPlanet 하위의 토큰들 자산
   final List<TokenBalance> balances;
 
+  final List<Planet> others;
+
   final bool isLoading;
 
   const AppLoaded({
@@ -52,6 +54,7 @@ class AppLoaded extends AppState {
     this.current = Planet.empty,
     this.balances = const [],
     this.isLoading = false,
+    this.others = const [],
   });
 
   static const empty = AppLoaded();
@@ -61,12 +64,14 @@ class AppLoaded extends AppState {
     Planet? current,
     List<TokenBalance>? balances,
     bool? isLoading,
+    List<Planet>? others,
   }) {
     return AppLoaded(
       planets: planets ?? this.planets,
       current: current ?? this.current,
       balances: balances ?? this.balances,
       isLoading: isLoading ?? this.isLoading,
+      others: others ?? this.others,
     );
   }
 
@@ -76,6 +81,7 @@ class AppLoaded extends AppState {
         current,
         balances,
         isLoading,
+        others,
       ];
 }
 

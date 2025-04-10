@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/ui/common/bounce_button.dart';
@@ -33,6 +34,7 @@ class _PlanetsScreenState extends State<PlanetsScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => PlanetsCubit(
+        appBloc: context.read<AppBloc>(),
         apiRepository: context.read<ApiRepository>(),
       )..initialize(),
       child: BlocListener<PlanetsCubit, PlanetsState>(

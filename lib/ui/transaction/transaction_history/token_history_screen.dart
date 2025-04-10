@@ -11,6 +11,7 @@ import 'package:planet/ui/common/default_button.dart';
 import 'package:planet/ui/common/default_dialog.dart';
 import 'package:planet/ui/common/planet_address_bottom_sheet.dart';
 import 'package:planet/ui/transaction/transaction_history/token_history_tile.dart';
+import 'package:planet/ui/transaction/transaction_history/transaction_history_detail_screen.dart';
 
 import '../../../enum/screen_status.dart';
 import '../../../util/app_ui.dart';
@@ -165,10 +166,17 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                           if (state.status == ScreenStatus.loading &&
                               state.items.isEmpty)
                             ...List.generate(5, (e) => Skeleton.historyTile),
-                          ...state.items.map((e) => TransactionHistoryTile(
-                                item: e,
-                                info: state.balance.info,
-                              )),
+                          ...state.items.map(
+                            (e) => GestureDetector(
+                                onTap: () {
+                                  TransactionHistoryDetailScreen.push(context,
+                                      info: state.balance.info, item: e);
+                                },
+                                child: TransactionHistoryTile(
+                                  item: e,
+                                  info: state.balance.info,
+                                )),
+                          ),
                           if (state.items.isEmpty &&
                               state.status == ScreenStatus.loaded)
                             Container(

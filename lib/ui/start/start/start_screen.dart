@@ -64,17 +64,22 @@ class _StartScreenState extends State<StartScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(height: 50),
                             if (!kIsWeb)
-                              Gif(
-                                image: AssetImage("assets/icons/planet.gif"),
-                                width: 200,
-                                duration: const Duration(seconds: 3),
-                                autostart: Autostart.loop,
+                              Container(
+                                width: 150,
+                                height: 150,
+                                child: Gif(
+                                  image: AssetImage("assets/icons/planet.gif"),
+                                  width: 150,
+                                  duration: const Duration(seconds: 3),
+                                  autostart: Autostart.loop,
+                                ),
                               ),
                             Text(
                               AppLocalizations.of(context)?.start_tagline ?? '',
                               textAlign: TextAlign.center,
-                              style: fontR(28,
+                              style: fontR(24,
                                   color: Colors.white,
                                   height: 1.4,
                                   isIalic: true),

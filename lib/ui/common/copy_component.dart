@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/ui/common/bounce_button.dart';
@@ -35,7 +36,8 @@ class _CopyComponentState extends State<CopyComponent> {
         if (widget.onSuccess != null) {
           widget.onSuccess!();
           if (widget.showSuccessDialog) {
-            DefaultDialog.showTimerDialog(context, description: "Success Copy");
+            DefaultDialog.showTimerDialog(context,
+                description: AppLocalizations.of(context)!.success_copy);
           }
         }
         // Fluttertoast.showToast(msg: "Success Copy");
