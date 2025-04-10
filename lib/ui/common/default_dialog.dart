@@ -98,6 +98,7 @@ class DefaultDialog extends StatefulWidget {
   }) async {
     return await showDialog(
       useSafeArea: false,
+      barrierDismissible: false,
       context: context,
       builder: (_) => DefaultDialog(
         title: title,

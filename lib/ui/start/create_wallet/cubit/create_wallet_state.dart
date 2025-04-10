@@ -4,7 +4,7 @@ class CreateWalletState extends Equatable {
   final ScreenStatus status;
   final CustomException exception;
 
-  final List<NetworkType> networkType;
+  final NetworkType networkType;
   final String mnemonic;
 
   final int page;
@@ -12,14 +12,14 @@ class CreateWalletState extends Equatable {
   const CreateWalletState({
     this.status = ScreenStatus.initial,
     this.exception = CustomException.empty,
-    this.networkType = const [],
+    this.networkType = NetworkType.ethereum,
     this.mnemonic = "",
     this.page = 0,
   });
 
   CreateWalletState copyWith({
     ScreenStatus? status,
-    List<NetworkType>? networkType,
+    NetworkType? networkType,
     String? mnemonic,
     int? page,
     CustomException? exception,

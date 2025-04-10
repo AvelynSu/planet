@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:bip32/bip32.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
+import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 
@@ -27,6 +27,10 @@ class CreateWalletCubit extends Cubit<CreateWalletState> {
   initialize() {
     var mnemonic = _walletService.generateMnemonic();
     emit(state.copyWith(mnemonic: mnemonic));
+  }
+
+  updateNetworkType(NetworkType networkType) {
+    emit(state.copyWith(networkType: networkType));
   }
 
   /// 네트워크 타입 선택

@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_event.dart';
-import 'package:planet/enum/network_type.dart';
 import 'package:planet/model/planet.dart';
 import 'package:planet/repository/fb_repository.dart';
 import 'package:planet/service/local_storage_service.dart';
@@ -57,10 +56,10 @@ class SetNicknameCubit extends Cubit<SetNicknameState> {
       // 이더리움 하위의 0 지갑 만들기
 
       var address = await walletService.generateHDAddress(
-          NetworkType.ethereum, planet.mnemonic, 0);
+          planet.networkType!, planet.mnemonic, 0);
 
       var _planet = planet.copyWith(
-          networkType: NetworkType.ethereum,
+          networkType: planet.networkType!,
           address: address,
           mnemonic: planet.mnemonic,
           name: state.nickname,

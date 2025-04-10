@@ -103,6 +103,7 @@ class _CreateWalletConfirmMnemonicPageState
           SetNicknameScreen.push(
             context,
             planet: Planet(
+              networkType: cubit.state.networkType,
               mnemonic: cubit.state.mnemonic,
             ),
           );
@@ -118,7 +119,8 @@ class _CreateWalletConfirmMnemonicPageState
     } else {
       // 오답일 경우
       DefaultDialog.showTimerDialog(context,
-              description: AppLocalizations.of(context)?.wallet_create_incorrect ?? '')
+              description:
+                  AppLocalizations.of(context)?.wallet_create_incorrect ?? '')
           .then((_) {
         setState(() {
           isVerifying = false;
@@ -166,7 +168,8 @@ class _CreateWalletConfirmMnemonicPageState
 
         // 안내 메시지
         Text(
-          AppLocalizations.of(context)?.wallet_create_select_word(   challengeIndices[currentStep] + 1) ??
+          AppLocalizations.of(context)?.wallet_create_select_word(
+                  challengeIndices[currentStep] + 1) ??
               '',
           style: fontR(18, color: C.current.mainText, height: 1.5),
           textAlign: TextAlign.center,

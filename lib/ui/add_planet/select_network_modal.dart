@@ -12,17 +12,20 @@ import '../../custom_theme.dart';
 class SelectNetworkModal extends StatefulWidget {
   final NetworkType networkType;
   final Function(NetworkType) onSuccess;
+  final List<NetworkType>? items;
 
   const SelectNetworkModal({
     super.key,
     required this.networkType,
     required this.onSuccess,
+    this.items,
   });
 
   static Future<NetworkType?> show(
     BuildContext context, {
     required NetworkType networkType,
     required Function(NetworkType) onSuccess,
+    List<NetworkType>? items,
   }) async {
     return await showDialog(
       useSafeArea: false,
@@ -30,6 +33,7 @@ class SelectNetworkModal extends StatefulWidget {
       builder: (_) => SelectNetworkModal(
         networkType: networkType,
         onSuccess: onSuccess,
+        items: items,
       ),
     );
   }
@@ -71,7 +75,7 @@ class _SelectNetworkModalState extends State<SelectNetworkModal> {
                 style: fontR(16, color: C.current.mainText),
               ),
               const SizedBox(height: 24),
-              ...NetworkType.values.map(
+              ...(widget.items ?? NetworkType.values).map(
                 (e) => _tile(
                   networkType: e,
                   iconPath: e.icon,
@@ -110,7 +114,7 @@ class _SelectNetworkModalState extends State<SelectNetworkModal> {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               width: 20,
               height: 20,
               decoration: BoxDecoration(
