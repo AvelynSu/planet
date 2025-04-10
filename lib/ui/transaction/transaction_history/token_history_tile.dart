@@ -38,7 +38,7 @@ class _TransactionHistoryTileState extends State<TransactionHistoryTile> {
               ),
               const SizedBox(width: 10),
               Text(
-                widget.item.status?.title ?? "",
+                widget.item.status?.title(context) ?? "",
                 style: fontM(16, color: C.current.mainText),
               ),
             ],

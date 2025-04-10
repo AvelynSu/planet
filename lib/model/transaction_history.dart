@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:planet/model/token_info.dart';
 
 import '../util/data/token_data.dart';
@@ -18,14 +20,14 @@ enum TransactionHistoryStatus {
     }
   }
 
-  String get title {
+  String title(BuildContext context) {
     switch (this) {
       case isPending:
-        return "Pending";
+        return AppLocalizations.of(context)!.pending;
       case isSent:
-        return "Sent";
+        return AppLocalizations.of(context)!.sent;
       case isReceived:
-        return "Received";
+        return AppLocalizations.of(context)!.received;
     }
   }
 }
@@ -494,7 +496,7 @@ class TransactionHistory {
       amount: value,
       confirmations: data.confirmations,
       isSuccess: true,
-      decimals: 18,  // BNB의 기본 decimals는 ETH와 동일하게 18
+      decimals: 18, // BNB의 기본 decimals는 ETH와 동일하게 18
       tokenAddress: null,
       fee: null,
       gas: null,

@@ -156,6 +156,11 @@
     "deleteAccountButton": "Delete Account",
     "deleteAccountConfirmTitle": "Confirm Account Deletion",
     "deleteAccountConfirmDescription": "Are you sure you want to delete your account? This action cannot be undone.",
-    "deleteButton": "Delete"
+    "deleteButton": "Delete",
+
+    "pending": "Pending",
+    "sent": "Sent",
+    "received": "Received"
+
 
 }

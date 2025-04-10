@@ -103,16 +103,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     Container(
                                       padding: const EdgeInsets.only(
-                                          top: 16, bottom: 8),
+                                          top: 8, bottom: 12),
                                       child: Text(
                                         state.planet.name,
-                                        style: fontR(
-                                          24,
-                                          color: C.current.mainText,
-                                        ),
+                                        style: fontR(24,
+                                            color: C.current.mainText),
                                       ),
                                     ),
                                     CopyComponent(
+                                      enableBackground: true,
                                       planet: state.planet,
                                       onSuccess: () {
                                         PlanetAddressBottomSheet.show(context,

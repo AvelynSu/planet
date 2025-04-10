@@ -88,7 +88,7 @@ class AppUtil {
     String curreny = SharedPrefsUtil.getString(AppConstant.currency) ?? "usd";
     curreny = curreny.toLowerCase();
     if (curreny == "krw") {
-      return "${(tokenPrice.round())} 원";
+      return "${(AppUtil.formatNumberWithComma(tokenPrice.round()))} 원";
     } else if (curreny == "usd") {
       return "\$${tokenPrice.toStringAsFixed(2)}";
     }

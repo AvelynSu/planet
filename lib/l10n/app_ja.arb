@@ -155,5 +155,8 @@
   "deleteAccountButton": "アカウントを削除",
   "deleteAccountConfirmTitle": "アカウント削除の確認",
   "deleteAccountConfirmDescription": "本当にアカウントを削除しますか？この操作は元に戻せません。",
-  "deleteButton": "削除"
+  "deleteButton": "削除",
+  "pending": "保留中",
+  "sent": "送信済み",
+  "received": "受信済み"
 }

@@ -51,7 +51,7 @@ class _BscHistoryService implements _BlockchainHistoryService {
       try {
         return await _fetchAlchemyTransactions(
           address: address,
-          category: 'bep20',
+          category: 'erc20',
           contractAddress: info.address,
         );
       } catch (e) {
@@ -67,16 +67,16 @@ class _BscHistoryService implements _BlockchainHistoryService {
   /// Alchemy API를 사용하여 트랜잭션 내역 조회
   Future<List<TransactionHistory>> _fetchAlchemyTransactions({
     required String address,
-    String category = 'external',
+    String category = 'native',
     String? contractAddress,
-    int maxCount = 100,
+    int maxCount = 1000,
   }) async {
     try {
       Future<Map<String, dynamic>> makeRequest(
           Map<String, dynamic> body) async {
         final response = await httpClient
             .post(
-              Uri.parse('${config.bscRpcUrl}'), // ethRpcUrl -> bscRpcUrl
+              Uri.parse(config.bscRpcUrl), // ethRpcUrl -> bscRpcUrl
               headers: {'Content-Type': 'application/json'},
               body: json.encode(body),
             )
@@ -149,7 +149,7 @@ class _BscHistoryService implements _BlockchainHistoryService {
 
       if (category == 'external') {
         return TransactionHistory.createBnbTransaction(commonData, value);
-      } else if (category == 'bep20') {
+      } else if (category == 'erc20') {
         return TransactionHistory.createTokenTransaction(commonData, tx, value);
       }
 
@@ -196,7 +196,7 @@ class _BscHistoryService implements _BlockchainHistoryService {
   Future<List<TransactionHistory>> _getTokenTransactions(String address) async {
     return _fetchAlchemyTransactions(
       address: address,
-      category: 'bep20',
+      category: 'erc20',
     );
   }
 

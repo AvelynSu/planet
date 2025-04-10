@@ -12,12 +12,14 @@ class CopyComponent extends StatefulWidget {
   final Planet planet;
   final Function? onSuccess;
   final bool showSuccessDialog;
+  final bool enableBackground;
 
   const CopyComponent({
     super.key,
     required this.planet,
     this.onSuccess,
     this.showSuccessDialog = false,
+    this.enableBackground = false,
   });
 
   @override
@@ -39,19 +41,27 @@ class _CopyComponentState extends State<CopyComponent> {
         // Fluttertoast.showToast(msg: "Success Copy");
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: widget.enableBackground
+              ? C.current.onBackground.withValues(alpha: 0.08)
+              : Colors.transparent,
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               AppUtil.shortenWalletAddress(widget.planet.address),
-              style: fontR(16, color: C.current.sub01),
+              style: fontR(
+                15,
+                color: C.current.onBackground.withValues(alpha: 0.65),
+              ),
             ),
             CustomImage(
               path: "icons/ic_copy.svg",
-              color: C.current.sub01,
+              color: C.current.onBackground.withValues(alpha: 0.5),
             ),
           ],
         ),

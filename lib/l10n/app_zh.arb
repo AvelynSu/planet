@@ -156,6 +156,8 @@
        "deleteAccountButton": "删除账户",
        "deleteAccountConfirmTitle": "确认删除账户",
        "deleteAccountConfirmDescription": "您确定要删除账户吗？此操作无法撤销。",
-       "deleteButton": "删除"
-
+       "deleteButton": "删除",
+       "pending": "待处理",
+       "sent": "已发送",
+       "received": "已接收"
 }

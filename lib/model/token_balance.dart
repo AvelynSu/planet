@@ -23,7 +23,24 @@ class TokenBalance {
     if (balance == 0) {
       return "0";
     }
-    return balance.toStringAsFixed(min(8, info.decimals));
+
+    // 최대 8자리까지만 표시하되 decimals보다 작은 값 사용
+    String formatted = balance.toStringAsFixed(min(8, info.decimals));
+
+    // 소수점이 있는 경우에만 처리
+    if (formatted.contains('.')) {
+      // 후행 0 제거
+      while (formatted.endsWith('0')) {
+        formatted = formatted.substring(0, formatted.length - 1);
+      }
+
+      // 소수점만 남은 경우 소수점도 제거
+      if (formatted.endsWith('.')) {
+        formatted = formatted.substring(0, formatted.length - 1);
+      }
+    }
+
+    return formatted;
   }
 
   factory TokenBalance.fromInfo(

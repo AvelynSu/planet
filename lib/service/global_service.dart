@@ -14,6 +14,6 @@ class GlobalService extends ChangeNotifier {
     var current = SharedPrefsUtil.getString(AppConstant.locale) ?? "en";
 
     locale = Locale(current);
-    // notifyListeners();
+    notifyListeners();
   }
 }
