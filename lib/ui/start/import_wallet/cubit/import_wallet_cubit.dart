@@ -33,6 +33,7 @@ class ImportWalletCubit extends Cubit<ImportWalletState> {
     try {
       emit(state.copyWith(status: ScreenStatus.loading));
       var planet = await apiRepository.getRequiredNicknamePlanet(
+        networkType: NetworkType.ethereum,
         mnemonic: state.mnemonic,
         onAppInitialize: () {
           appBloc.add(AppInitialize());

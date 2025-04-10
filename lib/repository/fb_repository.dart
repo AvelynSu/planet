@@ -87,6 +87,7 @@ class ApiRepository {
   /// 0이 없는 경우 닉네임 설정하라고 반환
   /// 네트워크 관계없이 다 불러와서 있으면 그거 보여주고, 없으면 이더리움으로 1개 생성
   Future<Planet?> getRequiredNicknamePlanet({
+    required NetworkType networkType,
     required String mnemonic,
     required Function onAppInitialize,
   }) async {
@@ -96,10 +97,10 @@ class ApiRepository {
     // 등록된 지갑이 아니면
     if (planets.isEmpty) {
       // 등록된 지갑이 아니면 빈 Planet 생성
-      var address = await WalletService()
-          .generateHDAddress(NetworkType.ethereum, mnemonic, 0);
+      var address =
+          await WalletService().generateHDAddress(networkType, mnemonic, 0);
       planet = Planet(
-        networkType: NetworkType.ethereum,
+        networkType: networkType,
         address: address,
         mnemonic: mnemonic,
       );

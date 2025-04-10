@@ -47,6 +47,7 @@ class CreateWalletCubit extends Cubit<CreateWalletState> {
   Future<Planet?> onGetRequiredPlanet() async {
     emit(state.copyWith(status: ScreenStatus.loading));
     var planet = await apiRepository.getRequiredNicknamePlanet(
+      networkType: state.networkType,
       mnemonic: state.mnemonic,
       onAppInitialize: () {
         appBloc.add(AppInitialize());
