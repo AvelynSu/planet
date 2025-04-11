@@ -168,14 +168,15 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                             ...List.generate(5, (e) => Skeleton.historyTile),
                           ...state.items.map(
                             (e) => GestureDetector(
-                                onTap: () {
-                                  TransactionHistoryDetailScreen.push(context,
-                                      info: state.balance.info, item: e);
-                                },
-                                child: TransactionHistoryTile(
-                                  item: e,
-                                  info: state.balance.info,
-                                )),
+                              onTap: () {
+                                TransactionHistoryDetailScreen.push(context,
+                                    info: state.balance.info, item: e);
+                              },
+                              child: TransactionHistoryTile(
+                                item: e,
+                                info: widget.info.info,
+                              ),
+                            ),
                           ),
                           if (state.items.isEmpty &&
                               state.status == ScreenStatus.loaded)

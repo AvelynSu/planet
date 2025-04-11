@@ -145,12 +145,27 @@ class _BscHistoryService implements _BlockchainHistoryService {
       final commonData = _extractCommonTransactionData(tx, isSent);
       if (commonData == null) return TransactionHistory.empty;
 
-      final value = double.tryParse(tx['value']?.toString() ?? '0') ?? 0.0;
+      double value = 0.0;
+      if (category == 'external') {
+        value = double.tryParse(tx['value']?.toString() ?? '0') ?? 0.0;
+      } else if (category == 'erc20') {
+        // rawContract.value에서 16진수 문자열을 가져와 처리
+        final rawValue = tx['rawContract']?['value']?.toString() ?? '0';
+        // 16진수 문자열에서 '0x' 제거 후 BigInt로 변환
+        final bigIntValue = BigInt.parse(rawValue.replaceAll('0x', ''), radix: 16);
+        // 18자리 소수점으로 나누어 실제 값으로 변환
+        value = bigIntValue / BigInt.from(10).pow(18);
+      }
 
       if (category == 'external') {
         return TransactionHistory.createBnbTransaction(commonData, value);
       } else if (category == 'erc20') {
-        return TransactionHistory.createTokenTransaction(commonData, tx, value);
+        final tokenData = {
+          ...tx,
+          'value': value,  // 변환된 value 값 사용
+          'contractAddress': tx['rawContract']?['address'],  // 컨트랙트 주소 추가
+        };
+        return TransactionHistory.createTokenTransaction(commonData, tokenData, value);
       }
 
       return TransactionHistory.empty;

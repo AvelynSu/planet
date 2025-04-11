@@ -81,7 +81,7 @@ class _TransactionHistoryTileState extends State<TransactionHistoryTile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               BoldMsgGenerator.toRichText(
-                  text: "*${widget.item.amount}* ${widget.item.tokenSymbol}",
+                  text: "*${widget.item.amount}* ${widget.info.symbol}",
                   style: fontM(16, color: C.current.sub01),
                   boldStyle: fontM(16, color: C.current.mainText)),
               const SizedBox(height: 5),
