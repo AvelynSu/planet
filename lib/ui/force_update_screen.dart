@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/l10n/app_localizations.dart';
 import 'package:gif/gif.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
@@ -69,7 +69,7 @@ class ForceUpdateScreen extends StatelessWidget {
 
     if (Platform.isAndroid) {
       // Android - Play Store
-      appId = 'com.shiftfn.planet'; // 앱의 패키지 이름으로 변경
+      appId = 'com.shiftfn.planetwallet'; // 앱의 패키지 이름으로 변경
       url = Uri.parse('https://play.google.com/store/apps/details?id=$appId');
     } else if (Platform.isIOS) {
       // iOS - App Store

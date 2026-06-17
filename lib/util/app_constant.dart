@@ -9,7 +9,7 @@ class AppConstant {
 
   static String pinCode = "";
 
-  static String appVersion = "1.2.0";
+  static String appVersion = "1.14.0";
 
   static String currency = "currency"; // KRW
   static String currencyCount = "currencyCount";

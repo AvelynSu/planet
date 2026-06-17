@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/l10n/app_localizations.dart';
 import 'package:planet/bloc/app/app_bloc.dart';
 import 'package:planet/bloc/app/app_state.dart';
 import 'package:planet/custom_theme.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/l10n/app_localizations.dart';
 import 'package:planet/custom_theme.dart';
 import 'package:planet/ui/common/custom_image.dart';
 

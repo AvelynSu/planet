@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/l10n/app_localizations.dart';
 import 'package:planet/service/local_storage_service.dart';
 import 'package:planet/ui/common/base_scaffold.dart';
 import 'package:planet/ui/transaction/transfer/transfer_amount_input/custom_number_keypad.dart';

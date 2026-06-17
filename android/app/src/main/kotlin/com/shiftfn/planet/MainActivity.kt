@@ -1,4 +1,4 @@
-package com.shiftfn.planet
+package com.shiftfn.planetwallet
 
 import io.flutter.embedding.android.FlutterActivity
 

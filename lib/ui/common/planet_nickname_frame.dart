@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:planet/l10n/app_localizations.dart';
 import 'package:planet/enum/network_type.dart';
 import 'package:planet/enum/screen_status.dart';
 import 'package:planet/model/custom_exception.dart';
